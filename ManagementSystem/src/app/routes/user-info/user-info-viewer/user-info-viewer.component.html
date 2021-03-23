@@ -1,0 +1,101 @@
+
+<ngx-dashboard-header [title]='title' #header></ngx-dashboard-header>
+
+<nb-card [class]='inEdit ? "in-edit" : ""'>
+    <nb-card-header>
+        <nb-user [name]='user?.nickname || user?.name' [picture]='user?.picture'></nb-user>
+        <div class="editing-mode">
+            <button nbButton status='primary' shape='round' size='tiny' outline>编辑头像</button>
+        </div>
+    </nb-card-header>
+
+    <nb-card-body>
+        <div class="user-info-list">
+            <div class="user-info-field">姓名</div>
+            <div class="user-info-value viewing-mode">张三</div>
+            <div class="user-info-value editing-mode">
+                <input type="text" nbInput fullWidth shape="rectangle" placeholder="姓名">
+            </div>
+
+            <div class="user-info-field">角色</div>
+            <div class="user-info-value">管理员</div>
+
+            <div class="user-info-field">性别</div>
+            <div class="user-info-value viewing-mode">男</div>
+            <div class="user-info-value editing-mode">
+                <input type="text" nbInput fullWidth shape="rectangle" placeholder="性别">
+            </div>
+
+            <div class="user-info-field">出生日期</div>
+            <div class="user-info-value viewing-mode">1999-09-09</div>
+            <div class="user-info-value editing-mode">
+                <input type="text" nbInput fullWidth shape="rectangle" placeholder="出生日期">
+            </div>
+
+            <div class="user-info-field">学工号</div>
+            <div class="user-info-value viewing-mode">10101010</div>
+            <div class="user-info-value editing-mode">
+                <input type="text" nbInput fullWidth shape="rectangle" placeholder="学工号">
+            </div>
+
+            <div class="user-info-field">学校</div>
+            <div class="user-info-value viewing-mode">福州大学</div>
+            <div class="user-info-value editing-mode">
+                <input type="text" nbInput fullWidth shape="rectangle" placeholder="学校">
+            </div>
+
+            <div class="user-info-field">院系</div>
+            <div class="user-info-value viewing-mode">数学与计算机科学学院</div>
+            <div class="user-info-value editing-mode">
+                <input type="text" nbInput fullWidth shape="rectangle" placeholder="院系">
+            </div>
+
+            <div class="user-info-field">专业</div>
+            <div class="user-info-value viewing-mode">电子信息</div>
+            <div class="user-info-value editing-mode">
+                <input type="text" nbInput fullWidth shape="rectangle" placeholder="专业">
+            </div>
+        </div>
+
+        <div class="user-info-list user-secret-info-list">
+            <div class="user-info-field">手机</div>
+            <div class="user-info-value viewing-mode">13344556677</div>
+            <div class="user-info-value editing-mode">
+                <div class="phone-number-email">
+                    <div class="user-info-value">
+                        13344556677
+                    </div>
+                    <button nbButton status='primary' shape='round' size='tiny' outline>编辑手机号</button>
+                </div>
+            </div>
+
+            <div class="user-info-field">邮箱</div>
+            <div class="user-info-value viewing-mode">good@gmail.com</div>
+            <div class="user-info-value editing-mode">
+                <div class="phone-number-email">
+                    <div class="user-info-value">
+                        good@gmail.com
+                    </div>
+                    <button nbButton status='primary' shape='round' size='tiny' outline>编辑邮箱</button>
+                </div>
+            </div>
+        </div>
+    </nb-card-body>
+
+    <nb-card-footer>
+        <div class="viewing-mode">
+            <div class="footer-buttons">
+                <button nbButton status='primary' outline>修改密码</button>
+                <button nbButton status='primary' hero (click)='gotoInfoEdit()'>编辑个人信息</button>
+            </div>
+        </div>
+
+        <div class="editing-mode">
+            <div class="footer-buttons">
+                <div></div>
+                <button nbButton status='primary' hero (click)='gotoInfoView()'>保存</button>
+            </div>
+        </div>
+    </nb-card-footer>
+</nb-card>
+

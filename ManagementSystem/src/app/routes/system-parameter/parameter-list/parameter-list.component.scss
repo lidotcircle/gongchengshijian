@@ -1,0 +1,31 @@
+
+ngx-parameter-list {
+    .without-record tbody {
+        display: none;
+    }
+
+    .without-data {
+        width: 100%;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 10em;
+        color: gray;
+
+        nb-icon {
+            width: 2em;
+            height: 2em;
+        }
+
+        .warning {
+            padding: 0.8em 0em;
+            user-select: none;
+        }
+    }
+
+    .without-record .without-data {
+        display: flex;
+    }
+}
+

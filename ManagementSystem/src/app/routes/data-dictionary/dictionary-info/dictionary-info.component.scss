@@ -1,0 +1,60 @@
+@import '~@nebular/theme/styles/global/breakpoints';
+@import '~bootstrap/scss/mixins/breakpoints';
+@import 'src/app/@theme/styles/themes';
+
+
+ngx-dictionary-info {
+    .dict-info {
+        display: grid;
+        grid-template-columns: 3em 42% 3em 42%;
+        grid-row-gap: 1em;
+
+        .dict-type-field {
+            user-select: none;
+        }
+
+        .dict-type-value {
+            color: gray;
+        }
+    }
+
+    checkbox-editor {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        input[type='checkbox'] {
+            width: 1em;
+            height: 1em;
+        }
+    }
+
+    .without-record tbody {
+        display: none;
+    }
+
+    .without-data {
+        width: 100%;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 10em;
+        color: gray;
+
+        nb-icon {
+            width: 2em;
+            height: 2em;
+        }
+
+        .warning {
+            padding: 0.8em 0em;
+            user-select: none;
+        }
+    }
+
+    .without-record .without-data {
+        display: flex;
+    }
+}
+

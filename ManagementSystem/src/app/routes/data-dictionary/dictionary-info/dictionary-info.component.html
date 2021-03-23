@@ -1,0 +1,33 @@
+
+<ngx-dashboard-header title='数据字典数据项'></ngx-dashboard-header>
+
+<nb-card accent='info'>
+    <nb-card-header>字典类型</nb-card-header>
+    <nb-card-body>
+        <div class="dict-info">
+            <div class="dict-type-field">名称</div>
+            <div class="dict-type-value">水果</div>
+            <div class="dict-type-field">编码</div>
+            <div class="dict-type-value">fruit</div>
+            <div class="dict-type-field">备注</div>
+            <div class="dict-type-value">水果可以吃</div>
+        </div>
+    </nb-card-body>
+</nb-card>
+
+<nb-card>
+    <nb-card-body [class]='recordLength == 0 ? "without-record" : ""'>
+        <ng2-smart-table [settings]="settings" [source]="source"
+            (createConfirm)="onCreateConfirm($event)"
+            (editConfirm)="onEditConfirm($event)"
+            (deleteConfirm)="onDeleteConfirm($event)" 
+            #datatable>
+        </ng2-smart-table>
+
+        <div class="without-data">
+            <nb-icon icon='archive-outline'></nb-icon>
+            <div class="warning">暂无数据</div>
+        </div>
+    </nb-card-body>
+</nb-card>
+

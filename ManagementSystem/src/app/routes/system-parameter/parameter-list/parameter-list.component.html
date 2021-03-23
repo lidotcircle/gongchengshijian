@@ -1,0 +1,19 @@
+
+<ngx-dashboard-header title='系统参数'></ngx-dashboard-header>
+
+<nb-card>
+    <nb-card-body [class]='recordLength == 0 ? "without-record" : ""'>
+        <ng2-smart-table [settings]="settings" [source]="source"
+            (createConfirm)="onCreateConfirm($event)"
+            (editConfirm)="onEditConfirm($event)"
+            (deleteConfirm)="onDeleteConfirm($event)" 
+            #datatable>
+        </ng2-smart-table>
+
+        <div class="without-data">
+            <nb-icon icon='archive-outline'></nb-icon>
+            <div class="warning">暂无数据</div>
+        </div>
+    </nb-card-body>
+</nb-card>
+

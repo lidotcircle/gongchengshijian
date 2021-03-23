@@ -1,0 +1,69 @@
+@import '~@nebular/theme/styles/global/breakpoints';
+@import '~bootstrap/scss/mixins/breakpoints';
+@import 'src/app/@theme/styles/themes';
+
+
+ngx-dictionary-list {
+    table thead [ng2-st-thead-form-row] td:first-child {
+        border-top: none !important;
+        border-bottom: none !important;
+
+        * {
+            visibility: hidden;
+        }
+    }
+
+    [ng2-st-thead-filters-row] .clickColumn {
+        border-bottom: none !important;
+        border-top: none !important;
+
+        * {
+            visibility: hidden;
+        }
+    }
+
+    .goto-dict-info-column {
+        border-bottom: none !important;
+
+        * {
+            visibility: hidden;
+        }
+    }
+
+    .data-row {
+        cursor: pointer;
+
+        td:first-child {
+            background: nb-theme(background-basic-color-1);
+        }
+    }
+
+    .without-record tbody {
+        display: none;
+    }
+
+    .without-data {
+        width: 100%;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 10em;
+        color: gray;
+
+        nb-icon {
+            width: 2em;
+            height: 2em;
+        }
+
+        .warning {
+            padding: 0.8em 0em;
+            user-select: none;
+        }
+    }
+
+    .without-record .without-data {
+        display: flex;
+    }
+}
+
