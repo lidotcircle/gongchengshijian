@@ -8,8 +8,16 @@
 
 ## 后台管理系统前端
 
-+ [列表页面](https://github.com/N1ckstrong/gongchengshijian/blob/frontend/ManagementSystem/src/app/routes/user-info/user-info-viewer/user-info-viewer.component.html)
-+ [编辑页面](https://github.com/N1ckstrong/gongchengshijian/blob/frontend/ManagementSystem/src/app/routes/user-info/user-info-viewer/user-info-viewer.component.html)
++ [Demo](https://gcsj.lidotcircle.ltd/)
+  + [登录](https://gcsj.lidotcircle.ltd/daoyun/auth/login)
+  + [主界面](https://gcsj.lidotcircle.ltd/daoyun/dashboard)
+
+### 列表页面和编辑页面
+
+使用了[**Ng2-SmartTable**](https://akveo.github.io/ng2-smart-table/#/)
+
++ [列表页面样例](https://gcsj.lidotcircle.ltd/daoyun/dashboard/data-dictionary/dict-list)
++ [编辑页面样例](https://gcsj.lidotcircle.ltd/daoyun/dashboard/data-dictionary/dict-list)
 
 ## 移动端
 
