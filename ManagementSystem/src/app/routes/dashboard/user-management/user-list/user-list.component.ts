@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NbToastrService } from '@nebular/theme';
 import { LocalDataSource } from 'ng2-smart-table';
-import { OptionalCellComponent } from '../../../shared/components/optional-cell.component';
-import { ICommonUser } from '../../../shared/utils';
+import { OptionalCellComponent } from 'src/app/shared/components/optional-cell.component';
+import { ICommonUser } from 'src/app/shared/utils';
 import { ClickCellComponent } from './click-cell.component';
 
 @Component({

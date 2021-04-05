@@ -86,9 +86,4 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     return false;
   }
-
-  navigateHome() {
-    this.menuService.navigateHome();
-    return false;
-  }
 }

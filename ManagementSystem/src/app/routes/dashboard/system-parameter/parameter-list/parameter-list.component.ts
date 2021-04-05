@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NbToastrService } from '@nebular/theme';
 import { LocalDataSource } from 'ng2-smart-table';
-import { ISystemParameter } from '../../../shared/utils';
+import { ISystemParameter } from 'src/app/shared/utils';
 
 @Component({
     selector: 'ngx-parameter-list',

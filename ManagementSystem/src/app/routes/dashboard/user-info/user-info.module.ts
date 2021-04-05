@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { UserInfoRoutingModule } from './user-info-routing.module';
 import { UserInfoViewerComponent } from './user-info-viewer/user-info-viewer.component';
-import { SharedModule } from '../../shared/shared.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({

@@ -1,18 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { DaoyunMenu } from './daoyun-menu';
+import { DaoyunMenu } from './dashboard-menu';
 
 @Component({
-    selector: 'ngx-daoyun',
+    selector: 'ngx-dashboard',
     template: `
     <ngx-default-layout>
         <router-outlet></router-outlet>
     </ngx-default-layout>
   `,
-    styleUrls: ['./daoyun.component.scss']
+    styles: []
 })
-export class DaoyunComponent implements OnInit {
-    menu = DaoyunMenu;
-
+export class DashboardComponent implements OnInit {
     constructor() { }
 
     ngOnInit(): void {

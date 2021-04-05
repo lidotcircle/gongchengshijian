@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NbToastrService } from '@nebular/theme';
 import { LocalDataSource } from 'ng2-smart-table';
-import { IDataDictionary, IDataDictionaryRecord } from '../../../shared/utils';
+import { IDataDictionary, IDataDictionaryRecord } from 'src/app/shared/utils';
 
 @Component({
     selector: 'ngx-dictionary-info',

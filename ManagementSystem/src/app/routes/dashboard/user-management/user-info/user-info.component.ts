@@ -1,23 +1,22 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { NbCardComponent } from '@nebular/theme';
+import { Component, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { UserData } from '../../../@core/data/users';
+import { UserData } from 'src/app/@core/data/users';
 
 @Component({
-    selector: 'ngx-user-info-viewer',
-    templateUrl: './user-info-viewer.component.html',
-    styleUrls: ['./user-info-viewer.component.scss']
+    selector: 'ngx-user-info',
+    templateUrl: './user-info.component.html',
+    styleUrls: ['./user-info.component.scss']
 })
-export class UserInfoViewerComponent implements OnInit, OnDestroy {
+export class UserInfoComponent implements OnInit {
     private destroy$: Subject<void> = new Subject<void>();
     user: {nickname: string, picture: string, name: string};
     title: string;
 
     constructor(private userService: UserData) {
         this.userService.getUsers()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((users: any) => this.user = users.zhangsan);
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((users: any) => this.user = users.zhangsan);
     }
 
     ngOnDestroy(): void {
@@ -31,12 +30,12 @@ export class UserInfoViewerComponent implements OnInit, OnDestroy {
 
     inEdit: boolean = false;
     gotoInfoEdit() {
-        this.title = '用户个人信息编辑';
+        this.title = '用户个人信息编辑 - 管理员';
         this.inEdit = true;
     }
 
     gotoInfoView() {
-        this.title = '用户个人信息';
+        this.title = '用户个人信息 - 管理员';
         this.inEdit = false;
     }
 }

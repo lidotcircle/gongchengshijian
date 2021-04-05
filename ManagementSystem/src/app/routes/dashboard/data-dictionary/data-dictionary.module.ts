@@ -5,8 +5,8 @@ import { DataDictionaryRoutingModule } from './data-dictionary-routing.module';
 import { DictionaryListComponent } from './dictionary-list/dictionary-list.component';
 import { DictionaryInfoComponent } from './dictionary-info/dictionary-info.component';
 import { AddDictionaryComponent } from './add-dictionary/add-dictionary.component';
-import { SharedModule } from '../../shared/shared.module';
 import { ClickCellComponent } from './dictionary-list/click-cell.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -18,7 +18,7 @@ import { ClickCellComponent } from './dictionary-list/click-cell.component';
     imports: [
         CommonModule,
         DataDictionaryRoutingModule,
-        SharedModule
+        SharedModule,
     ]
 })
 export class DataDictionaryModule { }

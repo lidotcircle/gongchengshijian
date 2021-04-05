@@ -2,7 +2,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ViewCell } from 'ng2-smart-table';
-import { ICommonUser } from '../../../shared/utils';
+import { ICommonUser } from 'src/app/shared/utils';
 
 @Component({
     template: `

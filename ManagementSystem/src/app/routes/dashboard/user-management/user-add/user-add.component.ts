@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { UserData } from '../../../@core/data/users';
+import { UserData } from 'src/app/@core/data/users';
 
 @Component({
     selector: 'ngx-user-add',

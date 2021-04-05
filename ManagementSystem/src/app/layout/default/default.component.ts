@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DaoyunMenu } from '../../routes/daoyun-menu';
+import { DaoyunMenu } from 'src/app/routes/dashboard/dashboard-menu';
 
 @Component({
     selector: 'ngx-default-layout',
