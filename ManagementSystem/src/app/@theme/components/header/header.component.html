@@ -3,7 +3,7 @@
         <a (click)="toggleSidebar()" href="#" class="sidebar-toggle">
             <nb-icon icon="menu-2-outline"></nb-icon>
         </a>
-        <a class="logo" href="#" (click)="navigateHome()">到云后台管理系统</a>
+        <a class="logo" [routerLink]="['/daoyun/dashboard']">到云后台管理系统</a>
     </div>
     <!--
     <nb-select [selected]="currentTheme" (selectedChange)="changeTheme($event)" status="primary">

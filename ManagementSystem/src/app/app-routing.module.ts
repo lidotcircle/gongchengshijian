@@ -51,7 +51,7 @@ export const routes: Routes = [
         ],
     },
     { path: '', redirectTo: 'daoyun', pathMatch: 'full' },
-    { path: '**', redirectTo: 'pages' },
+    { path: '**', redirectTo: 'daoyun' },
 ];
 
 const config: ExtraOptions = {

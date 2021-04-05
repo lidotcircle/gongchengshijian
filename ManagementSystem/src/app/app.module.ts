@@ -20,6 +20,7 @@ import {
   NbToastrModule,
   NbWindowModule,
 } from '@nebular/theme';
+import { InterceptorProviders } from './core/http';
 
 @NgModule({
   declarations: [AppComponent],
@@ -40,6 +41,7 @@ import {
     CoreModule.forRoot(),
     ThemeModule.forRoot(),
   ],
+  providers: [...InterceptorProviders],
   bootstrap: [AppComponent],
 })
 export class AppModule {

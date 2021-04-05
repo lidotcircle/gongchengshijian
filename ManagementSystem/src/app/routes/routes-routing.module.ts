@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { DaoyunComponent } from './daoyun.component';
 
 const routes: Routes = [
     {
@@ -11,39 +10,23 @@ const routes: Routes = [
     {
 
         path: 'dashboard',
-        component: DaoyunComponent,
-        children: [
-            {
-                path: '',
-                pathMatch: 'full',
-                redirectTo: 'user-info'
-            },
-            {
-                path: 'user-info',
-                loadChildren: () => import('./user-info/user-info.module')
-                .then(m => m.UserInfoModule),
-            },
-            {
-                path: 'data-dictionary',
-                loadChildren: () => import('./data-dictionary/data-dictionary.module')
-                .then(m => m.DataDictionaryModule),
-            },
-            {
-                path: 'system-parameter',
-                loadChildren: () => import('./system-parameter/system-parameter.module')
-                .then(m => m.SystemParameterModule),
-            },
-            {
-                path: 'user-management',
-                loadChildren: () => import('./user-management/user-management.module')
-                .then(m => m.UserManagementModule),
-            },
-        ]
+        loadChildren: () => import('./dashboard/dashboard.module')
+        .then(m => m.DashboardModule),
+    },
+    {
+
+        path: 'exception',
+        loadChildren: () => import('./exception/exception.module')
+        .then(m => m.ExceptionModule),
     },
     {
         path: '',
         pathMatch: 'full',
         redirectTo: 'auth'
+    },
+    {
+        path: '**',
+        redirectTo: 'exception',
     },
 ];
 
