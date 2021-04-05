@@ -14,6 +14,7 @@ services:
   redis.daoyun.six:
     image: redis
     command: redis-server --requirepass password
+    restart: always
     environment:
       - REDIS_REPLICATION_MODE=master
     ports:

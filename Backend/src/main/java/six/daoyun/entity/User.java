@@ -21,6 +21,9 @@ public class User implements Serializable {
 
     @Column(name = "uk_user_name", unique = true)
 	private String userName;
+    // TODO foreign key constrain
+    @Column(name = "fk_role_id", columnDefinition = "INT NOT NULL")
+    private int roleId;
 
     @Column(name = "gmt_created", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     private Date createdDate;
