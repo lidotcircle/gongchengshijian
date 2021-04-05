@@ -3,6 +3,7 @@ import { NbCardComponent } from '@nebular/theme';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserData } from 'src/app/@core/data/users';
+import { LocalStorageService } from 'src/app/service/storage';
 
 @Component({
     selector: 'ngx-user-info-viewer',
