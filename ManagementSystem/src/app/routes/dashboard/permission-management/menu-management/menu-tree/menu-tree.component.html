@@ -1,0 +1,33 @@
+
+<div class="tree-container">
+  <div class="properties">
+    <div class="toggle">
+      <div class="toggle-icon-hidden" *ngIf='!hasChild'></div>
+      <div class="toggle-icon" *ngIf='hasChild &&  show' (click)='closeSubmenu()'><nb-icon icon='chevron-down-outline'></nb-icon></div>
+      <div class="toggle-icon" *ngIf='hasChild && !show' (click)='openSubmenu()' ><nb-icon icon='chevron-right-outline'></nb-icon></div>
+    </div>
+    <div class="type-icon"><nb-icon [icon]='icon'></nb-icon></div>
+    <div class="name"> {{ menu.name }} </div>
+    <div class="link"> {{ menu.link }} </div>
+    <div class="take-space"></div>
+    <div class="status" *ngIf='!roleName'>
+      <div class="danger" *ngIf='!menuDefaultIsDisabled'>默认启用</div>
+      <div class="info"   *ngIf=' menuDefaultIsDisabled'>默认禁用</div>
+    </div>
+    <div class="buttons" *ngIf='roleName'>
+      <button *ngIf=' menuIsDisabled' nbButton shape='semi-round' status='primary' outline>启用</button>
+      <button *ngIf='!menuIsDisabled' nbButton shape='semi-round' status='primary' outline>禁用</button>
+      <button nbButton shape='semi-round' status='primary' outline>启用所有子项</button>
+      <button nbButton shape='semi-round' status='primary' outline>禁用所有子项</button>
+    </div>
+    <div class="buttons" *ngIf='!roleName'>
+      <button nbButton shape='semi-round' status='primary' outline>角色列表</button>
+      <button *ngIf=' menuDefaultIsDisabled' nbButton shape='semi-round' status='primary' outline>默认启用</button>
+      <button *ngIf='!menuDefaultIsDisabled' nbButton shape='semi-round' status='primary' outline>默认关闭</button>
+    </div>
+  </div>
+
+  <div [class]="'children ' + (show ? 'children-show' : '')" *ngIf='hasChild'>
+    <ngx-menu-tree *ngFor='let subMenu of menu.children' [menu]='subMenu' [roleName]='roleName'></ngx-menu-tree>
+  </div>
+</div>

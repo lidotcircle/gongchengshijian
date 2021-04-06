@@ -16,7 +16,7 @@
 </nb-card>
 
 <nb-card>
-    <nb-card-body [class]='recordLength == 0 ? "without-record" : ""'>
+    <nb-card-body [class]='recordLength == 0 ? "record-length-eqaul-zero" : ""'>
         <ng2-smart-table [settings]="settings" [source]="source"
             (createConfirm)="onCreateConfirm($event)"
             (editConfirm)="onEditConfirm($event)"
@@ -24,7 +24,7 @@
             #datatable>
         </ng2-smart-table>
 
-        <div class="without-data">
+        <div class="empty-state">
             <nb-icon icon='archive-outline'></nb-icon>
             <div class="warning">暂无数据</div>
         </div>

@@ -37,12 +37,10 @@ export class DictionaryListComponent implements OnInit {
             deleteButtonContent: '<i class="nb-trash"></i>',
             confirmDelete: true,
         },
-        rowClassFunction: () => 'data-row',
         columns: {
             clickColumn: {
                 title: '数据',
                 width: '4em',
-                class: 'goto-dict-info-column',
                 editable: false,
                 type: 'custom',
                 renderComponent: ClickCellComponent,

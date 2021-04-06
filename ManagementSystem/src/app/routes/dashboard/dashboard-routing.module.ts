@@ -33,6 +33,11 @@ const routes: Routes = [
                 loadChildren: () => import('./user-management/user-management.module')
                 .then(m => m.UserManagementModule),
             },
+            {
+                path: 'permission-management',
+                loadChildren: () => import('./permission-management/permission-management.module')
+                .then(m => m.PermissionManagementModule),
+            },
         ]
     },
 

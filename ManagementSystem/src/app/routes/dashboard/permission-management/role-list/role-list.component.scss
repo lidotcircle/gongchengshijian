@@ -1,7 +1,7 @@
 @import 'src/app/style/table.scss';
 
 
-ngx-user-list {
+ngx-role-list {
     @include Ng2SmartTableClickCell(1)
     @include TableIsEmpty()
 }

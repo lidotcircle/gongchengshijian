@@ -1,0 +1,94 @@
+@import '~@nebular/theme/styles/global/breakpoints';
+@import '~bootstrap/scss/mixins/breakpoints';
+@import 'src/app/@theme/styles/themes';
+
+
+.tree-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .properties {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0.5em 0.6em;
+        border-radius: 0.3em;
+        font-size: medium;
+
+        &:hover {
+            background-color: nb-theme(background-basic-color-2)
+        }
+
+        .toggle {
+            margin-right: 0.8em;
+
+            .toggle-icon-hidden {
+                width: 1.3em;
+            }
+
+            .toggle-icon {
+                &:hover {
+                    background-color: nb-theme(background-basic-color-4)
+                }
+            }
+        }
+
+        .type-icon {
+            margin-top: 0.15em;
+        }
+
+        .name {
+            padding: 0.5em;
+            min-width: 6em;
+        }
+
+        .link {
+            padding: 0.5em;
+            color: blue;
+        }
+
+        .take-space {
+            flex-grow: 1;
+        }
+
+        .status {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 0em 8em 0em 0em;
+
+            .info {
+                color: nb-theme(color-info-700);
+            }
+
+            .danger {
+                color: nb-theme(color-danger-700);
+            }
+        }
+
+        .buttons {
+            display: flex;
+
+            button {
+                margin: 0.3em;
+                padding: 0.5em 0.4em;
+            }
+        }
+    }
+
+    .children {
+        display: none;
+
+        &.children-show {
+            display: flex;
+        }
+
+        margin-left: 1.3em;
+
+        ngx-menu-tree {
+            width: 100%;
+        }
+    }
+}
+

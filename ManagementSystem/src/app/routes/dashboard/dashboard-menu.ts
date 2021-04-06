@@ -2,27 +2,25 @@ import { NbMenuItem } from '@nebular/theme';
 
 export const DaoyunMenu: NbMenuItem[] = [
     {
-        title: '角色管理',
+        title: '角色权限',
         icon: 'star-outline',
         children: [
             {
                 title: '角色列表',
-                link: '/daoyun/dashboard/role-management/role-list',
+                link: '/daoyun/dashboard/permission-management/roles',
             },
             {
-                title: '添加角色',
-                link: '/daoyun/dashboard/role-manangement/add-role',
-            }
-        ]
-    },
-    {
-        title: '权限管理',
-        icon: 'menu-outline',
-        children: [
-            {
                 title: '菜单查看',
-                link: '/daoyun/dashboard/access-control/menu-list',
-            }
+                link: '/daoyun/dashboard/permission-management/menu',
+            },
+            {
+                title: '按钮查看',
+                link: '/daoyun/dashboard/permission-management/button',
+            },
+            {
+                title: '文件查看',
+                link: '/daoyun/dashboard/permission-management/file',
+            },
         ]
     },
     {

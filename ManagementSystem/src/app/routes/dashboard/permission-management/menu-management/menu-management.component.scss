@@ -1,0 +1,14 @@
+
+.item-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.8em 0em 0em 0em;
+
+    .item {
+        nb-icon {
+            margin: 0em 0.5em 0em 0em;
+        }
+    }
+}
+

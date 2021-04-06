@@ -1,26 +1,28 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NbToastrService } from '@nebular/theme';
 import { LocalDataSource } from 'ng2-smart-table';
-import { OptionalCellComponent } from 'src/app/shared/components/optional-cell.component';
-import { ICommonUser } from 'src/app/shared/utils';
-import { ClickCellComponent } from './click-cell.component';
+import { Role } from 'src/app/entity';
+import { ButtonsCellComponent } from './buttons-cell.component';
+
+type DataType = Role;
 
 @Component({
-    selector: 'ngx-user-list',
-    templateUrl: './user-list.component.html',
-    styleUrls: ['./user-list.component.scss'],
+    selector: 'ngx-role-list',
+    templateUrl: './role-list.component.html',
+    styleUrls: ['./role-list.component.scss'],
     encapsulation: ViewEncapsulation.None,
 })
-export class UserListComponent implements OnInit {
+export class RoleListComponent implements OnInit {
     settings = {
         actions: {
             columnTitle: '操作',
-            add: false,
-            edit: false,
+            add: true,
+            edit: true,
             delete: true,
             position: 'right',
         },
-        noDataMessage: '找不到用户',
+        noDataMessage: '找不到字典类型',
+        sort: false,
         add: {
             addButtonContent: '<i class="nb-plus"></i>',
             createButtonContent: '<i class="nb-checkmark"></i>',
@@ -37,38 +39,33 @@ export class UserListComponent implements OnInit {
             deleteButtonContent: '<i class="nb-trash"></i>',
             confirmDelete: true,
         },
+        rowClassFunction: () => 'data-row',
         columns: {
-            clickColumn: {
+            buttons: {
+                title: 'Buttons',
                 width: '4em',
                 editable: false,
                 type: 'custom',
-                renderComponent: ClickCellComponent,
+                renderComponent: ButtonsCellComponent,
             },
-            name: {
-                title: '用户名',
+            roleName: {
+                title: '名称',
                 type: 'text',
             },
-            role: {
-                title: '角色',
+            createdDate: {
+                title: '创建日期',
+                editable: false,
                 type: 'text',
             },
-            email: {
-                title: '邮箱',
-                type: 'custom',
-                renderComponent: OptionalCellComponent,
-            },
-            phoneno: {
-                title: '手机号',
+            modifiedDate: {
+                title: '修改日期',
+                editable: false,
                 type: 'text',
             },
         },
     };
-    source: ICommonUser[] = [
-        {
-            name: 'niki',
-            role: 'admin',
-            phoneno: '110',
-        }
+    source: DataType[] = [
+        {roleName: "管理员", createdDate: new Date(), modifiedDate: new Date()},
     ];
 
     constructor(private toastrService: NbToastrService) { }
@@ -78,19 +75,31 @@ export class UserListComponent implements OnInit {
         this.recordLength = this.source.length;
     }
 
-    private async checkData(row: ICommonUser, toaster: boolean = true): Promise<boolean> //{
-        {
-            return true;
-        } //}
+    private static nameRegex = /.{2,10}/;
+    private async checkData(name: string, toaster: boolean = true): Promise<boolean> //{
+    {
+        const nameTestFail = name == null || !RoleListComponent.nameRegex.test(name);
+
+        if(toaster && nameTestFail) {
+            let message = "错误的角色名";
+            this.toastrService.show(message, '角色管理', {
+                duration: 2000,
+                destroyByClick: true,
+                status: 'warning'
+            });
+        }
+
+        return !nameTestFail;
+    } //}
 
 
     async onCreateConfirm(event: {
-        newData: ICommonUser,
+        newData: DataType, 
         source: LocalDataSource,
-        confirm: {resolve: (data: ICommonUser) => void, reject: () => void},
+        confirm: {resolve: (data: DataType) => void, reject: () => void},
     }) //{
     {
-        if(!(await this.checkData(event.newData))) {
+        if(!(await this.checkData(event.newData.roleName))) {
             event.confirm.reject();
             return;
         }
@@ -101,13 +110,13 @@ export class UserListComponent implements OnInit {
     } //}
 
     async onEditConfirm(event: {
-        data: ICommonUser,
-        newData: ICommonUser,
+        data: DataType,
+        newData: DataType,
         source: LocalDataSource,
-        confirm: {resolve: (data: ICommonUser) => void, reject: () => void},
+        confirm: {resolve: (data: DataType) => void, reject: () => void},
     }) //{
     {
-        if(!(await this.checkData(event.newData))) {
+        if(!(await this.checkData(event.newData.roleName))) {
             event.confirm.reject();
             return;
         }
@@ -117,9 +126,9 @@ export class UserListComponent implements OnInit {
     } //}
 
     async onDeleteConfirm(event: {
-        data: ICommonUser, 
+        data: DataType, 
         source: LocalDataSource,
-        confirm: {resolve: (data: ICommonUser) => void, reject: () => void},
+        confirm: {resolve: (data: DataType) => void, reject: () => void},
     }) //{
     {
         console.log(await event.source.getAll(), this.source);

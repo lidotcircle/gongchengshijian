@@ -1,0 +1,26 @@
+<ngx-dashboard-header title='菜单'></ngx-dashboard-header>
+
+<nb-card status='info'>
+  <nb-card-header *ngIf='roleName'>
+    角色: {{ roleName }}
+  </nb-card-header>
+
+  <nb-card-header *ngIf='!roleName'>
+    菜单信息查看
+  </nb-card-header>
+
+  <nb-card-body>
+    <div *ngFor='let menu of menus'>
+      <ngx-menu-tree [menu]='menu' [roleName]='roleName'></ngx-menu-tree>
+    </div>
+  </nb-card-body>
+
+  <nb-card-footer>
+    <div class="item-info">
+      <div class="item"><nb-icon icon='menu-outline'></nb-icon> 表示菜单</div>
+      <div class="item"><nb-icon icon='book-open-outline'></nb-icon> 表示页面</div>
+      <div class="item"><nb-icon icon='radio-button-on-outline'></nb-icon> 表示按钮</div>
+    </div>
+  </nb-card-footer>
+</nb-card>
+
