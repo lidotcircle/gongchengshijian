@@ -37,11 +37,11 @@ export const DaoyunMenu: NbMenuItem[] = [
         children: [
             {
                 title: '班课查看',
-                link: '/daoyun/dashboard/class-management/class-list',
+                link: '/daoyun/dashboard/class-management/course-list',
             },
             {
                 title: '添加班课',
-                link: '/daoyun/dashboard/class-management/add-class',
+                link: '/daoyun/dashboard/class-management/course-create',
             },
         ]
     },

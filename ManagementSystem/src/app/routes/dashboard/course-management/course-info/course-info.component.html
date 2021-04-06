@@ -1,0 +1,55 @@
+<ngx-dashboard-header title='班课管理/课程主页'></ngx-dashboard-header>
+
+<nb-card status='info'>
+  <nb-card-header>课程信息</nb-card-header>
+  <nb-card-body>
+    <div class="basic">
+      <div>课程名称</div>
+      <div>{{ course.courseName }}</div>
+      <div>课程号</div>
+      <div>{{ course.courseUID }}</div>
+      <div>任课老师</div>
+      <div>{{ course.teacher }}</div>
+      <div>学生数量</div>
+      <div>{{ course.students.length }}</div>
+    </div>
+
+    <nb-card accent='info'>
+      <nb-card-body> {{ course.courseDescription }} </nb-card-body>
+    </nb-card>
+  </nb-card-body>
+</nb-card>
+
+<nb-card status='info'>
+  <nb-card-header>学生列表</nb-card-header>
+  <nb-card-body>
+    <nb-list>
+      <nb-list-item *ngFor='let student of course.students || []'>
+        {{ student }}
+      </nb-list-item>
+    </nb-list>
+  </nb-card-body>
+</nb-card>
+
+<nb-card status='info'>
+  <nb-card-header>任务列表</nb-card-header>
+  <nb-card-body>
+    <nb-list>
+      <nb-list-item *ngFor='let task of course.taskList || []'>
+        {{ task }}
+      </nb-list-item>
+    </nb-list>
+  </nb-card-body>
+</nb-card>
+
+<nb-card status='info'>
+  <nb-card-header>签到列表</nb-card-header>
+  <nb-card-body>
+    <nb-list>
+      <nb-list-item *ngFor='let checkIn of course.checkInList || []'>
+        {{ checkIn }}
+      </nb-list-item>
+    </nb-list>
+  </nb-card-body>
+</nb-card>
+

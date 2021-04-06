@@ -38,6 +38,11 @@ const routes: Routes = [
                 loadChildren: () => import('./permission-management/permission-management.module')
                 .then(m => m.PermissionManagementModule),
             },
+            {
+                path: 'class-management',
+                loadChildren: () => import('./course-management/course-management.module')
+                .then(m => m.CourseManagementModule),
+            },
         ]
     },
 

@@ -1,0 +1,26 @@
+@import 'src/app/style/utils.scss';
+
+.property-name {
+    color: nb-theme(color-primary-600);
+    user-select: none;
+}
+
+.course {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .course-name, .teacher, .brief-description, .course-id, .buttons {
+        width: 20%;
+    }
+
+    .take-space {
+        flex-grow: 1;
+    }
+
+    .buttons {
+        display: flex;
+        flex-direction: row;
+    }
+}
+

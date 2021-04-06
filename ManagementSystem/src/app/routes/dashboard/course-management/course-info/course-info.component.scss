@@ -1,0 +1,19 @@
+@import 'src/app/style/utils.scss';
+
+.basic {
+    display: grid;
+    grid-template-columns: 5.5em 45% 5.5em 45%;
+    grid-row-gap: 0.8em;
+    padding: 0em 0em 1.5em 0.5em;
+    box-sizing: border-box;
+
+    @media (max-width: 800px) {
+        grid-template-columns: 30% 70%;
+    }
+
+    div:nth-child(2n+1) {
+        user-select: none;
+        color: nb-theme(color-basic-800);
+    }
+}
+
