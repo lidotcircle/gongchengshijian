@@ -6,6 +6,7 @@ import java.sql.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import javax.persistence.GeneratedValue;
@@ -34,14 +35,14 @@ public class DictionaryData implements Serializable {
         return this.modifiedDate;
     }
 
-    // TODO foreign key constrain
-    @Column(name = "fk_dict_type_id")
-    private int dictTypeId;
-    public int getDictTypeId() {
-        return this.dictTypeId;
+    @Column(name = "fk_dict_type")
+    private DictionaryType dictionaryType;
+    @ManyToOne
+    public DictionaryType getDictionaryType() {
+        return this.dictionaryType;
     }
-    public void setDictTypeId(int dictTypeId) {
-        this.dictTypeId = dictTypeId;
+    public void setDictionaryType(DictionaryType dictionaryType) {
+        this.dictionaryType = dictionaryType;
     }
 
     @Column(name = "keyword")

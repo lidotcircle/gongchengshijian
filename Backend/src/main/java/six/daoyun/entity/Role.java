@@ -1,11 +1,13 @@
 package six.daoyun.entity;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import javax.persistence.GeneratedValue;
@@ -34,7 +36,7 @@ public class Role implements Serializable {
         return this.modifiedDate;
     }
 
-    @Column(name = "uk_role")
+    @Column(name = "uk_role_name")
     private String roleName;
     public String getRoleName() {
         return this.roleName;
@@ -43,6 +45,31 @@ public class Role implements Serializable {
         this.roleName = roleName;
     }
 
-    // TODO role items
+    private Collection<Menu> menus;
+    @ManyToMany()
+    public Collection<Menu> getMenus() {
+        return this.menus;
+    }
+    public void setMenus(Collection<Menu> menus) {
+        this.menus = menus;
+    }
+
+    private Collection<Button> buttons;
+    @ManyToMany()
+    public Collection<Button> getButtons() {
+        return this.buttons;
+    }
+    public void setButtons(Collection<Button> buttons) {
+        this.buttons = buttons;
+    }
+
+    private Collection<File> files;
+    @ManyToMany()
+    public Collection<File> getFiles() {
+        return this.files;
+    }
+    public void setFiles(Collection<File> files) {
+        this.files = files;
+    }
 }
 

@@ -1,11 +1,13 @@
 package six.daoyun.entity;
 
+import java.util.Collection;
 import java.io.Serializable;
 import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import javax.persistence.GeneratedValue;
@@ -50,6 +52,15 @@ public class DictionaryType implements Serializable {
     }
     public void setTypeCOde(String typeCOde) {
         this.typeCOde = typeCOde;
+    }
+
+    private Collection<DictionaryData> datas;
+    @OneToMany(mappedBy = "fk_dict_type")
+    public Collection<DictionaryData> getDatas() {
+        return this.datas;
+    }
+    public void setDatas(Collection<DictionaryData> datas) {
+        this.datas = datas;
     }
 
     @Column(name = "remark")

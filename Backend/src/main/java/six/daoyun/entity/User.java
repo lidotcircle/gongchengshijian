@@ -1,11 +1,13 @@
 package six.daoyun.entity;
 
+import java.util.Collection;
 import java.io.Serializable;
 import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import javax.persistence.GeneratedValue;
@@ -21,14 +23,22 @@ public class User implements Serializable {
 
     @Column(name = "uk_user_name", unique = true)
 	private String userName;
-    // TODO foreign key constrain
-    @Column(name = "fk_role_id", columnDefinition = "INT NOT NULL")
-    private int roleId;
 
     @Column(name = "gmt_created", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     private Date createdDate;
     @Column(name = "gmt_modified", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private Date modifiedDate;
+
+    private Collection<Role> roles;
+    @OneToMany
+    public Collection<Role> getRoles() {
+        return this.roles;
+    }
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
+    }
+
+    // TODO 头像
 
     @Column(name = "name", columnDefinition = "VARCHAR(32) NULL")
     private String name;
