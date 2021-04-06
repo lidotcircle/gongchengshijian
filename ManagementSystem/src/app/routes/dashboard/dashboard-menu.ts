@@ -13,14 +13,6 @@ export const DaoyunMenu: NbMenuItem[] = [
                 title: '菜单查看',
                 link: '/daoyun/dashboard/permission-management/menu',
             },
-            {
-                title: '按钮查看',
-                link: '/daoyun/dashboard/permission-management/button',
-            },
-            {
-                title: '文件查看',
-                link: '/daoyun/dashboard/permission-management/file',
-            },
         ]
     },
     {

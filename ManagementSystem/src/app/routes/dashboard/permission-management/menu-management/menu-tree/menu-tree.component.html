@@ -21,7 +21,7 @@
       <button nbButton shape='semi-round' status='primary' outline>禁用所有子项</button>
     </div>
     <div class="buttons" *ngIf='!roleName'>
-      <button nbButton shape='semi-round' status='primary' outline>角色列表</button>
+      <button nbButton (click)='showRoleList()' shape='semi-round' status='primary' outline>角色列表</button>
       <button *ngIf=' menuDefaultIsDisabled' nbButton shape='semi-round' status='primary' outline>默认启用</button>
       <button *ngIf='!menuDefaultIsDisabled' nbButton shape='semi-round' status='primary' outline>默认关闭</button>
     </div>

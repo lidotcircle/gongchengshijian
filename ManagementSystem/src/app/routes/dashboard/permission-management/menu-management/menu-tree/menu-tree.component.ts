@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { NbWindowService } from '@nebular/theme';
 import { PermMenu } from 'src/app/entity';
+import { MenuRoleListComponent } from './menu-role-list.component';
 
 @Component({
     selector: 'ngx-menu-tree',
@@ -18,7 +20,7 @@ export class MenuTreeComponent implements OnInit {
     menuIsDisabled: boolean = false;
     menuDefaultIsDisabled: boolean = false;
 
-    constructor() { }
+    constructor(private windowService: NbWindowService) { }
 
     ngOnInit(): void {
         if(this.menu.isPage) {
@@ -37,6 +39,14 @@ export class MenuTreeComponent implements OnInit {
 
     async closeSubmenu() {
         this.show = false;
+    }
+
+    async showRoleList() {
+        await this.windowService.open(
+            MenuRoleListComponent, {
+                title: `${this.menu.name} |  ${this.menu.link} | 角色列表`,
+                context: { menu: this.menu },
+            }).onClose.toPromise();
     }
 }
 
