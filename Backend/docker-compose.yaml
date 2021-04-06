@@ -1,0 +1,25 @@
+version: '3.2'
+
+services:
+  mysql.daoyun.six:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=daoyun
+    ports:
+      - 33061:3306
+
+  redis.daoyun.six:
+    image: redis
+    command: redis-server --requirepass password
+    restart: always
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    ports:
+      - 63791:6379
+    # volumes:
+      # - $PWD/redis-data:/var/lib/redis
+      # - $PWD/redis.conf:/usr/local/redis/redis.conf
+

@@ -1,0 +1,22 @@
+server:
+  port: 8099
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:33061/daoyun
+    username: root
+    password: password
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+redis:
+  host: localhost
+  port: 63791
+  password: password
+
+logging:
+  level:
+    root: INFO
+

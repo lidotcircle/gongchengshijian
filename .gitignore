@@ -2,3 +2,9 @@
 ManagementSystem/node_modules
 ManagementSystem/package-lock.json
 
+Backend/target/*
+Backend/.settings/*
+Backend/.classpath
+Backend/.factorypath
+Backend/.project
+
