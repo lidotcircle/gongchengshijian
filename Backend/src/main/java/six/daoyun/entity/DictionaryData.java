@@ -35,9 +35,8 @@ public class DictionaryData implements Serializable {
         return this.modifiedDate;
     }
 
-    @Column(name = "fk_dict_type")
+    @ManyToOne()
     private DictionaryType dictionaryType;
-    @ManyToOne
     public DictionaryType getDictionaryType() {
         return this.dictionaryType;
     }

@@ -19,8 +19,8 @@ public class Role implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id @GeneratedValue @Column(name = "pk_role_id")
-    private String roleId;
-    public String getRoleId() {
+    private long roleId;
+    public long getRoleId() {
         return this.roleId;
     }
 
@@ -45,31 +45,13 @@ public class Role implements Serializable {
         this.roleName = roleName;
     }
 
-    private Collection<Menu> menus;
     @ManyToMany()
-    public Collection<Menu> getMenus() {
-        return this.menus;
+    private Collection<PermEntry> permEntries;
+    public Collection<PermEntry> getMenus() {
+        return this.permEntries;
     }
-    public void setMenus(Collection<Menu> menus) {
-        this.menus = menus;
-    }
-
-    private Collection<Button> buttons;
-    @ManyToMany()
-    public Collection<Button> getButtons() {
-        return this.buttons;
-    }
-    public void setButtons(Collection<Button> buttons) {
-        this.buttons = buttons;
-    }
-
-    private Collection<File> files;
-    @ManyToMany()
-    public Collection<File> getFiles() {
-        return this.files;
-    }
-    public void setFiles(Collection<File> files) {
-        this.files = files;
+    public void setMenus(Collection<PermEntry> permEntries) {
+        this.permEntries = permEntries;
     }
 }
 

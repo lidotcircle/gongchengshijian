@@ -23,3 +23,9 @@ services:
       # - $PWD/redis-data:/var/lib/redis
       # - $PWD/redis.conf:/usr/local/redis/redis.conf
 
+  adminer.daoyun.six:
+    image: adminer
+    restart: always
+    ports:
+      - 6080:8080
+

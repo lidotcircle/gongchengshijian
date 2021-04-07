@@ -54,8 +54,8 @@ public class DictionaryType implements Serializable {
         this.typeCOde = typeCOde;
     }
 
+    @OneToMany()
     private Collection<DictionaryData> datas;
-    @OneToMany(mappedBy = "fk_dict_type")
     public Collection<DictionaryData> getDatas() {
         return this.datas;
     }

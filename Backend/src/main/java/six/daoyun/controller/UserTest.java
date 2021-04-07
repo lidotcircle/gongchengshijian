@@ -13,21 +13,26 @@ import six.daoyun.service.UserService;
 
 @RestController
 class UserTest {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UserTest.class);
+
     @Autowired
     private UserService UserService;
 
     @GetMapping("/users")
     private Collection<User> getUsers() {
+        log.info("API GET /users");
         return this.UserService.getAllUsers();
     }
 
     @GetMapping("/user")
     private User getUserByName(@RequestBody User User) {
+        log.info("API GET /user");
         return this.UserService.getUserByUserName(User.getUserName());
     }
 
     @PostMapping("/user")
     private void newUsers(@RequestBody User User) {
+        log.info("API POST /user");
         this.UserService.createUser(User);
     }
 }

@@ -36,8 +36,8 @@ public class CheckInTask implements Serializable {
         this.course = course;
     }
 
-    private Collection<User> checkedStudents;
     @ManyToMany
+    private Collection<User> checkedStudents;
     public Collection<User> getCheckedStudents() {
         return this.checkedStudents;
     }

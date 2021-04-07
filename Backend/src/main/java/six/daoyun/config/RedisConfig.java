@@ -1,7 +1,5 @@
 package six.daoyun.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +20,7 @@ public class RedisConfig {
     @Value("${redis.password}")
     private String redisPassword;
 
-    private static Logger log = LoggerFactory.getLogger(RedisConfig.class);
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RedisConfig.class);
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {

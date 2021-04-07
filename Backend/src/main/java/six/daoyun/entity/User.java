@@ -7,8 +7,10 @@ import java.sql.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.GeneratedValue;
 
@@ -29,8 +31,8 @@ public class User implements Serializable {
     @Column(name = "gmt_modified", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private Date modifiedDate;
 
+    @ManyToMany
     private Collection<Role> roles;
-    @OneToMany
     public Collection<Role> getRoles() {
         return this.roles;
     }
@@ -65,6 +67,7 @@ public class User implements Serializable {
     @Column(name = "third_party_accout", columnDefinition = "VARCHAR(256) NULL DEFAULT NULL")
     private String thirdPartyAccount;
 
+    @JsonIgnore
     @Column(name = "password")
     private String password;
 
