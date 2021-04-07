@@ -1,0 +1,21 @@
+@import 'src/app/style/utils.scss';
+
+
+nb-card-body {
+    @include GridKVTable2('.user-info-list', '.user-info-field', '.user-info-value');
+
+    .user-info-list .user-info-value.textarea {
+        height: 8em;
+
+        textarea {
+            height: 100%;
+        }
+    }
+}
+
+.footer-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+

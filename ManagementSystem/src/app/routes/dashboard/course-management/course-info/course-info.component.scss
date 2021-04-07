@@ -1,4 +1,5 @@
 @import 'src/app/style/utils.scss';
+@import 'src/app/style/table.scss';
 
 .basic {
     display: grid;
@@ -16,4 +17,6 @@
         color: nb-theme(color-basic-800);
     }
 }
+
+@include TableIsEmpty();
 

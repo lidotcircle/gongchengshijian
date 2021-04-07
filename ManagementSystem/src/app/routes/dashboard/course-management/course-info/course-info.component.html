@@ -22,34 +22,61 @@
 
 <nb-card status='info'>
   <nb-card-header>学生列表</nb-card-header>
-  <nb-card-body>
+  <nb-card-body [class]='course.students?.length > 0 ? "" : "record-length-equal-zero"'>
     <nb-list>
       <nb-list-item *ngFor='let student of course.students || []'>
         {{ student }}
       </nb-list-item>
     </nb-list>
+    <div class="empty-state">
+      <nb-icon icon='archive-outline'></nb-icon>
+      <div class="warning">暂无</div>
+    </div>
   </nb-card-body>
 </nb-card>
 
 <nb-card status='info'>
   <nb-card-header>任务列表</nb-card-header>
-  <nb-card-body>
+  <nb-card-body [class]='course.taskList?.length > 0 ? "" : "record-length-equal-zero"'>
     <nb-list>
       <nb-list-item *ngFor='let task of course.taskList || []'>
         {{ task }}
       </nb-list-item>
     </nb-list>
+    <div class="empty-state">
+      <nb-icon icon='archive-outline'></nb-icon>
+      <div class="warning">暂无</div>
+    </div>
+  </nb-card-body>
+</nb-card>
+
+<nb-card status='info'>
+  <nb-card-header>通知列表</nb-card-header>
+  <nb-card-body [class]='course.infoList?.length > 0 ? "" : "record-length-equal-zero"'>
+    <nb-list>
+      <nb-list-item *ngFor='let info of course.infoList || []'>
+        {{ info }}
+      </nb-list-item>
+    </nb-list>
+    <div class="empty-state">
+      <nb-icon icon='archive-outline'></nb-icon>
+      <div class="warning">暂无</div>
+    </div>
   </nb-card-body>
 </nb-card>
 
 <nb-card status='info'>
   <nb-card-header>签到列表</nb-card-header>
-  <nb-card-body>
+  <nb-card-body [class]='course.checkInList?.length > 0 ? "" : "record-length-equal-zero"'>
     <nb-list>
       <nb-list-item *ngFor='let checkIn of course.checkInList || []'>
         {{ checkIn }}
       </nb-list-item>
     </nb-list>
+    <div class="empty-state">
+      <nb-icon icon='archive-outline'></nb-icon>
+      <div class="warning">暂无</div>
+    </div>
   </nb-card-body>
 </nb-card>
 

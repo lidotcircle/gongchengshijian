@@ -1,37 +1,9 @@
+@import 'src/app/style/utils.scss';
 
 nb-card-body {
+    @include GridKVTable2('.user-info-list', '.user-info-field', '.user-info-value');
+
     .user-info-list {
-        display: grid;
-        grid-template-columns: 5.5em 45% 5.5em 45%;
-        grid-row-gap: 1em;
-
-        @media (max-width: 800px) {
-            grid-template-columns: 30% 70%;
-
-            .user-info-value {
-                width: 100% !important;
-            }
-        }
-        
-        .user-info-field {
-            padding-left: 1em;
-            align-self: center;
-        }
-
-        .user-info-value {
-            height: 3em;
-            line-height: 3em;
-            width: 80%;
-            color: gray;
-        }
-
-        .required:before {
-            content: '*';
-            color: red;
-            position: absolute;
-            transform: translate(-0.8em, 0em);
-        }
-
         &.user-secret-info-list {
             padding-top: 2em;
         }

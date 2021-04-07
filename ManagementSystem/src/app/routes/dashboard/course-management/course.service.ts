@@ -27,7 +27,7 @@ export class CourseService {
                 courseName: '高等数学B下',
                 students: ['张三', '李四', '王五'],
                 checkInList: ['位置签到'],
-                taskList: ['第一周作业'],
+                taskList: [],
                 infoList: ['周一交作业'],
             })),
         ];

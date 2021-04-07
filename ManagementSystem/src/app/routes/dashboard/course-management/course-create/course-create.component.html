@@ -1,1 +1,28 @@
-<p>course-create works!</p>
+<ngx-dashboard-header title='添加班课' #header></ngx-dashboard-header>
+
+<nb-card accent='primary'>
+  <nb-card-body>
+    <div class="user-info-list">
+      <div class="user-info-field required">课程名</div>
+      <div class="user-info-value">
+        <input type="text" nbInput fullWidth shape="rectangle" placeholder="">
+      </div>
+
+      <div></div>
+      <div></div>
+
+      <div class="user-info-field">课程介绍</div>
+      <div class="user-info-value textarea">
+        <textarea nbInput fullWidth></textarea>
+      </div>
+    </div>
+  </nb-card-body>
+
+  <nb-card-footer>
+    <div class="footer-buttons">
+      <div></div>
+      <button nbButton status='primary' hero (click)='addCourse()'>确认</button>
+    </div>
+  </nb-card-footer>
+</nb-card>
+

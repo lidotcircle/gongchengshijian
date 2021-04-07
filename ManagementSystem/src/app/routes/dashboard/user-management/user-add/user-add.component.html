@@ -1,80 +1,80 @@
 
 <ngx-dashboard-header title='添加用户' #header></ngx-dashboard-header>
 
-<nb-card>
-    <nb-card-body>
-        <div class="user-info-list">
-            <div class="user-info-field required">姓名</div>
-            <div class="user-info-value">
-                <input type="text" nbInput fullWidth shape="rectangle" placeholder="姓名">
-            </div>
+<nb-card accent='primary'>
+  <nb-card-body>
+    <div class="user-info-list">
+      <div class="user-info-field required">姓名</div>
+      <div class="user-info-value">
+        <input type="text" nbInput fullWidth shape="rectangle" placeholder="姓名">
+      </div>
 
-            <div class="user-info-field required">角色</div>
-            <div class="user-info-value">
-                <nb-select selected="1">
-                    <nb-option value="1">管理员</nb-option>
-                    <nb-option value="2">教师</nb-option>
-                </nb-select>
-            </div>
+      <div class="user-info-field required">角色</div>
+      <div class="user-info-value">
+        <nb-select selected="1">
+          <nb-option value="1">管理员</nb-option>
+          <nb-option value="2">教师</nb-option>
+        </nb-select>
+      </div>
 
-            <div class="user-info-field">性别</div>
-            <div class="user-info-value">
-                <input type="text" nbInput fullWidth shape="rectangle" placeholder="性别">
-            </div>
+      <div class="user-info-field">性别</div>
+      <div class="user-info-value">
+        <input type="text" nbInput fullWidth shape="rectangle" placeholder="性别">
+      </div>
 
-            <div class="user-info-field">出生日期</div>
-            <div class="user-info-value">
-                <input nbInput
-                       placeholder="出生日期"
-                       [nbDatepicker]="birthdatepicker">
-                <nb-datepicker #birthdatepicker></nb-datepicker>
-            </div>
+      <div class="user-info-field">出生日期</div>
+      <div class="user-info-value">
+        <input nbInput
+               placeholder="出生日期"
+               [nbDatepicker]="birthdatepicker">
+        <nb-datepicker #birthdatepicker></nb-datepicker>
+      </div>
 
-            <div class="user-info-field">学工号</div>
-            <div class="user-info-value">
-                <input type="text" nbInput fullWidth shape="rectangle" placeholder="学工号">
-            </div>
+      <div class="user-info-field">学工号</div>
+      <div class="user-info-value">
+        <input type="text" nbInput fullWidth shape="rectangle" placeholder="学工号">
+      </div>
 
-            <div class="user-info-field">学校</div>
-            <div class="user-info-value">
-                <input type="text" nbInput fullWidth shape="rectangle" placeholder="学校">
-            </div>
+      <div class="user-info-field">学校</div>
+      <div class="user-info-value">
+        <input type="text" nbInput fullWidth shape="rectangle" placeholder="学校">
+      </div>
 
-            <div class="user-info-field">院系</div>
-            <div class="user-info-value">
-                <input type="text" nbInput fullWidth shape="rectangle" placeholder="院系">
-            </div>
+      <div class="user-info-field">院系</div>
+      <div class="user-info-value">
+        <input type="text" nbInput fullWidth shape="rectangle" placeholder="院系">
+      </div>
 
-            <div class="user-info-field">专业</div>
-            <div class="user-info-value">
-                <input type="text" nbInput fullWidth shape="rectangle" placeholder="专业">
-            </div>
-        </div>
+      <div class="user-info-field">专业</div>
+      <div class="user-info-value">
+        <input type="text" nbInput fullWidth shape="rectangle" placeholder="专业">
+      </div>
+    </div>
 
-        <div class="user-info-list user-secret-info-list">
-            <div class="user-info-field required">手机</div>
-            <div class="user-info-value">
-                <input type="text" nbInput fullWidth shape="rectangle" placeholder="手机">
-            </div>
+    <div class="user-info-list user-secret-info-list">
+      <div class="user-info-field required">手机</div>
+      <div class="user-info-value">
+        <input type="text" nbInput fullWidth shape="rectangle" placeholder="手机">
+      </div>
 
 
-            <div class="user-info-field">邮箱</div>
-            <div class="user-info-value">
-                <input type="text" nbInput fullWidth shape="rectangle" placeholder="邮箱">
-            </div>
+      <div class="user-info-field">邮箱</div>
+      <div class="user-info-value">
+        <input type="text" nbInput fullWidth shape="rectangle" placeholder="邮箱">
+      </div>
 
-            <div class="user-info-field required">密码</div>
-            <div class="user-info-value">
-                <input type="text" nbInput fullWidth shape="rectangle" placeholder="密码">
-            </div>
-        </div>
-    </nb-card-body>
+      <div class="user-info-field required">密码</div>
+      <div class="user-info-value">
+        <input type="text" nbInput fullWidth shape="rectangle" placeholder="密码">
+      </div>
+    </div>
+  </nb-card-body>
 
-    <nb-card-footer>
-        <div class="footer-buttons">
-            <div></div>
-            <button nbButton status='primary' hero (click)='addUser()'>确认</button>
-        </div>
-    </nb-card-footer>
+  <nb-card-footer>
+    <div class="footer-buttons">
+      <div></div>
+      <button nbButton status='primary' hero (click)='addUser()'>确认</button>
+    </div>
+  </nb-card-footer>
 </nb-card>
 
