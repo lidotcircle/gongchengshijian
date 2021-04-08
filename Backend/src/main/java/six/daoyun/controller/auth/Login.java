@@ -1,6 +1,9 @@
 package six.daoyun.controller.auth;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,13 +23,15 @@ class Login {
     private UserService UserService;
     @Autowired
     private RefreshTokenService refreshTokenService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/apis/auth/login")
-    private LoginResponse login(@RequestBody LoginByUsernameRequest request) {
+    private LoginResponse login(@RequestBody @Valid LoginByUsernameRequest request) {
         User user = this.UserService.getUserByUserName(request.getUsername());
         LoginResponse resp = new LoginResponse();
 
-        if (user.getPassword().equals(request.getPassword())) {
+        if(this.passwordEncoder.matches(user.getPassword(), user.getPassword())) {
             RefreshToken token = this.refreshTokenService.createRefreshToken(user);
             resp.setToken(token.getToken());
         } else {
@@ -37,7 +42,7 @@ class Login {
     }
 
     @DeleteMapping("/apis/auth/login")
-    private void logout(@RequestBody LoginResponse request) {
+    private void logout(@RequestBody @Valid LoginResponse request) {
         this.refreshTokenService.deleteRefreshTokenByToken(request.getToken());
     }
 }

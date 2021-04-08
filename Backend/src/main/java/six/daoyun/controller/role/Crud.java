@@ -2,6 +2,8 @@ package six.daoyun.controller.role;
 
 import java.util.Collection;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +23,7 @@ class Crud {
     private RoleService roleService;
 
     @GetMapping("/apis/role/by-name")
-    private Role getRoleByName(@RequestBody GetRole req) {
+    private Role getRoleByName(@RequestBody @Valid GetRole req) {
         log.info("API GET /apis/role/by-name");
         return this.roleService.getRoleByRoleName(req.getRoleName());
     }
@@ -33,7 +35,7 @@ class Crud {
     }
 
     @PostMapping("/apis/role")
-    private void newUsers(@RequestBody GetRole req) {
+    private void newUsers(@RequestBody @Valid GetRole req) {
         log.info("API POST /apis/role");
         if(this.roleService.hasRole(req.getRoleName())) {
             throw new HttpForbidden();
