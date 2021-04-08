@@ -2,6 +2,7 @@ package six.daoyun.controller.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,30 +16,14 @@ import six.daoyun.service.RefreshTokenService;
 import six.daoyun.service.UserService;
 
 @RestController()
-class Login {
+class Jwt {
     @Autowired
     private UserService UserService;
     @Autowired
     private RefreshTokenService refreshTokenService;
 
-    @PostMapping("/apis/auth/login")
-    private LoginResponse login(@RequestBody LoginByUsernameRequest request) {
-        User user = this.UserService.getUserByUserName(request.getUsername());
-        LoginResponse resp = new LoginResponse();
-
-        if (user.getPassword().equals(request.getPassword())) {
-            RefreshToken token = this.refreshTokenService.createRefreshToken(user);
-            resp.setToken(token.getToken());
-        } else {
-            throw new HttpUnauthorized();
-        }
-
-        return resp;
-    }
-
-    @DeleteMapping("/apis/auth/login")
-    private void logout(@RequestBody LoginResponse request) {
-        this.refreshTokenService.deleteRefreshTokenByToken(request.getToken());
+    @GetMapping("/apis/auth/jwt")
+    private void getJwt(@RequestBody LoginResponse request) {
     }
 }
 

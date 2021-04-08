@@ -61,5 +61,10 @@ public class UserServiceImpl implements UserService {
         this.userRepository.findAll().forEach(ans::add);
         return ans;
 	}
+
+	@Override
+	public User getUserByUserId(Integer userId) {
+        return this.userRepository.findById(userId).get();
+	}
 }
 

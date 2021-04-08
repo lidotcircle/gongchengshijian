@@ -5,5 +5,6 @@ import six.daoyun.entity.User;
 
 
 public interface UserRepository extends PagingAndSortingRepository<User, Integer> {
+    User getUserByUserName(String userName);
 }
 
