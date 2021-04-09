@@ -67,7 +67,6 @@ public class User implements Serializable {
     @Column(name = "third_party_accout", columnDefinition = "VARCHAR(256) NULL DEFAULT NULL")
     private String thirdPartyAccount;
 
-    @JsonIgnore
     @Column(name = "password")
     private String password;
 

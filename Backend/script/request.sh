@@ -2,6 +2,16 @@
 
 source $(dirname ${BASH_SOURCE[0]})/utils.sh
 
+START_TIME_NS=$(date +%s%N)
+echoExecutionTime() {
+    NOW=$(date +%s%N)
+    TIME_MS=$[($NOW - $START_TIME_NS) / 10**6]
+
+    printf "\n\n"
+    info "exit after ${TIME_MS}ms"
+}
+trap echoExecutionTime EXIT
+
 [ -z "$(which curl)" ] && error "cURL: require curl" && exit 1
 
 usage() {
@@ -15,7 +25,8 @@ commands:
   getRoleByName     get role by name      [roleName]
   addRole           add a role            [roleName]
   updateRoleName    update role name      oldRoleName newRoleName
-  addUser           add a user            [username [phone]]
+  addUser           add a user            [username [password(default. password) [phone]]]
+  login             login with username   username password
 EOF
 }
 
@@ -23,6 +34,7 @@ EOF
 
 GET="curl -v -X GET"
 POST="curl -v -X POST "
+DELETE="curl -v -X DELETE "
 DESTINATION="http://localhost:8099"
 NOPROXY="--noproxy localhost,127.0.0.1 "
 APPLICATION_JSON=(
@@ -34,14 +46,40 @@ BYPASS_AUTHORIZATION=(
 
 addUser() {
     local username=${1:-dummy$RANDOM}
-    local phone=${2:-$RANDOM}
-    local json='{"userName": "'$username'", "password": "password", "phone": "'$phone'" }'
+    local password=${2:-password}
+    local phone=${3:-$RANDOM}
+    local json='{"userName": "'$username'", "password": "'$password'", "phone": "'$phone'" }'
     debug JSON $json
 
     $POST $NOPROXY \
         "${APPLICATION_JSON[@]}" \
         --data "$json" \
         $DESTINATION/apis/auth/signup
+}
+
+loginByUsername() {
+    assert "[ $# -eq 2 ]"
+    local username=$1
+    local password=$2
+    local json='{"userName": "'$username'", "password": "'$password'" }'
+    debug JSON $json
+
+    $POST $NOPROXY \
+        "${APPLICATION_JSON[@]}" \
+        --data "$json" \
+        $DESTINATION/apis/auth/login
+}
+
+logout() {
+    assert "[ $# -eq 1 ]"
+    local token=$1
+    local json='{"token": "'$token'"}'
+    debug JSON $json
+
+    $DELETE $NOPROXY \
+        "${APPLICATION_JSON[@]}" \
+        --data "$json" \
+        $DESTINATION/apis/auth/login
 }
 
 addRole() {
@@ -95,6 +133,14 @@ case $COMMAND in
     "addUser" )
         info "add user"
         addUser $@
+        ;;
+    "login" )
+        info "login"
+        loginByUsername $@
+        ;;
+    "logout" )
+        info "logout"
+        logout $@
         ;;
     "addRole")
         info "add role"

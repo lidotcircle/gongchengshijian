@@ -29,11 +29,11 @@ class Login {
 
     @PostMapping("/apis/auth/login")
     private LoginResponse login(@RequestBody @Valid LoginByUsernameRequest request) {
-        User user = this.UserService.getUserByUserName(request.getUsername())
+        User user = this.UserService.getUserByUserName(request.getUserName())
                                     .orElseThrow(() -> new HttpBadRequest());
         LoginResponse resp = new LoginResponse();
 
-        if(this.passwordEncoder.matches(user.getPassword(), user.getPassword())) {
+        if(this.passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             RefreshToken token = this.refreshTokenService.createRefreshToken(user);
             resp.setToken(token.getToken());
         } else {

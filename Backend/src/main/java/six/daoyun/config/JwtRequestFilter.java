@@ -79,6 +79,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         }
 
+        response.setHeader("Allow-Origin", "*");
         chain.doFilter(request, response);
     }
 

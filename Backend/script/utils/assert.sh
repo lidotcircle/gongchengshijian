@@ -10,7 +10,7 @@ assert_code() {
     eval 2>/dev/null 1>&2 ${1}
     local status=$?
     if [ ! $status -eq ${2} ]; then
-        error "assert failure: " ${3}
+        error "'$1' assert failure: " ${3}
         exit 1
     fi
     return $status

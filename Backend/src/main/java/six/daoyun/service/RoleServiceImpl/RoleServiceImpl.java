@@ -3,14 +3,8 @@ package six.daoyun.service.RoleServiceImpl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import six.daoyun.controller.exception.HttpNotFound;
@@ -24,44 +18,18 @@ public class RoleServiceImpl implements RoleService {
 
     @Autowired
     private RoleRepository roleRepository;
-    @Autowired
-    private RedisTemplate<String, Role> redisRoles;
-    @Autowired
-    private ObjectMapper objectMapper;
 
 	@Override
 	public void createRole(String roleName) {
+        log.info("create new role: {}", roleName);
         Role newRole = new Role();
         newRole.setRoleName(roleName);
         this.roleRepository.save(newRole);
 	}
 
-    private static String RoleNamePrefix = "Role_";
-    private static String keyname(String roleName) {
-        return RoleNamePrefix + roleName;
-    }
-
 	@Override
 	public Optional<Role> getRoleByRoleName(String roleName) {
-        ValueOperations<String, Role> operation =  this.redisRoles.opsForValue();
-        String redisKey = keyname(roleName);
-        if(this.redisRoles.hasKey(redisKey)) {
-            log.info("redis HIT Role");
-            Role c = operation.get(redisKey);
-            String json;
-			try {
-				json = this.objectMapper.writeValueAsString(c);
-                log.info(json);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-            return Optional.of(c);
-        }
-
         Role ans = this.roleRepository.getRoleByRoleName(roleName);
-        if(ans != null) {
-            operation.set(redisKey, ans, 10, TimeUnit.SECONDS);
-        }
         return Optional.ofNullable(ans);
 	}
 
