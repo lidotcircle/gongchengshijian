@@ -27,7 +27,7 @@ class UserTest {
     @GetMapping("/user")
     private User getUserByName(@RequestBody User User) {
         log.info("API GET /user");
-        return this.UserService.getUserByUserName(User.getUserName());
+        return this.UserService.getUserByUserName(User.getUserName()).get();
     }
 
     @PostMapping("/user")

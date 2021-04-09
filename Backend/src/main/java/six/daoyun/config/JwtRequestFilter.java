@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -19,6 +20,11 @@ import io.jsonwebtoken.ExpiredJwtException;
 public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    @Value("${daoyun.supersuper.enable}")
+    private boolean superEnable;
+    @Value("${daoyun.supersuper.name}")
+    private String supername;
+
     private static final ArrayList<String> bypassURIs;
     static {
         bypassURIs = new ArrayList<String>();
@@ -39,6 +45,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 bypass = true;
                 break;
             }
+        }
+
+        String isAdmin = request.getHeader("X-IM-ADMIN");
+        if(this.superEnable && supername.equals(isAdmin)) {
+            bypass = true;
         }
 
         if(!bypass) {

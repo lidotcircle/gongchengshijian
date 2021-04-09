@@ -2,6 +2,7 @@ package six.daoyun.service.UserServiceImpl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -30,21 +31,21 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User getUserByUserName(String userName) {
+	public Optional<User> getUserByUserName(String userName) {
         ValueOperations<String, User> operation =  this.redisUsers.opsForValue();
         if(this.redisUsers.hasKey(userName)) {
             this.logger.info("redis HIT {}", userName);
-            return operation.get(userName);
+            return Optional.of(operation.get(userName));
         }
 
         for(User User: this.userRepository.findAll()) {
             if(User.getName().equals(userName)) {
                 operation.set(userName, User, 10, TimeUnit.SECONDS);
-                return User;
+                return Optional.of(User);
             }
         }
 
-        return null;
+        return Optional.empty();
 	}
 
 	@Override
@@ -63,8 +64,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User getUserByUserId(Integer userId) {
-        return this.userRepository.findById(userId).get();
+	public Optional<User> getUserByUserId(Integer userId) {
+        return this.userRepository.findById(userId);
 	}
 }
 

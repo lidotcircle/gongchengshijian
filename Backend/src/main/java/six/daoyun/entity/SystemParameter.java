@@ -1,7 +1,7 @@
 package six.daoyun.entity;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +12,7 @@ import javax.persistence.GeneratedValue;
 
 
 @Entity
-@Table(name="system_parameter")
+@Table(name="tbl_system_parameter")
 public class SystemParameter implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -22,13 +22,13 @@ public class SystemParameter implements Serializable {
         return this.id;
     }
 
-    @Column(name = "gmt_created", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "gmt_created", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)
     private Date createdDate;
     public Date getCreatedDate() {
         return this.createdDate;
     }
 
-    @Column(name = "gmt_modified", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @Column(name = "gmt_modified", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", insertable = false, updatable = false)
     private Date modifiedDate;
     public Date getModifiedDate() {
         return this.modifiedDate;

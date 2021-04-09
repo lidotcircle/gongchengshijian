@@ -2,27 +2,32 @@ package six.daoyun.service.RoleServiceImpl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import six.daoyun.controller.exception.HttpNotFound;
 import six.daoyun.entity.Role;
 import six.daoyun.repository.RoleRepository;
 import six.daoyun.service.RoleService;
 
 @Service
 public class RoleServiceImpl implements RoleService {
-    private Logger logger = LoggerFactory.getLogger(RoleServiceImpl.class);
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RoleServiceImpl.class);
 
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
     private RedisTemplate<String, Role> redisRoles;
+    @Autowired
+    private ObjectMapper objectMapper;
 
 	@Override
 	public void createRole(String roleName) {
@@ -31,21 +36,33 @@ public class RoleServiceImpl implements RoleService {
         this.roleRepository.save(newRole);
 	}
 
-    static String RoleNamePrefix = "Role_";
+    private static String RoleNamePrefix = "Role_";
+    private static String keyname(String roleName) {
+        return RoleNamePrefix + roleName;
+    }
 
 	@Override
-	public Role getRoleByRoleName(String roleName) {
+	public Optional<Role> getRoleByRoleName(String roleName) {
         ValueOperations<String, Role> operation =  this.redisRoles.opsForValue();
-        if(this.redisRoles.hasKey(RoleServiceImpl.RoleNamePrefix + roleName)) {
-            this.logger.info("redis HIT Role");
-            return operation.get(roleName);
+        String redisKey = keyname(roleName);
+        if(this.redisRoles.hasKey(redisKey)) {
+            log.info("redis HIT Role");
+            Role c = operation.get(redisKey);
+            String json;
+			try {
+				json = this.objectMapper.writeValueAsString(c);
+                log.info(json);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+            return Optional.of(c);
         }
 
         Role ans = this.roleRepository.getRoleByRoleName(roleName);
         if(ans != null) {
-            operation.set(RoleServiceImpl.RoleNamePrefix + roleName, ans, 10, TimeUnit.SECONDS);
+            operation.set(redisKey, ans, 10, TimeUnit.SECONDS);
         }
-        return ans;
+        return Optional.ofNullable(ans);
 	}
 
 	@Override
@@ -58,6 +75,13 @@ public class RoleServiceImpl implements RoleService {
         ArrayList<Role> ans = new ArrayList<Role>();
         this.roleRepository.findAll().forEach(ans::add);
         return ans;
+	}
+
+	@Override
+	public void updateRoleName(String oldRoleName, String newRoleName) {
+        Role role = this.getRoleByRoleName(oldRoleName).orElseThrow(() -> new HttpNotFound());
+        role.setRoleName(newRoleName);
+        this.roleRepository.save(role);
 	}
 }
 

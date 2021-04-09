@@ -14,7 +14,7 @@ import javax.persistence.GeneratedValue;
 
 
 @Entity
-@Table(name="check_in_task")
+@Table(name="tbl_check_in_task")
 public class CheckInTask implements Serializable {
 	private static final long serialVersionUID = 1L;
 

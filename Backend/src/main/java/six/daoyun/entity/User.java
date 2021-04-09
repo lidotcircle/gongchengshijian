@@ -2,7 +2,7 @@ package six.daoyun.entity;
 
 import java.util.Collection;
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +16,7 @@ import javax.persistence.GeneratedValue;
 
 
 @Entity
-@Table(name="user")
+@Table(name="tbl_user")
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -26,9 +26,9 @@ public class User implements Serializable {
     @Column(name = "uk_user_name", unique = true)
 	private String userName;
 
-    @Column(name = "gmt_created", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "gmt_created", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)
     private Date createdDate;
-    @Column(name = "gmt_modified", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @Column(name = "gmt_modified", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", insertable = false, updatable = false)
     private Date modifiedDate;
 
     @ManyToMany

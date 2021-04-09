@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import six.daoyun.controller.exception.HttpForbidden;
+import six.daoyun.controller.exception.HttpNotFound;
 import six.daoyun.controller.role.proto.GetRole;
+import six.daoyun.controller.role.proto.Rename;
 import six.daoyun.entity.Role;
 import six.daoyun.service.RoleService;
 
@@ -25,7 +27,8 @@ class Crud {
     @GetMapping("/apis/role/by-name")
     private Role getRoleByName(@RequestBody @Valid GetRole req) {
         log.info("API GET /apis/role/by-name");
-        return this.roleService.getRoleByRoleName(req.getRoleName());
+        return this.roleService.getRoleByRoleName(req.getRoleName())
+                               .orElseThrow(() -> new HttpNotFound());
     }
 
     @GetMapping("/apis/role/all")
@@ -42,6 +45,12 @@ class Crud {
         } else {
             this.roleService.createRole(req.getRoleName());
         }
+    }
+
+    @PostMapping("/apis/role/rename")
+    private void rename(@RequestBody @Valid Rename req) {
+        log.info("API POST /apis/role/rename");
+        this.roleService.updateRoleName(req.getOldRoleName(), req.getNewRoleName());
     }
 }
 

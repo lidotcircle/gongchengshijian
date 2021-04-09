@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import six.daoyun.controller.auth.proto.LoginByUsernameRequest;
 import six.daoyun.controller.auth.proto.LoginResponse;
+import six.daoyun.controller.exception.HttpBadRequest;
 import six.daoyun.controller.exception.HttpUnauthorized;
 import six.daoyun.entity.RefreshToken;
 import six.daoyun.entity.User;
@@ -28,7 +29,8 @@ class Login {
 
     @PostMapping("/apis/auth/login")
     private LoginResponse login(@RequestBody @Valid LoginByUsernameRequest request) {
-        User user = this.UserService.getUserByUserName(request.getUsername());
+        User user = this.UserService.getUserByUserName(request.getUsername())
+                                    .orElseThrow(() -> new HttpBadRequest());
         LoginResponse resp = new LoginResponse();
 
         if(this.passwordEncoder.matches(user.getPassword(), user.getPassword())) {

@@ -1,12 +1,14 @@
 package six.daoyun.service;
 
-import six.daoyun.entity.User;
 import java.util.Collection;
+import java.util.Optional;
+
+import six.daoyun.entity.User;
 
 public interface UserService {
     void createUser(User user);
-    User getUserByUserName(String username);
-    User getUserByUserId(Integer userId);
+    Optional<User> getUserByUserName(String username);
+    Optional<User> getUserByUserId(Integer userId);
     void updateUser(String username, User user);
     void deleteUser(String username);
 

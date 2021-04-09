@@ -12,7 +12,7 @@ import javax.persistence.GeneratedValue;
 
 
 @Entity
-@Table(name="commit_task")
+@Table(name="tbl_commit_task")
 public class CommitTask implements Serializable {
 	private static final long serialVersionUID = 1L;
 

@@ -15,7 +15,7 @@ import javax.persistence.GeneratedValue;
 
 
 @Entity
-@Table(name="course")
+@Table(name="tbl_course")
 public class Course implements Serializable {
 	private static final long serialVersionUID = 1L;
 

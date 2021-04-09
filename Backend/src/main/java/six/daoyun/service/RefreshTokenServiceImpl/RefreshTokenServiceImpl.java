@@ -42,7 +42,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
     @Override
     public RefreshToken createRefreshToken(Integer userId) {
-        User user = this.userService.getUserByUserId(userId);
+        User user = this.userService.getUserByUserId(userId).get();
         return this.createRefreshToken(user);
     }
     @Override

@@ -15,7 +15,7 @@ import javax.persistence.GeneratedValue;
 
 
 @Entity
-@Table(name="perm_entry")
+@Table(name="tbl_perm_entry")
 public class PermEntry implements Serializable {
 	private static final long serialVersionUID = 1L;
 
