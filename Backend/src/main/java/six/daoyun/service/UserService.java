@@ -9,7 +9,7 @@ public interface UserService {
     void createUser(User user);
     Optional<User> getUserByUserName(String username);
     Optional<User> getUserByUserId(Integer userId);
-    void updateUser(String username, User user);
+    void updateUser(User user);
     void deleteUser(String username);
 
     Collection<User> getAllUsers();

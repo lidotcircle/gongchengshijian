@@ -31,7 +31,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUser(final String name, final User User) {
+	public void updateUser(User user) {
+        this.userRepository.save(user);
 	}
 
 	@Override

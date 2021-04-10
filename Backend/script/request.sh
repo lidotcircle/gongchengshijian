@@ -27,6 +27,7 @@ commands:
   updateRoleName    update role name      oldRoleName newRoleName
   addUser           add a user            [username [password(default. password) [phone]]]
   login             login with username   username password
+  userSet           update attribute      attribute value
 EOF
 }
 
@@ -34,6 +35,7 @@ EOF
 
 GET="curl -v -X GET"
 POST="curl -v -X POST "
+PUT="curl -v -X PUT "
 DELETE="curl -v -X DELETE "
 DESTINATION="http://localhost:8099"
 NOPROXY="--noproxy localhost,127.0.0.1 "
@@ -126,8 +128,20 @@ getJwt() {
     local params="refreshToken=$token"
 
     $GET $NOPROXY \
-        "${APPLICATION_JSON[@]}" \
         $DESTINATION/apis/auth/jwt?$params
+}
+
+userSet() {
+    assert "[ $# -eq 2 ]" "require attributeName value"
+    local attribute=$1
+    local value=$2
+    local json='{"'$attribute'": '$value'}'
+    debug JSON $json
+
+    $PUT $NOPROXY "${BYPASS_AUTHORIZATION[@]}" \
+        "${APPLICATION_JSON[@]}" \
+        --data "$json" \
+        $DESTINATION/apis/user
 }
 
 COMMAND=$1
@@ -166,9 +180,13 @@ case $COMMAND in
         info "update role name"
         updateRoleName $@
         ;;
-    "getJwt")
+    "getJwt" )
         info "get jwt"
         getJwt $@
+        ;;
+    "userSet" )
+        info "set user attribute"
+        userSet $@
         ;;
     *)
         usage

@@ -50,6 +50,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String isAdmin = request.getHeader("X-IM-ADMIN");
         if(this.superEnable && supername.equals(isAdmin)) {
+            request.setAttribute("username", "admin");
             bypass = true;
         }
 
@@ -69,6 +70,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     if(username == null) {
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                         return;
+                    } else {
+                        request.setAttribute("username", username);
                     }
                 } catch (IllegalArgumentException e) {
                     System.out.println("Get a bad JWT Token");

@@ -36,6 +36,12 @@ public class HttpExceptionAdvice {
         return this.processHttpException(ex);
     }
 
+    @ExceptionHandler(HttpInternalServerError.class)
+    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public Object processInternalServerError(HttpException ex) {
+        return this.processHttpException(ex);
+    }
 
     public Object processHttpException(HttpException ex) {
         HttpExceptionResponse ans = new HttpExceptionResponse();
