@@ -22,12 +22,13 @@ Usage: $0 <command> <comand-arguments>
 
 commands:
   getRoles          get all role
-  getRoleByName     get role by name      [roleName]
-  addRole           add a role            [roleName]
-  updateRoleName    update role name      oldRoleName newRoleName
-  addUser           add a user            [username [password(default. password) [phone]]]
-  login             login with username   username password
-  userSet           update attribute      attribute value
+  getRoleByName     get role by name           [roleName]
+  addRole           add a role                 [roleName]
+  updateRoleName    update role name           oldRoleName newRoleName
+  addUser           add a user                 [username [password(default. password) [phone]]]
+  login             login with username        username password
+  userSet           update attribute           attribute value
+  userSetP          update priv attribute      password attribute value
 EOF
 }
 
@@ -144,6 +145,20 @@ userSet() {
         $DESTINATION/apis/user
 }
 
+userSetP() {
+    assert "[ $# -eq 3 ]" "require password attributeName value"
+    local password=$1
+    local attribute=$2
+    local value=$3
+    local json='{"requiredPassword": "'$password'", "'$attribute'": '$value'}'
+    debug JSON $json
+
+    $PUT $NOPROXY "${BYPASS_AUTHORIZATION[@]}" \
+        "${APPLICATION_JSON[@]}" \
+        --data "$json" \
+        $DESTINATION/apis/user/privileged
+}
+
 COMMAND=$1
 shift 1
 
@@ -187,6 +202,10 @@ case $COMMAND in
     "userSet" )
         info "set user attribute"
         userSet $@
+        ;;
+    "userSetP" )
+        info "set user privileged attribute"
+        userSetP $@
         ;;
     *)
         usage
