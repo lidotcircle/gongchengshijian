@@ -10,3 +10,5 @@ export function assert(expr: boolean, msg?: string) {
     }
 }
 
+export const API_ADDRESS = "http://192.168.44.43:8099";
+
