@@ -21,7 +21,7 @@ class Jwt {
     @GetMapping("/apis/auth/jwt")
     private JwtResponse getJwt(@RequestParam("refreshToken") String refreshToken) {
         RefreshToken token = this.refreshTokenService.getRefreshTokenByToken(refreshToken)
-                                                     .orElseThrow(() -> new HttpBadRequest());
+                                                     .orElseThrow(() -> new HttpBadRequest("无效的Token"));
         JwtResponse resp = new JwtResponse();
         resp.setJwtToken(this.jwtUtil.generateToken(token.getUser().getUserName()));
         return resp;
