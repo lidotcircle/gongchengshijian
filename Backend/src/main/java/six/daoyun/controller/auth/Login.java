@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import six.daoyun.controller.auth.proto.LoginByUsernameRequest;
@@ -44,8 +45,8 @@ class Login {
     }
 
     @DeleteMapping("/apis/auth/login")
-    private void logout(@RequestBody @Valid LoginResponse request) {
-        this.refreshTokenService.deleteRefreshTokenByToken(request.getToken());
+    private void logout(@RequestParam("refreshToken") String refreshToken) {
+        this.refreshTokenService.deleteRefreshTokenByToken(refreshToken);
     }
 }
 

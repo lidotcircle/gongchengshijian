@@ -12,8 +12,8 @@ import six.daoyun.entity.User;
 import six.daoyun.service.UserService;
 
 @RestController
-class UserTest {
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UserTest.class);
+class BadBear {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BadBear.class);
 
     @Autowired
     private UserService UserService;

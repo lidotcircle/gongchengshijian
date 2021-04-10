@@ -73,13 +73,11 @@ loginByUsername() {
 logout() {
     assert "[ $# -eq 1 ]"
     local token=$1
-    local json='{"token": "'$token'"}'
-    debug JSON $json
+    local params="refreshToken=$token"
 
     $DELETE $NOPROXY \
         "${APPLICATION_JSON[@]}" \
-        --data "$json" \
-        $DESTINATION/apis/auth/login
+        $DESTINATION/apis/auth/login?$params
 }
 
 addRole() {
@@ -122,6 +120,16 @@ getRoles() {
         $DESTINATION/apis/role/all
 }
 
+getJwt() {
+    assert "[ $# -eq 1 ]" "require refresh token"
+    local token=$1
+    local params="refreshToken=$token"
+
+    $GET $NOPROXY \
+        "${APPLICATION_JSON[@]}" \
+        $DESTINATION/apis/auth/jwt?$params
+}
+
 COMMAND=$1
 shift 1
 
@@ -157,6 +165,10 @@ case $COMMAND in
     "updateRoleName")
         info "update role name"
         updateRoleName $@
+        ;;
+    "getJwt")
+        info "get jwt"
+        getJwt $@
         ;;
     *)
         usage

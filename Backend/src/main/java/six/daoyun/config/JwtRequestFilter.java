@@ -30,6 +30,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         bypassURIs = new ArrayList<String>();
         bypassURIs.add("/apis/auth/signup");
         bypassURIs.add("/apis/auth/login");
+        bypassURIs.add("/apis/auth/jwt");
     }
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JwtRequestFilter.class);
@@ -37,7 +38,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
         throws ServletException, IOException {
-        log.info("filtering HTTP Request for: " + request.getRequestURI());
+        log.info("filtering HTTP Request for: " + request.getMethod() + " " + request.getRequestURI());
 
         boolean bypass = false;
         for(String uri: bypassURIs) {
@@ -51,6 +52,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if(this.superEnable && supername.equals(isAdmin)) {
             bypass = true;
         }
+
+        if(request.getMethod() == "OPTIONS") {
+            bypass = true;
+        }
+
 
         if(!bypass) {
             final String jwtToken = request.getHeader("Authorization");
@@ -79,7 +85,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         }
 
-        response.setHeader("Allow-Origin", "*");
         chain.doFilter(request, response);
     }
 
