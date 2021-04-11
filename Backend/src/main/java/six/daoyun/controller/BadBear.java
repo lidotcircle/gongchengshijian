@@ -12,22 +12,27 @@ import six.daoyun.entity.User;
 import six.daoyun.service.UserService;
 
 @RestController
-class UserTest {
+class BadBear {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BadBear.class);
+
     @Autowired
     private UserService UserService;
 
     @GetMapping("/users")
     private Collection<User> getUsers() {
+        log.info("API GET /users");
         return this.UserService.getAllUsers();
     }
 
     @GetMapping("/user")
     private User getUserByName(@RequestBody User User) {
-        return this.UserService.getUserByUserName(User.getUserName());
+        log.info("API GET /user");
+        return this.UserService.getUser(User.getUserName()).get();
     }
 
     @PostMapping("/user")
     private void newUsers(@RequestBody User User) {
+        log.info("API POST /user");
         this.UserService.createUser(User);
     }
 }

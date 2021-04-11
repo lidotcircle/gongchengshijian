@@ -2,64 +2,98 @@ package six.daoyun.service.UserServiceImpl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import six.daoyun.entity.User;
+import six.daoyun.exchange.UserInfo;
 import six.daoyun.repository.UserRepository;
 import six.daoyun.service.UserService;
+import six.daoyun.utils.ObjUitl;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UserServiceImpl.class);
+
+    @Autowired
+    private RedisTemplate<String, UserInfo> userinfoCache;
+    private static String userinfoKey(String username) {
+        return "userinfo_" + username;
+    }
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private RedisTemplate<String, User> redisUsers;
 
 	@Override
-	public void createUser(User User) {
-        this.userRepository.save(User);
+	public void createUser(final User user) {
+        log.info("create new user: {}", user.getUserName());
+        this.userRepository.save(user);
 	}
 
 	@Override
-	public User getUserByUserName(String userName) {
-        ValueOperations<String, User> operation =  this.redisUsers.opsForValue();
-        if(this.redisUsers.hasKey(userName)) {
-            this.logger.info("redis HIT {}", userName);
-            return operation.get(userName);
+	public Optional<User> getUser(final String userName) {
+        final User user = this.userRepository.getUserByUserName(userName);
+        return Optional.ofNullable(user);
+	}
+
+    private void clearKey(String username) //{
+    {
+        final String key = userinfoKey(username);
+        if(this.userinfoCache.hasKey(key)) {
+            this.userinfoCache.delete(key);
         }
+    } //}
 
-        for(User User: this.userRepository.findAll()) {
-            if(User.getName().equals(userName)) {
-                operation.set(userName, User, 10, TimeUnit.SECONDS);
-                return User;
-            }
-        }
-
-        return null;
+	@Override
+	public void updateUser(User user) {
+        this.clearKey(user.getUserName());
+        this.userRepository.save(user);
 	}
 
 	@Override
-	public void updateUser(String name, User User) {
-	}
-
-	@Override
-	public void deleteUser(String name) {
+	public void deleteUser(final String username) {
+        this.clearKey(username);
+        this.userRepository.deleteByUserName(username);
 	}
 
 	@Override
 	public Collection<User> getAllUsers() {
-        ArrayList<User> ans = new ArrayList<User>();
+        final ArrayList<User> ans = new ArrayList<User>();
         this.userRepository.findAll().forEach(ans::add);
         return ans;
 	}
+
+	@Override
+	public Optional<UserInfo> getUserInfo(String username) //{
+    {
+        final String key = userinfoKey(username);
+        ValueOperations<String, UserInfo> operation = this.userinfoCache.opsForValue();
+
+        if(this.userinfoCache.hasKey(key)) {
+            return Optional.of(operation.get(key));
+        } else {
+            final UserInfo userinfo = new UserInfo();
+            try {
+                final User user = this.getUser(username).get();
+                ObjUitl.assignFields(userinfo, user);
+
+                userinfo.setBirthday(user.getBirthday().getTime());
+
+                Collection<String> roles = new ArrayList<>();
+                user.getRoles().forEach(role -> roles.add(role.getRoleName()));
+                userinfo.setRoles(roles);
+
+                operation.set(key, userinfo);
+                return Optional.of(userinfo);
+            } catch (NoSuchElementException ex){}
+        }
+
+		return Optional.empty();
+    } //}
 }
 

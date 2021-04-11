@@ -14,7 +14,7 @@ import javax.persistence.GeneratedValue;
 
 
 @Entity
-@Table(name="course_task")
+@Table(name="tbl_course_task")
 public class CourseTask implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -27,8 +27,8 @@ public class CourseTask implements Serializable {
         this.id = id;
     }
 
-    private Course course;
     @ManyToOne
+    private Course course;
     public Course getCourse() {
         return this.course;
     }
@@ -45,13 +45,13 @@ public class CourseTask implements Serializable {
         this.content = content;
     }
 
-    private Collection<CommitTask> commitedTasks;
-    @OneToMany(mappedBy = "course_task")
-    public Collection<CommitTask> getCommitedTasks() {
-        return this.commitedTasks;
+    @OneToMany()
+    private Collection<CommitTask> commitTasks;
+    public Collection<CommitTask> getCommitTasks() {
+        return this.commitTasks;
     }
-    public void setCommitedTasks(Collection<CommitTask> commitedTasks) {
-        this.commitedTasks = commitedTasks;
+    public void setCommitedTasks(Collection<CommitTask> commitTasks) {
+        this.commitTasks = commitTasks;
     }
 }
 

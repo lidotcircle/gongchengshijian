@@ -1,28 +1,26 @@
 package six.daoyun.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.GeneratedValue;
 
 
 @Entity
-@Table(name="tbl_role")
-public class Role implements Serializable {
+@Table(name="tbl_refresh_token")
+public class RefreshToken implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id @GeneratedValue @Column(name = "pk_role_id")
-    private long roleId;
-    public long getRoleId() {
-        return this.roleId;
+	@Id @GeneratedValue @Column(name = "token_id")
+    private long id;
+    public long getId() {
+        return this.id;
     }
 
     @Column(name = "gmt_created", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)
@@ -37,23 +35,31 @@ public class Role implements Serializable {
         return this.modifiedDate;
     }
 
-    @Column(name = "uk_role_name", columnDefinition = "VARCHAR(32) NOT NULL")
-    private String roleName;
-    public String getRoleName() {
-        return this.roleName;
+    @Column(name = "uk_token", columnDefinition = "VARCHAR(48) NOT NULL UNIQUE")
+    private String token;
+    public String getToken() {
+        return this.token;
     }
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setToken(String token) {
+        this.token = token;
     }
 
-    @JsonIgnore
-    @ManyToMany()
-    private Collection<PermEntry> permEntries;
-    public Collection<PermEntry> getPermEntries() {
-        return this.permEntries;
+    @Column()
+    private Date expiredDate;
+    public Date getExpiredDate() {
+        return this.expiredDate;
     }
-    public void setPermEntries(Collection<PermEntry> permEntries) {
-        this.permEntries = permEntries;
+    public void setExpiredDate(Date expiredDate) {
+        this.expiredDate = expiredDate;
+    }
+
+    @ManyToOne()
+    private User user;
+    public User getUser() {
+        return this.user;
+    }
+    public void setUser(User user) {
+        this.user = user;
     }
 }
 

@@ -9,7 +9,10 @@ spring:
 
   jpa:
     hibernate:
+      # ddl-auto: update
+      # ddl-auto: create
       ddl-auto: none
+      # ddl-auto: create-drop # DEV
 
 redis:
   host: localhost
@@ -19,4 +22,14 @@ redis:
 logging:
   level:
     root: INFO
+
+jwt:
+  secret: helloworld
+
+daoyun:
+  # super admin, just for testing api 
+  # set HTTP Header 'X-IM_ADMIN: supersuper.name'
+  supersuper:
+    enable: true
+    name: daoyun
 

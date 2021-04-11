@@ -1,20 +1,18 @@
 package six.daoyun.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import javax.persistence.GeneratedValue;
 
 
 @Entity
-@Table(name="commit_task")
+@Table(name="tbl_commit_task")
 public class CommitTask implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -36,18 +34,17 @@ public class CommitTask implements Serializable {
         this.commitContent = commitContent;
     }
 
-    private Collection<User> student;
-    @OneToOne()
-    public Collection<User> getStudent() {
+    @ManyToOne()
+    private User student;
+    public User getStudent() {
         return this.student;
     }
-    public void setStudent(Collection<User> student) {
+    public void setStudent(User student) {
         this.student = student;
     }
 
-    @Column(name = "course_task")
-    private CourseTask courseTask;
     @ManyToOne()
+    private CourseTask courseTask;
     public CourseTask getCourseTask() {
         return this.courseTask;
     }
