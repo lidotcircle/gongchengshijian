@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,7 +47,7 @@ public class UserRud {
         User user = this.userService.getUser(username).orElseThrow(() -> new HttpBadRequest("user not found: " + username));
         Collection<String> ans = ObjUitl.assignFields(user, request);
 
-        if(request.getBirthday() != null) {
+        if(request.getBirthday() >= 0) {
             Date birthday = new Date(request.getBirthday());
             user.setBirthday(birthday);
             ans.add("birthday");
@@ -64,7 +65,7 @@ public class UserRud {
 
 	@PutMapping("/apis/user/privileged")
     @ResponseBody
-    public Collection<String> modifyUserInfoPriv(HttpServletRequest httpreq, @RequestBody UserUpdatingPriv request) //{
+    public Collection<String> modifyUserInfoPriv(HttpServletRequest httpreq, @RequestBody @Valid UserUpdatingPriv request) //{
     {
         String username = (String) httpreq.getAttribute("username");
         User user = this.userService.getUser(username).orElseThrow(() -> new HttpBadRequest("user not found: " + username));

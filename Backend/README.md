@@ -115,7 +115,7 @@ URI:`/apis/user`
   "userName": "string",
   "birthday": "number",
   "gender": "string",
-  "student_teacher_id": "string",
+  "studentTeacherId": "string",
   "shcool": "string",
   "college": "string",
   "major": "string"
@@ -151,7 +151,7 @@ URI: `/apis/user`
   "name": "string",
   "birthday": "string",
   "gender": "string",
-  "student_teacher_id": "string",
+  "studentTeacherId": "string",
   "school": "string",
   "college": "string",
   "major": "string",

@@ -10,11 +10,11 @@ public class UserUnprivileged {
         this.name = name;
     }
 
-    private Integer birthday;
-    public Integer getBirthday() {
+    private long birthday = -1;
+    public long getBirthday() {
         return this.birthday;
     }
-    public void setBirthday(Integer birthday) {
+    public void setBirthday(long birthday) {
         this.birthday = birthday;
     }
 
@@ -26,12 +26,12 @@ public class UserUnprivileged {
         this.gender = gender;
     }
 
-    private String student_teacher_id;
-    public String getStudent_teacher_id() {
-        return this.student_teacher_id;
+    private String studentTeacherId;
+    public String getStudentTeacherId() {
+        return this.studentTeacherId;
     }
-    public void setStudent_teacher_id(String student_teacher_id) {
-        this.student_teacher_id = student_teacher_id;
+    public void setStudentTeacherId(String studentTeacherId) {
+        this.studentTeacherId = studentTeacherId;
     }
 
     private String school;

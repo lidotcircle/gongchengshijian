@@ -82,6 +82,8 @@ public class UserServiceImpl implements UserService {
                 final User user = this.getUser(username).get();
                 ObjUitl.assignFields(userinfo, user);
 
+                userinfo.setBirthday(user.getBirthday().getTime());
+
                 Collection<String> roles = new ArrayList<>();
                 user.getRoles().forEach(role -> roles.add(role.getRoleName()));
                 userinfo.setRoles(roles);
