@@ -7,10 +7,9 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.GeneratedValue;
 
@@ -40,7 +39,14 @@ public class User implements Serializable {
         this.roles = roles;
     }
 
-    // TODO 头像
+    @Lob
+    private byte[] profilePhoto;
+    public byte[] getProfilePhoto() {
+        return this.profilePhoto;
+    }
+    public void setProfilePhoto(byte[] profilePhoto) {
+        this.profilePhoto = profilePhoto;
+    }
 
     @Column(name = "name", columnDefinition = "VARCHAR(32) NULL")
     private String name;
@@ -70,6 +76,14 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "email")
+    private String email;
+    public String getEmail() {
+        return this.email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     // getter and setter
     

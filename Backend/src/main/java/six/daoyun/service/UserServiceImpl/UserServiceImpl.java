@@ -2,18 +2,29 @@ package six.daoyun.service.UserServiceImpl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import six.daoyun.entity.User;
+import six.daoyun.exchange.UserInfo;
 import six.daoyun.repository.UserRepository;
 import six.daoyun.service.UserService;
+import six.daoyun.utils.ObjUitl;
 
 @Service
 public class UserServiceImpl implements UserService {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UserServiceImpl.class);
+
+    @Autowired
+    private RedisTemplate<String, UserInfo> userinfoCache;
+    private static String userinfoKey(String username) {
+        return "userinfo_" + username;
+    }
 
     @Autowired
     private UserRepository userRepository;
@@ -25,19 +36,29 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Optional<User> getUserByUserName(final String userName) {
+	public Optional<User> getUser(final String userName) {
         final User user = this.userRepository.getUserByUserName(userName);
         return Optional.ofNullable(user);
 	}
 
+    private void clearKey(String username) //{
+    {
+        final String key = userinfoKey(username);
+        if(this.userinfoCache.hasKey(key)) {
+            this.userinfoCache.delete(key);
+        }
+    } //}
+
 	@Override
 	public void updateUser(User user) {
+        this.clearKey(user.getUserName());
         this.userRepository.save(user);
 	}
 
 	@Override
-	public void deleteUser(final String name) {
-        this.userRepository.deleteByUserName(name);
+	public void deleteUser(final String username) {
+        this.clearKey(username);
+        this.userRepository.deleteByUserName(username);
 	}
 
 	@Override
@@ -48,8 +69,29 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Optional<User> getUserByUserId(final Integer userId) {
-        return this.userRepository.findById(userId);
-	}
+	public Optional<UserInfo> getUserInfo(String username) //{
+    {
+        final String key = userinfoKey(username);
+        ValueOperations<String, UserInfo> operation = this.userinfoCache.opsForValue();
+
+        if(this.userinfoCache.hasKey(key)) {
+            return Optional.of(operation.get(key));
+        } else {
+            final UserInfo userinfo = new UserInfo();
+            try {
+                final User user = this.getUser(username).get();
+                ObjUitl.assignFields(userinfo, user);
+
+                Collection<String> roles = new ArrayList<>();
+                user.getRoles().forEach(role -> roles.add(role.getRoleName()));
+                userinfo.setRoles(roles);
+
+                operation.set(key, userinfo);
+                return Optional.of(userinfo);
+            } catch (NoSuchElementException ex){}
+        }
+
+		return Optional.empty();
+    } //}
 }
 

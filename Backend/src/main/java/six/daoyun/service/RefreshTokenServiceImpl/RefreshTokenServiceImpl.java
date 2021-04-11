@@ -12,12 +12,9 @@ import six.daoyun.entity.RefreshToken;
 import six.daoyun.entity.User;
 import six.daoyun.repository.RefreshTokenRepository;
 import six.daoyun.service.RefreshTokenService;
-import six.daoyun.service.UserService;
 
 @Service
 public class RefreshTokenServiceImpl implements RefreshTokenService {
-    @Autowired()
-    private UserService userService;
     @Autowired()
     private RefreshTokenRepository refreshTokenRepository;
 
@@ -40,11 +37,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
         return token;
     }
-    @Override
-    public RefreshToken createRefreshToken(Integer userId) {
-        User user = this.userService.getUserByUserId(userId).get();
-        return this.createRefreshToken(user);
-    }
+
     @Override
     public Optional<RefreshToken> getRefreshTokenByToken(String token) {
         RefreshToken ans = this.refreshTokenRepository.getByToken(token);

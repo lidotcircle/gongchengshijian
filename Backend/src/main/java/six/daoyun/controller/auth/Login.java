@@ -30,7 +30,7 @@ class Login {
 
     @PostMapping("/apis/auth/login")
     private LoginResponse login(@RequestBody @Valid LoginByUsernameRequest request) {
-        User user = this.UserService.getUserByUserName(request.getUserName())
+        User user = this.UserService.getUser(request.getUserName())
                                     .orElseThrow(() -> new HttpBadRequest("用户不存在"));
         LoginResponse resp = new LoginResponse();
 

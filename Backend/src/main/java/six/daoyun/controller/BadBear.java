@@ -27,7 +27,7 @@ class BadBear {
     @GetMapping("/user")
     private User getUserByName(@RequestBody User User) {
         log.info("API GET /user");
-        return this.UserService.getUserByUserName(User.getUserName()).get();
+        return this.UserService.getUser(User.getUserName()).get();
     }
 
     @PostMapping("/user")

@@ -29,6 +29,7 @@ commands:
   login             login with username        username password
   userSet           update attribute           attribute value
   userSetP          update priv attribute      password attribute value
+  getUserinfo       get user info              [jwtToken]
 EOF
 }
 
@@ -159,6 +160,17 @@ userSetP() {
         $DESTINATION/apis/user/privileged
 }
 
+getUserinfo() {
+    assert "[ $# -le 1 ]" "require one or none argument"
+    if [ $# -eq 1 ]; then
+        $GET $NOPROXY --header "Authorization: $1" \
+            $DESTINATION/apis/user
+    else
+        $GET $NOPROXY "${BYPASS_AUTHORIZATION[@]}" \
+            $DESTINATION/apis/user
+    fi
+}
+
 COMMAND=$1
 shift 1
 
@@ -206,6 +218,10 @@ case $COMMAND in
     "userSetP" )
         info "set user privileged attribute"
         userSetP $@
+        ;;
+    "getUserinfo" )
+        info "get user info"
+        getUserinfo $@
         ;;
     *)
         usage
