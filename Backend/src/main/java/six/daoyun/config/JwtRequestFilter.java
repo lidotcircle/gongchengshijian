@@ -54,7 +54,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             bypass = true;
         }
 
-        if(request.getMethod() == "OPTIONS") {
+        if(request.getMethod().equalsIgnoreCase("OPTIONS")) {
             bypass = true;
         }
 
