@@ -18,12 +18,23 @@ export class DashboardDomainGuard implements CanActivate {
         state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree 
     {
         return new Promise((resolve) => {
-            if(!this.authService.isLogin) {
+            const m = async (): Promise<boolean> => {
+                if(!this.authService.isLogin) {
+                    this.router.navigateByUrl('/daoyun');
+                    return false;
+                } else {
+                    if(this.authService.jwtToken == null) {
+                        await this.authService.refreshJWT();
+                    }
+
+                    return true;
+                }
+            };
+
+            m().then(resolve).catch(() => {
                 this.router.navigateByUrl('/daoyun');
                 resolve(false);
-            } else {
-                resolve(true);
-            }
+            });
         });
     }
 }

@@ -3,7 +3,7 @@
 
 <nb-card [class]='inEdit ? "in-edit" : ""'>
     <nb-card-header>
-        <nb-user [name]='user?.nickname || user?.name' [picture]='user?.picture'></nb-user>
+        <nb-user [name]='user?.name || user?.userName'></nb-user>
         <div class="editing-mode">
             <button nbButton status='primary' shape='round' size='tiny' outline>编辑头像</button>
         </div>
@@ -12,74 +12,81 @@
     <nb-card-body>
         <div class="user-info-list">
             <div class="user-info-field">用户名</div>
-            <div class="user-info-value">zhangsan</div>
+            <div class="user-info-value">{{ user?.userName }}</div>
 
             <div class="user-info-field">姓名</div>
-            <div class="user-info-value viewing-mode">张三</div>
+            <div class="user-info-value viewing-mode">{{ user?.name }}</div>
             <div class="user-info-value editing-mode">
-                <input type="text" nbInput fullWidth shape="rectangle" placeholder="姓名">
+                <input type="text" [(ngModel)]='updatedUser.name' nbInput fullWidth shape="rectangle" placeholder="姓名">
             </div>
 
             <div class="user-info-field">角色</div>
-            <div class="user-info-value">管理员</div>
+            <div class="user-info-value">{{ roles }}</div>
 
             <div class="user-info-field">性别</div>
-            <div class="user-info-value viewing-mode">男</div>
+            <div class="user-info-value viewing-mode">{{ user?.Gender }}</div>
             <div class="user-info-value editing-mode">
-                <input type="text" nbInput fullWidth shape="rectangle" placeholder="性别">
+                <nb-select fullWidth [(ngModel)]="updatedUser.gender">
+                  <nb-option value="male">男</nb-option>
+                  <nb-option value="female">女</nb-option>
+                  <nb-option value="unknown">隐藏</nb-option>
+                </nb-select>
             </div>
 
             <div class="user-info-field">出生日期</div>
-            <div class="user-info-value viewing-mode">1999-09-09</div>
+            <div class="user-info-value viewing-mode">{{ user?.Birthday }}</div>
             <div class="user-info-value editing-mode">
-                <input type="text" nbInput fullWidth shape="rectangle" placeholder="出生日期">
+                <input nbInput fullWidth shape="rectangle" [(ngModel)]="birthday"
+                       placeholder="出生日期"
+                       [nbDatepicker]="datepicker">
+                <nb-datepicker #datepicker></nb-datepicker>
             </div>
 
             <div class="user-info-field">学工号</div>
-            <div class="user-info-value viewing-mode">10101010</div>
+            <div class="user-info-value viewing-mode">{{ user?.studentTeacherId }}</div>
             <div class="user-info-value editing-mode">
-                <input type="text" nbInput fullWidth shape="rectangle" placeholder="学工号">
+                <input type="text" [(ngModel)]="updatedUser.studentTeacherId" nbInput fullWidth shape="rectangle" placeholder="学工号">
             </div>
 
             <div class="user-info-field">学校</div>
-            <div class="user-info-value viewing-mode">福州大学</div>
+            <div class="user-info-value viewing-mode">{{ user?.school }}</div>
             <div class="user-info-value editing-mode">
-                <input type="text" nbInput fullWidth shape="rectangle" placeholder="学校">
+                <input type="text" [(ngModel)]="updatedUser.school" nbInput fullWidth shape="rectangle" placeholder="学校">
             </div>
 
             <div class="user-info-field">院系</div>
-            <div class="user-info-value viewing-mode">数学与计算机科学学院</div>
+            <div class="user-info-value viewing-mode">{{ user?.college }}</div>
             <div class="user-info-value editing-mode">
-                <input type="text" nbInput fullWidth shape="rectangle" placeholder="院系">
+                <input type="text" [(ngModel)]="updatedUser.college" nbInput fullWidth shape="rectangle" placeholder="院系">
             </div>
 
             <div class="user-info-field">专业</div>
-            <div class="user-info-value viewing-mode">电子信息</div>
+            <div class="user-info-value viewing-mode">{{ user?.major }}</div>
             <div class="user-info-value editing-mode">
-                <input type="text" nbInput fullWidth shape="rectangle" placeholder="专业">
+                <input type="text" [(ngModel)]="updatedUser.major" nbInput fullWidth shape="rectangle" placeholder="专业">
             </div>
         </div>
 
         <div class="user-info-list user-secret-info-list">
             <div class="user-info-field">手机</div>
-            <div class="user-info-value viewing-mode">13344556677</div>
+            <div class="user-info-value viewing-mode">{{ user?.phone }}</div>
             <div class="user-info-value editing-mode">
                 <div class="phone-number-email">
                     <div class="user-info-value">
-                        13344556677
+                      {{ user?.phone }}
                     </div>
-                    <button nbButton status='primary' shape='round' size='tiny' outline>编辑手机号</button>
+                    <button nbButton status='primary' (click)='editPhone()' shape='round' size='tiny' outline>编辑手机号</button>
                 </div>
             </div>
 
             <div class="user-info-field">邮箱</div>
-            <div class="user-info-value viewing-mode">good@gmail.com</div>
+            <div class="user-info-value viewing-mode">{{ user?.email }}</div>
             <div class="user-info-value editing-mode">
                 <div class="phone-number-email">
                     <div class="user-info-value">
-                        good@gmail.com
+                      {{ user?.email }}
                     </div>
-                    <button nbButton status='primary' shape='round' size='tiny' outline>编辑邮箱</button>
+                    <button nbButton status='primary' (click)='editEmail()' shape='round' size='tiny' outline>编辑邮箱</button>
                 </div>
             </div>
         </div>
@@ -88,7 +95,7 @@
     <nb-card-footer>
         <div class="viewing-mode">
             <div class="footer-buttons">
-                <button nbButton status='primary' outline>修改密码</button>
+                <button nbButton status='primary' outline (click)='editPassword()'>修改密码</button>
                 <button nbButton status='primary' hero (click)='gotoInfoEdit()'>编辑个人信息</button>
             </div>
         </div>

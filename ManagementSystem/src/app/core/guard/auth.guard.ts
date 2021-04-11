@@ -18,13 +18,22 @@ export class AuthDomainGuard implements CanActivate {
         state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree 
     {
         return new Promise((resolve) => {
-            if(this.authService.isLogin) {
-                this.router.navigateByUrl('/daoyun/dashboard');
-                resolve(false);
-            } else {
-                resolve(true);
-            }
+            const m = async (): Promise<boolean> => {
+                if(this.authService.isLogin) {
+                    if(this.authService.jwtToken == null) {
+                        await this.authService.refreshJWT();
+                    }
+
+                    this.router.navigateByUrl('/daoyun/dashboard');
+                    return false;
+                } else {
+                    return true;
+                }
+            };
+
+            m().then(resolve).catch(() => resolve(true));
         });
     }
+
 }
 

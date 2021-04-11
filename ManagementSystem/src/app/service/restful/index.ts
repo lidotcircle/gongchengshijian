@@ -1,3 +1,3 @@
 
-export { Auth as RESTfulAuth } from './auth';
+export { API as RESTfulAPI } from './api';
 
