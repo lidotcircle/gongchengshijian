@@ -36,18 +36,18 @@ export function createNodeFromHtmlString(htmlText: string): HTMLElement
 export module Pattern {
     export const HintSym = Symbol('Hint');
 
-    export const password: String = new String('.{6,}');
+    export const password: String = new String(`.{6,}`);
     password[HintSym] = '密码至少拥有6个字符';
 
-    export const username: String = new String('[a-zA-Z][\w_]{4,19}');
+    export const username: String = new String(`[a-zA-Z][\\w_]{4,19}`);
     username[HintSym] = '用户名由字母数字下划线组成且首字符为字母, 不少于5个字符不多于20字符';
 
-    export const name: String = new String('^([A-Za-z]|\p{Unified_Ideograph})([A-Za-z0-9_]|\p{Unified_Ideograph}){1,7}$');
+    export const name: String = new String(`^([A-Za-z]|\\p{Unified_Ideograph})([A-Za-z0-9_]|\\p{Unified_Ideograph}){1,7}$`);
     name[HintSym] = '名称由中文字母数字下划线组成, 2-8字符, 中文或者字母开头';
 
-    export const email: String = new String('^.*[@].*\..*$');
+    export const email: String = new String(`^.*[@].*\\..*$`);
 
-    export const phone: String = new String('^\d{11}$');
+    export const phone: String = new String(`^\\d{11}$`);
     phone[HintSym] = '请输入合法的11位手机号';
 }
 

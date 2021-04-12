@@ -51,16 +51,19 @@ export class AuthService {
     }
 
     async logout() {
-        this.localstorage.set<string>(StorageKeys.REFRESH_TOKEN, null);
-
-        await this.http.delete(RESTfulAPI.Auth.login, {
-            params: {
-                "refreshToken": this.refresh_token
-            }
-        }).toPromise();
-        this.refresh_token = null;
-        this.jwt_token = null;
-        this.jwtSubject.next(null);
+        try {
+            await this.http.delete(RESTfulAPI.Auth.login, {
+                params: {
+                    "refreshToken": this.refresh_token
+                }
+            }).toPromise();
+        } finally {
+            this.localstorage.remove(StorageKeys.REFRESH_TOKEN);
+            this.sessionStorage.remove(StorageKeys.JWT_TOKEN);
+            this.refresh_token = null;
+            this.jwt_token = null;
+            this.jwtSubject.next(null);
+        }
     }
 
     async refreshJWT() {

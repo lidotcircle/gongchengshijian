@@ -55,7 +55,6 @@ export class PrivEditWindowComponent implements OnInit {
 
     ngOnInit() {
         this.pwpattern = Pattern.password.toString();
-        console.log(this.pattern, this.pwpattern);
     }
 
     isConfirmed: boolean = false;
