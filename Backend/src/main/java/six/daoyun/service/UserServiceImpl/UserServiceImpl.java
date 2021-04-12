@@ -83,6 +83,9 @@ public class UserServiceImpl implements UserService {
                 ObjUitl.assignFields(userinfo, user);
 
                 userinfo.setBirthday(user.getBirthday().getTime());
+                if(user.getProfilePhoto() != null && user.getProfilePhoto().length > 0) {
+                    userinfo.setPhoto(new String(user.getProfilePhoto()));
+                }
 
                 Collection<String> roles = new ArrayList<>();
                 user.getRoles().forEach(role -> roles.add(role.getRoleName()));

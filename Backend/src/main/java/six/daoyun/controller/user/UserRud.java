@@ -53,6 +53,12 @@ public class UserRud {
             ans.add("birthday");
         }
 
+        if(request.getPhoto() != null && request.getPhoto().length() > 0) {
+            byte[] photo = request.getPhoto().getBytes();
+            user.setProfilePhoto(photo);
+            ans.add("photo");
+        }
+
         if(ans.isEmpty()) {
             throw new HttpBadRequest("nothing changed, but expect something");
         } else {

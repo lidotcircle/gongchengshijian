@@ -18,6 +18,14 @@ public class UserUnprivileged {
         this.birthday = birthday;
     }
 
+    private String photo;
+    public String getPhoto() {
+        return this.photo;
+    }
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
     private String gender;
     public String getGender() {
         return this.gender;
