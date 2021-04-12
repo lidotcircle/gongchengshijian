@@ -43,7 +43,7 @@ public class SystemParameter implements Serializable {
         this.parameterName = parameterName;
     }
 
-    @Column(name = "uk_value")
+    @Column(name = "value")
     private String parameterValue;
     public String getParameterValue() {
         return this.parameterValue;

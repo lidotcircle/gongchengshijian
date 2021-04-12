@@ -13,6 +13,13 @@
         * [修改用户信息](#修改用户信息)
         * [修改用户信息(需要密码)](#修改用户信息需要密码)
         * [获取用户信息](#获取用户信息)
+    * [系统参数](#系统参数)
+        * [创建](#创建)
+        * [查询](#查询)
+        * [修改](#修改)
+        * [删除](#删除)
+        * [获取全部](#获取全部)
+        * [分页获取](#分页获取)
 * [测试](#测试)
 
 <!-- vim-markdown-toc -->
@@ -160,6 +167,106 @@ URI: `/apis/user`
   "roles": ["string"]
 }
 ```
+
+
+### 系统参数
+
+*key* 的长度在2到48之间
+
+#### 创建
+
+Method: **POST** :key:  
+URI:`/apis/sysparam'`  
+条件: 对应 *key*没被使用  
+参数:
+```json
+{
+  "key": "string",
+  "value": "string"
+}
+```
+
+#### 查询
+
+Method: **GET** :key:  
+URI:`/apis/sysparam`  
+条件: 对应 *key*存在  
+参数:
+```json
+{
+  "key": "string"
+}
+```
+返回值:
+```json
+{
+  "value": "string"
+}
+```
+
+#### 修改
+
+Method: **PUT** :key:  
+URI:`/apis/sysparam`  
+条件: 对应 *key*存在  
+参数:
+```json
+{
+  "key": "string",
+  "value": "string"
+}
+```
+
+#### 删除
+
+Method: **DELETE** :key:  
+URI:`/apis/sysparam`  
+参数:
+```json
+{
+  "key": "string"
+}
+```
+
+#### 获取全部
+
+Method: **GET** :key:  
+URI: `/apis/sysparam/all-key`  
+返回值:
+```json
+[
+  {
+    "key": "string",
+    "value": "string"
+  }
+]
+```
+
+#### 分页获取
+
+Method: **GET** :key:  
+URI: `/apis/sysparam/page`  
+参数: 
+```json
+{
+  "pageno": "number",
+  "size": "number"
+}
+```
+返回值:
+```json
+{
+  "total": "number",
+  "pairs": [
+    {
+      "key": "string",
+      "value": "string"
+    }
+  ]
+}
+```
+
+Method: **
 
 ## 测试
 

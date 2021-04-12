@@ -171,9 +171,80 @@ getUserinfo() {
     fi
 }
 
+sysparam_get() {
+    assert "[ $# -eq 1 ]" "sysparam get <key>"
+    local json='{"key": "'$1'"}'
+    debug JSON $json
+
+    $GET $NOPROXY "${BYPASS_AUTHORIZATION[@]}" \
+        "${APPLICATION_JSON[@]}" \
+        --data "$json" \
+        $DESTINATION/apis/sysparam
+}
+sysparam_put() {
+    assert "[ $# -eq 2 ]" "sysparam put <key> <value>"
+    local json='{"key": "'$1'", "value": "'$2'"}'
+    debug JSON $json
+
+    $PUT $NOPROXY "${BYPASS_AUTHORIZATION[@]}" \
+        "${APPLICATION_JSON[@]}" \
+        --data "$json" \
+        $DESTINATION/apis/sysparam
+}
+sysparam_post() {
+    assert "[ $# -eq 2 ]" "sysparam post <key> <value>"
+    local json='{"key": "'$1'", "value": "'$2'"}'
+    debug JSON $json
+
+    $POST $NOPROXY "${BYPASS_AUTHORIZATION[@]}" \
+        "${APPLICATION_JSON[@]}" \
+        --data "$json" \
+        $DESTINATION/apis/sysparam
+}
+sysparam_delete() {
+    assert "[ $# -eq 1 ]" "sysparam delete <key>"
+    local json='{"key": "'$1'"}'
+    debug JSON $json
+
+    $DELETE $NOPROXY "${BYPASS_AUTHORIZATION[@]}" \
+        "${APPLICATION_JSON[@]}" \
+        --data "$json" \
+        $DESTINATION/apis/sysparam
+}
+
+sysparam_getall() {
+    $GET $NOPROXY "${BYPASS_AUTHORIZATION[@]}" \
+        $DESTINATION/apis/sysparam/all-key
+}
+sysparam_getpage() {
+    assert "[ $# -eq 2 ]" "sysparam getpage <pageno> <size>"
+    local json='{"pageno": '$1', "size": '$2'}'
+    debug JSON $json
+
+    $GET $NOPROXY "${BYPASS_AUTHORIZATION[@]}" \
+        "${APPLICATION_JSON[@]}" \
+        --data "$json" \
+        $DESTINATION/apis/sysparam/page
+}
+
+sysparam() {
+    assert "[ $# -ge 1 ]" "sysparam [get | put | post | delete]"
+    local command=$1
+    shift 1
+    case $command in
+        "get" ) sysparam_get $@ ;;
+        "put" ) sysparam_put $@ ;;
+        "post" ) sysparam_post $@ ;;
+        "delete" ) sysparam_delete $@ ;;
+        "getall" ) sysparam_getall $@ ;;
+        "getpage" ) sysparam_getpage $@ ;;
+    esac
+}
+
 COMMAND=$1
 shift 1
 
+# COMMANDS #{
 case $COMMAND in
     "-h"|"--help" )
         usage
@@ -223,9 +294,14 @@ case $COMMAND in
         info "get user info"
         getUserinfo $@
         ;;
+    "sysparam" )
+        info "sysparam $1"
+        sysparam $@
+        ;;
     *)
         usage
         exit 1
         ;;
 esac
+#}
 
