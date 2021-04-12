@@ -26,6 +26,13 @@ export function computeDifference(newObj: object, oldObj: object): object | null
     return i==0 ? null : ans;
 }
 
+export function createNodeFromHtmlString(htmlText: string): HTMLElement
+{
+    let div = document.createElement("div");
+    div.innerHTML = htmlText.trim();
+    return div.firstChild as HTMLElement;
+}
+
 export module Pattern {
     export const HintSym = Symbol('Hint');
 

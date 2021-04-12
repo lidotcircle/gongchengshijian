@@ -9,6 +9,7 @@ import { UserService } from 'src/app/service/user/user.service';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window.component';
 import { computeDifference, Pattern } from 'src/app/shared/utils';
 import { PrivEditWindowComponent } from './priv-edit-window.component';
+import { ProfilePhotoUploadComponent } from './profile-photo-upload.component';
 
 
 @Component({
@@ -54,6 +55,7 @@ export class UserInfoViewerComponent implements OnInit, OnDestroy {
         this.inEdit = true;
     }
 
+    inSavingUserinfo: boolean = false;
     async gotoInfoView() {
         this.updatedUser.birthday = this.birthday?.getTime() || this.updatedUser.birthday;
         const diff = computeDifference(this.updatedUser, this.user);
@@ -67,7 +69,15 @@ export class UserInfoViewerComponent implements OnInit, OnDestroy {
             const confirmed = win.config.context['isConfirmed'];
 
             if(confirmed) {
-                await this.userService.updateUser(diff);
+                try {
+                    this.inSavingUserinfo = true;
+                    await this.userService.updateUser(diff);
+                } catch {
+                    this.toastService.show("保存用户信息失败", "保存", {status: 'danger'});
+                    return;
+                } finally {
+                    this.inSavingUserinfo = false;
+                }
             } else {
                 return;
             }
@@ -149,6 +159,28 @@ export class UserInfoViewerComponent implements OnInit, OnDestroy {
                 this.toastService.show('修改手机号失败', '手机号', {status: 'danger'});
             }
         }
+    }
+
+    async editProfilePhoto() {
+        const win = this.windowService.open(ProfilePhotoUploadComponent, {
+            title: '修改头像',
+            context: {
+                photo: this.user.photo
+            }
+        });
+        await win.onClose.toPromise();
+
+        if(win.config.context['isConfirmed']) {
+            const photo = win.config.context['photo'];
+
+            try {
+                await this.userService.updateUser({photo: photo});
+                this.toastService.show('修改头像成功', '头像', {status: 'info'});
+            } catch {
+                this.toastService.show('修改头像失败', '头像', {status: 'danger'});
+            }
+        }
+
     }
 
     get roles(): string {

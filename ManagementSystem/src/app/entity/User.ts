@@ -1,3 +1,4 @@
+export const defaultProfileImage = require('!url-loader!./profile-image.png').default;
 
 const genderMap = {
     "unknown": '隐藏',
@@ -11,6 +12,7 @@ export class User {
     name: string;
     birthday: number;
     gender: string;
+    photo: string;
 
     studentTeacherId: string;
     school: string;
@@ -28,6 +30,10 @@ export class User {
 
     get Gender(): string {
         return genderMap[this.gender || 'unknown'];
+    }
+
+    get Photo(): string {
+        return this.photo || defaultProfileImage;
     }
 }
 
