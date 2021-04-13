@@ -5,6 +5,7 @@
 
 * [RESTful APIs](#restful-apis)
     * [认证](#认证)
+        * [获取短信](#获取短信)
         * [登录](#登录)
         * [登出](#登出)
         * [JWT](#jwt)
@@ -40,6 +41,28 @@ API的参数序列化为JSON格式包含在 *body*中.
 
 ### 认证
 
+**IMPORTAN**: 
++ *captcha* 暂时未实现, 使用`hello world`
++ *code* 短信验证码暂时没有实现, 使用`666666`
+
+#### 获取短信
+
+Method: **POST**
+URI: `/apis/message`
+```json
+{
+  "phone": "string",
+  "type": "string",
+  "captcha": "string"
+}
+```
+返回值:
+```json
+{
+  "codeToken": "string"
+}
+```
+*type* 的合法值 `login signup reset`
 
 #### 登录    
 
@@ -51,7 +74,8 @@ URI: `/apis/auth/login`
 ```json
 {
   "userName": "string", 
-  "password": "string"
+  "password": "string",
+  "captcha": "sring"
 }
 ```
 返回值:
@@ -60,6 +84,7 @@ URI: `/apis/auth/login`
   "token": "string"
 }
 ```
+
 
 
 #### 登出
@@ -105,7 +130,8 @@ URI:`/apis/auth/signup`
 {
   "userName": "string", 
   "password": "string",
-  "phone": "string"
+  "phone": "string",
+  "code": "string"
 }
 ```
 
