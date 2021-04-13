@@ -10,7 +10,8 @@ export function assert(expr: boolean, msg?: string) {
     }
 }
 
-export const API_ADDRESS = "http://192.168.44.43:8099";
+export const API_ADDRESS = window.location.protocol.toLowerCase() == 'http:' ? "http://192.168.44.43:8099" : '';
+console.log(window.location.protocol.toLowerCase());
 
 export function computeDifference(newObj: object, oldObj: object): object | null {
     const ans = Object.create({});

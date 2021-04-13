@@ -19,22 +19,22 @@
         <label class="label" for="input-username">用户名:</label>
         <input nbInput
                fullWidth
-               [(ngModel)]="user.username"
-               #username="ngModel"
-               name="username"
-               id="input-username"
+               [(ngModel)]="user.userName"
+               #userName="ngModel"
+               name="userName"
+               id="input-userName"
                pattern=".{2,}"
                placeholder="用户名"
                fieldSize="large"
                autofocus
-               [status]="username.dirty ? (username.invalid  ? 'danger' : 'success') : 'basic'"
+               [status]="userName.dirty ? (userName.invalid  ? 'danger' : 'success') : 'basic'"
                required
-               [attr.aria-invalid]="username.invalid && username.touched ? true : null">
-        <ng-container *ngIf="username.invalid && username.touched">
-            <p class="caption status-danger" *ngIf="username.errors?.required">
+               [attr.aria-invalid]="userName.invalid && userName.touched ? true : null">
+        <ng-container *ngIf="userName.invalid && userName.touched">
+            <p class="caption status-danger" *ngIf="userName.errors?.required">
             请输入用户名
             </p>
-            <p class="caption status-danger" *ngIf="username.errors?.pattern">
+            <p class="caption status-danger" *ngIf="userName.errors?.pattern">
             请输入合法的用户名
             </p>
         </ng-container>
@@ -69,8 +69,10 @@
     </div>
 
     <div class="form-control-group accept-group">
-        <nb-checkbox name="rememberMe" [(ngModel)]="user.rememberMe" *ngIf="rememberMe">记住登录状态</nb-checkbox>
+        <nb-checkbox name="rememberMe" [(ngModel)]="rememberMe" *ngIf="enableRememberMe">记住登录状态</nb-checkbox>
     </div>
+
+    <div class="h-captcha" data-sitekey="e46186ab-3584-420b-8e06-40b049517be5"></div>
 
     <button nbButton
             fullWidth

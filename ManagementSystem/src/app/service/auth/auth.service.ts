@@ -22,6 +22,7 @@ export class AuthService {
                 private sessionStorage: SessionStorageService,
                 private http: HttpClient) {
         this.refresh_token = this.localstorage.get<string>(StorageKeys.REFRESH_TOKEN, null);
+        this.refresh_token = this.refresh_token || this.sessionStorage.get<string>(StorageKeys.REFRESH_TOKEN, null);
         this.jwt_token = this.sessionStorage.get<string>(StorageKeys.JWT_TOKEN, null);
         this.jwtSubject = new Subject();
         this.jwtHelper = new JwtHelperService();
@@ -35,11 +36,8 @@ export class AuthService {
         }
     }
 
-    async loginByUsername(username: string, password: string): Promise<void> {
-        const ans = await this.http.post(RESTfulAPI.Auth.login, {
-            userName: username,
-            password: password,
-        }).toPromise() as {token: string};
+    async loginByUsername(loginreq: {userName: string, password: string, captcha: string}): Promise<void> {
+        const ans = await this.http.post(RESTfulAPI.Auth.login, loginreq).toPromise() as {token: string};
 
         this.refresh_token = ans.token;
         if(this.refresh_token == null) {
@@ -84,6 +82,11 @@ export class AuthService {
 
     trigger() {
         this.jwtSubject.next(this.jwt_token && this.jwtToClaim(this.jwt_token));
+    }
+
+    forgetLogin() {
+        this.localstorage.remove(StorageKeys.REFRESH_TOKEN);
+        this.sessionStorage.set<string>(StorageKeys.REFRESH_TOKEN, this.refresh_token);
     }
 
     get jwtToken() {

@@ -12,9 +12,12 @@ import { AuthService } from 'src/app/service/auth';
 })
 export class LoginComponent extends NbLoginComponent implements OnInit {
     user: {
-        username: string;
+        userName: string;
         password: string;
+        captcha: string;
     };
+    enableRememberMe: boolean = true;
+    rememberMe: boolean = true;
 
     constructor(service: NbAuthService, cd: ChangeDetectorRef, router: Router,
                 private authService: AuthService,
@@ -23,6 +26,8 @@ export class LoginComponent extends NbLoginComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        // TODO
+        this.user.captcha = 'hello world';
     }
 
     async login() {
@@ -32,11 +37,15 @@ export class LoginComponent extends NbLoginComponent implements OnInit {
         this.submitted = false;
 
         try {
-            await this.authService.loginByUsername(this.user.username, this.user.password);
+            await this.authService.loginByUsername(this.user);
             await this.toastService.show("登录成功, 跳转到首页", "登录", {status: 'primary'});
             await new Promise(resolve => setTimeout(resolve, 1000));
             this.submitted = true;
             this.router.navigateByUrl('/daoyun/dashboard');
+
+            if(!this.rememberMe) {
+                this.authService.forgetLogin();
+            }
         } catch (e: any) {
             let errorMsg = "未知错误, 服务不可达";
             if(e instanceof HttpErrorResponse) {
