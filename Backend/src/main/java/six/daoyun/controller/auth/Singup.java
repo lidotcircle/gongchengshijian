@@ -14,12 +14,15 @@ import javax.validation.constraints.Pattern;
 import six.daoyun.controller.exception.*;
 import six.daoyun.entity.User;
 import six.daoyun.service.UserService;
+import six.daoyun.service.AuthService;
 import six.daoyun.service.MessageCodeService;
 
 @RestController()
 class Signup {
     @Autowired
     private UserService userService;
+    @Autowired
+    private AuthService authService;
     @Autowired
     private MessageCodeService mcodeService;
     @Autowired
@@ -54,13 +57,22 @@ class Signup {
             this.phone = phone;
         }
 
-        @Pattern(regexp = ".{1,}")
-        private String captcha;
-        public String getCaptcha() {
-            return this.captcha;
+        @NotNull
+        private String messageCodeToken;
+        public String getMessageCodeToken() {
+            return this.messageCodeToken;
         }
-        public void setCaptcha(String captcha) {
-            this.captcha = captcha;
+        public void setMessageCodeToken(String messageCodeToken) {
+            this.messageCodeToken = messageCodeToken;
+        }
+
+        @NotNull
+        private String messageCode;
+        public String getMessageCode() {
+            return this.messageCode;
+        }
+        public void setMessageCode(String messageCode) {
+            this.messageCode = messageCode;
         }
 
         private String role;
@@ -128,28 +140,36 @@ class Signup {
         }
     } //}
 
-    @PostMapping("/apis/auth/signup")
-    private void createUserByPhone(@RequestBody @Valid RegisterByPhone userinfo) {
-        if(!this.mcodeService.captcha(userinfo.getCaptcha())) {
-            throw new HttpForbidden("验证码错误");
+    @PostMapping("/apis/auth/user")
+    private void createUserByPhone(@RequestBody @Valid RegisterByPhone req) {
+        if(!this.mcodeService.validate(req.getMessageCodeToken(), 
+                                       req.getPhone(), 
+                                       req.getMessageCode(), 
+                                       MessageCodeService.MessageCodeType.signup)) {
+            throw new HttpForbidden("验证错误, 注册失败");
+        }
+
+        if(!this.userService.getUser(req.getUserName()).isEmpty()) {
+            throw new HttpForbidden("用户 '" + req.getUserName() + "' 已存在");
         }
 
         User user = new User();
-        user.setUserName(userinfo.getUserName());
-        user.setPassword(this.passwordEncoder.encode(userinfo.getPassword()));
-        user.setPhone(userinfo.getPhone());
-        user.setStudentTeacherId(userinfo.getStudentTeacherId());
-        user.setName(userinfo.getTrueName());
-        user.setMajor(userinfo.getMajor());
-        user.setPhone(userinfo.getPhone()); // TODO
-        user.setGender(userinfo.getGender());
-        user.setSchool(userinfo.getSchool());
-        user.setCollege(userinfo.getCollege());
+        user.setUserName(req.getUserName());
+        user.setPassword(this.passwordEncoder.encode(req.getPassword()));
+        user.setPhone(req.getPhone());
+        user.setStudentTeacherId(req.getStudentTeacherId());
+        user.setName(req.getTrueName());
+        user.setMajor(req.getMajor());
+        user.setPhone(req.getPhone());
+        user.setGender(req.getGender());
+        user.setSchool(req.getSchool());
+        user.setCollege(req.getCollege());
         user.setThirdPartyAccountType("none");
-        if(userinfo.getBirthdate() != null) {
-            user.setBirthday(new java.sql.Date(userinfo.getBirthdate().getTime()));
+        if(req.getBirthdate() != null) {
+            user.setBirthday(new java.sql.Date(req.getBirthdate().getTime()));
         }
-        this.userService.createUser(user);
+        this.mcodeService.removeToken(req.getMessageCodeToken());
+        this.authService.signup(user);
     }
 }
 

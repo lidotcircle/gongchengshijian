@@ -28,8 +28,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private static final ArrayList<String> bypassURIs;
     static {
         bypassURIs = new ArrayList<String>();
-        bypassURIs.add("/apis/auth/signup");
-        bypassURIs.add("/apis/auth/login");
+        bypassURIs.add("/apis/auth/user");
+        bypassURIs.add("/apis/auth/refresh-token");
         bypassURIs.add("/apis/auth/jwt");
     }
 
@@ -83,7 +83,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     return;
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "require JWT");
                 return;
             }
         }

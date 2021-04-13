@@ -14,11 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import six.daoyun.controller.exception.HttpBadRequest;
 import six.daoyun.controller.exception.HttpForbidden;
+import six.daoyun.controller.exception.HttpNotFound;
 import six.daoyun.controller.exception.HttpUnauthorized;
 import six.daoyun.entity.RefreshToken;
 import six.daoyun.entity.User;
+import six.daoyun.service.AuthService;
 import six.daoyun.service.MessageCodeService;
-import six.daoyun.service.RefreshTokenService;
 import six.daoyun.service.UserService;
 
 @RestController()
@@ -28,9 +29,9 @@ class Login {
     @Autowired
     private MessageCodeService mcodeService;
     @Autowired
-    private RefreshTokenService refreshTokenService;
-    @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AuthService authService;
 
     static public class LoginByUsernameRequest //{
     {
@@ -62,6 +63,37 @@ class Login {
         }
     } //}
 
+    static public class LoginByMessage //{
+    {
+        @NotNull
+        @Pattern(regexp = ".{11}", message = "请输入11位手机号")
+        private String phone;
+        public String getPhone() {
+            return this.phone;
+        }
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
+
+        @NotNull
+        private String code;
+        public String getCode() {
+            return this.code;
+        }
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        @NotNull
+        private String messageCodeToken;
+        public String getMessageCodeToken() {
+            return this.messageCodeToken;
+        }
+        public void setMessageCodeToken(String messageCodeToken) {
+            this.messageCodeToken = messageCodeToken;
+        }
+    } //}
+
     static public class LoginResponse //{
     {
         @NotNull(message = "require token")
@@ -74,10 +106,10 @@ class Login {
         }
     } //}
 
-    @PostMapping("/apis/auth/login")
+    @PostMapping("/apis/auth/refresh-token")
     private LoginResponse login(@RequestBody @Valid LoginByUsernameRequest request) {
         if(!this.mcodeService.captcha(request.captcha)) {
-            throw new HttpForbidden("验证码错误");
+            throw new HttpUnauthorized("验证码错误");
         }
 
         User user = this.UserService.getUser(request.getUserName())
@@ -85,7 +117,7 @@ class Login {
         LoginResponse resp = new LoginResponse();
 
         if(this.passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            RefreshToken token = this.refreshTokenService.createRefreshToken(user);
+            RefreshToken token = this.authService.login(user);
             resp.setToken(token.getToken());
         } else {
             throw new HttpUnauthorized("密码错误");
@@ -94,9 +126,25 @@ class Login {
         return resp;
     }
 
-    @DeleteMapping("/apis/auth/login")
+    @PostMapping("/apis/auth/refresh-token/message")
+    private LoginResponse loginByMessage(@RequestBody @Valid LoginByMessage req) {
+        if(!this.mcodeService.validate(req.getMessageCodeToken(), 
+                                       req.getPhone(), 
+                                       req.getCode(), 
+                                       MessageCodeService.MessageCodeType.login)) {
+            throw new HttpUnauthorized();
+        }
+
+        LoginResponse resp = new LoginResponse();
+        User user = this.UserService.getUserByPhone(req.getPhone()).orElseThrow(() -> new HttpNotFound());
+        RefreshToken token = this.authService.login(user);
+        resp.setToken(token.getToken());
+        return resp;
+    }
+
+    @DeleteMapping("/apis/auth/refresh-token")
     private void logout(@RequestParam("refreshToken") String refreshToken) {
-        this.refreshTokenService.deleteRefreshTokenByToken(refreshToken);
+        this.authService.logout(refreshToken);
     }
 }
 

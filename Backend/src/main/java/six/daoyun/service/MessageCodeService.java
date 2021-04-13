@@ -12,6 +12,7 @@ public interface MessageCodeService {
 
     String sendTo(String phone, MessageCodeType type) throws MessageNeedWait;
     boolean validate(String token, String phone, String messageCode, MessageCodeType type);
+    void removeToken(String token);
 
     boolean captcha(String captchaResponse);
 }

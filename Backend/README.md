@@ -42,7 +42,7 @@ API的参数序列化为JSON格式包含在 *body*中.
 ### 认证
 
 **IMPORTAN**: 
-+ *captcha* 暂时未实现, 使用`hello world`
++ *captcha* 暂时未实现, 使用`helloworld`
 + *code* 短信验证码暂时没有实现, 使用`666666`
 
 #### 获取短信
@@ -69,7 +69,7 @@ URI: `/apis/message`
 用于获取 **refresh token**, **refresh token**可以用于获取 **JWT Token**
 
 Method: **POST**  
-URI: `/apis/auth/login`  
+URI: `/apis/auth/refresh-token`  
 参数:
 ```json
 {
@@ -92,7 +92,7 @@ URI: `/apis/auth/login`
 删除对应的**refresh token**
 
 Method: **DELETE**  
-URI: `/apis/auth/login`  
+URI: `/apis/auth/refresh-token`  
 参数:
 ```json
 {
@@ -124,14 +124,15 @@ URI: `/apis/auth/jwt`
 #### 用户注册
 
 Method: **POST**  
-URI:`/apis/auth/signup`  
+URI:`/apis/auth/user`  
 参数:
 ```json
 {
   "userName": "string", 
   "password": "string",
   "phone": "string",
-  "code": "string"
+  "messsageCode": "string",
+  "messsageCodeToken": "string"
 }
 ```
 

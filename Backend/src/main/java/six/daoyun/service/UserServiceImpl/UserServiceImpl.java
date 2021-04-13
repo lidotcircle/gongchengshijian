@@ -98,5 +98,10 @@ public class UserServiceImpl implements UserService {
 
 		return Optional.empty();
     } //}
+
+	@Override
+	public Optional<User> getUserByPhone(String phone) {
+        return Optional.ofNullable(this.userRepository.getUserByPhone(phone));
+	}
 }
 

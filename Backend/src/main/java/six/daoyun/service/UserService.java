@@ -13,6 +13,7 @@ public interface UserService {
     void deleteUser(String username);
 
     Optional<UserInfo> getUserInfo(String username);
+    Optional<User> getUserByPhone(String phone);
 
     Collection<User> getAllUsers();
 }

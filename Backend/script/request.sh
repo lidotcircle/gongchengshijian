@@ -241,6 +241,52 @@ sysparam() {
     esac
 }
 
+# Message #{
+message() {
+    assert "[ $# -ge 1 ]" "message [get]"
+    local command=$1
+    shift 1
+    case $command in
+        "get" )
+            message_get $@
+            ;;
+    esac
+}
+
+message_get() {
+    assert "[ $# -ge 3 ]" "message get phone captcha type"
+    local phone=$1
+    local captcha=$2
+    local type=$3
+    local json='{"phone": "'$phone'", "captcha": "'$captcha'", "type": "'$type'"}'
+    debug JSON $json
+
+    $POST $NOPROXY "${BYPASS_AUTHORIZATION[@]}" \
+        "${APPLICATION_JSON[@]}" \
+        --data "$json" \
+        $DESTINATION/apis/message
+}
+
+#}
+
+# Signup #{
+signup() {
+    assert "[ $# -eq 5 ]" "signup username password phone code token"
+    local username=$1
+    local password=$2
+    local phone=$3
+    local code=$4
+    local token=$5
+    local json='{"userName": "'$username'", "password": "'$password'", "phone": "'$phone'", "messageCode": "'$code'", "messageCodeToken": "'$token'"}'
+    debug JSON $json
+
+    $POST $NOPROXY "${BYPASS_AUTHORIZATION[@]}" \
+        "${APPLICATION_JSON[@]}" \
+        --data "$json" \
+        $DESTINATION/apis/auth/signup
+}
+#}
+
 COMMAND=$1
 shift 1
 
@@ -297,6 +343,14 @@ case $COMMAND in
     "sysparam" )
         info "sysparam $1"
         sysparam $@
+        ;;
+    "message" )
+        info "message ops"
+        message $@
+        ;;
+    "signup" )
+        info "signup $1"
+        signup $@
         ;;
     *)
         usage

@@ -64,7 +64,7 @@ public class User implements Serializable {
     @Column(name = "major", columnDefinition = "VARCHAR(48) NULL")
     private String major;
 
-    @Column(name = "idx_phone", columnDefinition = "VARCHAR(20) NULL")
+    @Column(name = "idx_phone", columnDefinition = "VARCHAR(20) NULL UNIQUE")
     private String phone;
 
     // 第三方账号信息

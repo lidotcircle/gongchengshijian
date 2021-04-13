@@ -9,17 +9,25 @@ import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import six.daoyun.controller.exception.HttpForbidden;
 import six.daoyun.service.MessageCodeService;
+import six.daoyun.service.UserService;
 
+@RestController
 public class MessageCode {
     @Autowired
     private MessageCodeService mcodeService;
+    @Autowired
+    private UserService userService;
 
     private static Map<String, MessageCodeService.MessageCodeType> type2type;
     static {
         type2type = new HashMap<>();
+        type2type.put("signup", MessageCodeService.MessageCodeType.signup);
+        type2type.put("login", MessageCodeService.MessageCodeType.login);
+        type2type.put("reset", MessageCodeService.MessageCodeType.reset);
     }
 
     static class MessageCodeReq //{
@@ -69,7 +77,31 @@ public class MessageCode {
             throw new HttpForbidden("验证码错误");
         }
 
-        return null;
+        MessageCodeService.MessageCodeType type = type2type.get(req.getType());
+        switch(type) {
+            case login:
+            case reset:
+                if(this.userService.getUserByPhone(req.getPhone()).isEmpty()) {
+                    throw new HttpForbidden("手机号未注册");
+                }
+                break;
+            case signup:
+                if(this.userService.getUserByPhone(req.getPhone()).isPresent()) {
+                    throw new HttpForbidden("手机号已注册");
+                }
+                break;
+
+            default: break;
+        }
+
+        try {
+            final String token = this.mcodeService.sendTo(req.phone, type);
+            MessageCodeResp resp = new MessageCodeResp();
+            resp.setCodeToken(token);
+            return resp;
+        } catch (MessageCodeService.MessageNeedWait ex) {
+            throw new HttpForbidden("请求过于频繁");
+        }
     }
 }
 
