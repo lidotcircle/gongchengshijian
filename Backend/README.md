@@ -21,6 +21,7 @@
         * [删除](#删除)
         * [获取全部](#获取全部)
         * [分页获取](#分页获取)
+* [短信服务](#短信服务)
 * [测试](#测试)
 
 <!-- vim-markdown-toc -->
@@ -293,7 +294,19 @@ URI: `/apis/sysparam/page`
 }
 ```
 
-Method: **
+
+## 短信服务
+
+短信服务默认关闭, 所有短信验证码都为`666666`. 
+在[application.yaml](./src/main/resources/application.yaml#L32)将`daoyun.message.enable`设为`true`
+可以开启阿里云的短信服务, 需要对应的配置环境变量
+```bash
+export AliyunAccessKeyId=
+export AliyunAccessKeySecret=
+export AliyunSmsSignName=
+```
+阿里云的短信模板需要有`signup`, `login`, `reset`
+
 
 ## 测试
 

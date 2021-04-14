@@ -3,6 +3,7 @@ package six.daoyun.service.MessageCodeServiceImpl;
 import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
 import java.io.Serializable;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import six.daoyun.service.MessageCodeService;
+import six.daoyun.service.SmsService;
 
 @Service
 public class MessageCodeServiceImpl implements MessageCodeService {
@@ -19,10 +21,14 @@ public class MessageCodeServiceImpl implements MessageCodeService {
     private RedisTemplate<String, Long> prevCache;
     @Autowired
     private RedisTemplate<String, TokenCache> tokenCache;
+    @Autowired
+    private SmsService smsService;
     @Value("${daoyun.message.validMs}")
     private long codeValidDur_ms;
     @Value("${daoyun.message.waitMs}")
     private long codeRequestWait_ms;
+    @Value("${daoyun.message.enable}")
+    private boolean enable;
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MessageCodeServiceImpl.class);
 
     static class TokenCache implements Serializable //{
@@ -54,6 +60,18 @@ public class MessageCodeServiceImpl implements MessageCodeService {
         }
     } //}
 
+    private static String one2nine = "123456789";
+    private String generateDigitString(int n) //{
+    {
+        String ans = "";
+        for(;n>0;n--) {
+            final int idx = (int)Math.floor(Math.random() * 100) % 9;
+            ans += one2nine.charAt(idx);
+        }
+
+        return ans;
+    } //}
+
 	@Override
 	public String sendTo(String phone, MessageCodeType type) throws MessageNeedWait {
         log.info("发送短信到: {}, {}", phone, type);
@@ -69,8 +87,16 @@ public class MessageCodeServiceImpl implements MessageCodeService {
         }
         operation.set(key, now, codeValidDur_ms, TimeUnit.MILLISECONDS);
 
-        // TODO 发送短信
         String code = "666666";
+        if(this.enable) {
+            code = this.generateDigitString(6);
+            try {
+                this.smsService.sendMessageCode(phone, code, type);
+            } catch (Exception ex) {
+                throw new RuntimeException("发送验证码失败");
+            }
+        }
+
         final TokenCache token = new TokenCache();
         token.setType(type);
         token.setCode(code);

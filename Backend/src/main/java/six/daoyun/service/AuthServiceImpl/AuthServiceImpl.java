@@ -1,10 +1,17 @@
 package six.daoyun.service.AuthServiceImpl;
 
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import six.daoyun.controller.exception.HttpNotFound;
+import six.daoyun.controller.exception.HttpUnauthorized;
 import six.daoyun.entity.RefreshToken;
 import six.daoyun.entity.User;
 import six.daoyun.service.AuthService;
@@ -20,6 +27,10 @@ public class AuthServiceImpl implements AuthService {
     private RefreshTokenService refreshTokenService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private RedisTemplate<String, String> resetTokenCache;
+    @Value("${daoyun.reset.validMs}")
+    private long resetTokenValid_ms;
 
 	@Override
 	public RefreshToken login(User user) {
@@ -36,15 +47,37 @@ public class AuthServiceImpl implements AuthService {
         this.userService.createUser(user);
 	}
 
+    private static String keyname(String token) {
+        return "rest_pass_" + token;
+    }
+
 	@Override
-	public void resetPassword(User user, String newpass) {
-        user.setPassword(this.passwordEncoder.encode(newpass));
+	public String requestResetPassword(User user) {
+        UUID ans = UUID.randomUUID();
+        ValueOperations<String, String> operation = this.resetTokenCache.opsForValue();
+        final String key = keyname(ans.toString());
+        operation.set(key, user.getUserName(), this.resetTokenValid_ms, TimeUnit.MILLISECONDS);
+        return key;
 	}
 
 	@Override
-	public void resetPassword(String phone, String newpass) {
+	public String requestResetPassword(String phone) {
         User user = this.userService.getUserByPhone(phone).orElseThrow(() -> new HttpNotFound("手机号未找到"));
-        this.resetPassword(user, newpass);
+        return this.requestResetPassword(user);
+	}
+
+	@Override
+	public void resetPassword(String resetToken, String newpass) {
+        final ValueOperations<String, String> operation = this.resetTokenCache.opsForValue();
+        final String key = keyname(resetToken);
+        final String username = operation.get(key);
+        if(username == null) {
+            throw new HttpUnauthorized("invalid reset token");
+        }
+
+        final User user = this.userService.getUser(username).get();
+        user.setPassword(this.passwordEncoder.encode(newpass));
+        this.userService.updateUser(user);
 	}
 }
 

@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +21,7 @@ public class ResetPass {
     @Autowired
     private AuthService authService;
 
-    static class ResetPassRequest //{
+    static class RequestResetPassReq //{
     {
         @NotNull
         @Pattern(regexp = "\\d{11}", message = "请输入11位手机号码")
@@ -49,9 +50,29 @@ public class ResetPass {
         public void setMessageCodeToken(String messageCodeToken) {
             this.messageCodeToken = messageCodeToken;
         }
+    } //}
+    static class RequestResetPassResp //{
+    {
+        private String resetToken;
+        public String getResetToken() {
+            return this.resetToken;
+        }
+        public void setResetToken(String resetToken) {
+            this.resetToken = resetToken;
+        }
+    } //}
+    static class ResetPassReq //{
+    {
+        @NotNull
+        private String resetToken;
+        public String getResetToken() {
+            return this.resetToken;
+        }
+        public void setResetToken(String resetToken) {
+            this.resetToken = resetToken;
+        }
 
         @NotNull
-        @Pattern(regexp = ".{6,}", message = "密码至少包含6字符")
         private String password;
         public String getPassword() {
             return this.password;
@@ -61,8 +82,8 @@ public class ResetPass {
         }
     } //}
 
-    @PutMapping("/apis/auth/password")
-    private void resetPassword(@RequestBody @Valid ResetPassRequest req) {
+    @PostMapping("/apis/auth/password/reset-token")
+    private RequestResetPassResp requestResetPassword(@RequestBody @Valid RequestResetPassReq req) {
         if(!this.mcodeService.validate(req.getMessageCodeToken(), 
                                        req.getPhone(), 
                                        req.getMessageCode(), 
@@ -70,7 +91,15 @@ public class ResetPass {
             throw new HttpUnauthorized();
         }
 
-        this.authService.resetPassword(req.getPhone(), req.getPassword());
+        final RequestResetPassResp ans = new RequestResetPassResp();
+        ans.setResetToken(this.authService.requestResetPassword(req.getPhone()));
+        return ans;
+    }
+
+    @PutMapping("/apis/auth/password")
+    private void ResetPassword(@RequestBody @Valid ResetPassReq req) {
+
+        this.authService.resetPassword(req.getResetToken(), req.getPassword());
     }
 }
 

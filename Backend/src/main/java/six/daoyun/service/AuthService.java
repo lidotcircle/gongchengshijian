@@ -10,7 +10,9 @@ public interface AuthService {
 
     void signup(User user);
 
-    void resetPassword(User user, String newpass);
-    void resetPassword(String phone, String newpass);
+    String requestResetPassword(User user);
+    String requestResetPassword(String phone);
+
+    void resetPassword(String resetToken, String newpass);
 }
 
