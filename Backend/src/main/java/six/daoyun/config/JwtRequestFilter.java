@@ -31,6 +31,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         bypassURIs.add("/apis/auth/user");
         bypassURIs.add("/apis/auth/refresh-token");
         bypassURIs.add("/apis/auth/jwt");
+        bypassURIs.add("/apis/auth/password");
         bypassURIs.add("/apis/message");
     }
 

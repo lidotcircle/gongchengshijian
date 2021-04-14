@@ -30,7 +30,8 @@ class Signup {
 
     static public class RegisterByPhone //{
     {
-        @Pattern(regexp = "[a-zA-Z]\\w{3,20}", message = "username must begin with a letter and ...")
+        @NotNull
+        @Pattern(regexp = "[a-zA-Z]\\w{2,31}", message = "username must begin with a letter and ...")
         private String userName;
         public String getUserName() {
             return this.userName;
@@ -39,6 +40,7 @@ class Signup {
             this.userName = userName;
         }
 
+        @NotNull
         @Pattern(regexp = "\\w{6,20}", message = "password must contains at least 6 character")
         private String password;
         public String getPassword() {
@@ -49,6 +51,7 @@ class Signup {
         }
 
         @NotNull(message = "invalid phone")
+        @Pattern(regexp = "\\d{11}")
         private String phone;
         public String getPhone() {
             return this.phone;

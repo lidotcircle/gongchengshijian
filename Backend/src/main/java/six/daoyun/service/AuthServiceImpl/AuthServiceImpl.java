@@ -57,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
         ValueOperations<String, String> operation = this.resetTokenCache.opsForValue();
         final String key = keyname(ans.toString());
         operation.set(key, user.getUserName(), this.resetTokenValid_ms, TimeUnit.MILLISECONDS);
-        return key;
+        return ans.toString();
 	}
 
 	@Override

@@ -111,8 +111,15 @@ class Login {
             throw new HttpUnauthorized("验证码错误");
         }
 
-        User user = this.UserService.getUser(request.getUserName())
-                                    .orElseThrow(() -> new HttpBadRequest("用户不存在"));
+        User user;
+
+        if(java.util.regex.Pattern.matches("\\d{11}", request.getUserName())) {
+            user = this.UserService.getUserByPhone(request.getUserName())
+                                   .orElseThrow(() -> new HttpBadRequest("手机号未注册"));
+        } else {
+            user = this.UserService.getUser(request.getUserName())
+                                   .orElseThrow(() -> new HttpBadRequest("用户不存在"));
+        }
         LoginResponse resp = new LoginResponse();
 
         if(this.passwordEncoder.matches(request.getPassword(), user.getPassword())) {
