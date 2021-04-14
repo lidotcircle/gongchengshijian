@@ -2,7 +2,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ViewCell } from 'ng2-smart-table';
-import { ICommonUser } from 'src/app/shared/utils';
 
 @Component({
     template: `
@@ -13,7 +12,7 @@ export class ClickCellComponent implements ViewCell, OnInit {
     constructor(private router: Router, private activatedRouter: ActivatedRoute) {}
 
     @Input() value: string | number;
-    @Input() rowData: ICommonUser;
+    @Input() rowData: any;
 
     ngOnInit() {
     }

@@ -19,5 +19,13 @@ export module API {
         export const updatePrivileged = API_ADDRESS + '/apis/user/privileged';
     }
 
+    export module SysParam {
+        export const getParam = API_ADDRESS + '/apis/sysparam';
+        export const putParam = API_ADDRESS + '/apis/sysparam';
+        export const postParam = API_ADDRESS + '/apis/sysparam';
+        export const deleteParam = API_ADDRESS + '/apis/sysparam';
+        export const getPage = API_ADDRESS + '/apis/sysparam/page';
+    }
+
 }
 

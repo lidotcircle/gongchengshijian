@@ -8,6 +8,7 @@ import { ThemeModule } from '../@theme/theme.module';
 import { DashboardHeaderComponent } from './components/dashboard-header/dashboard-header.component';
 import { ComponentsModule } from './components/components.module';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { InterceptorProviders } from '../core/http';
 
 
 @NgModule({
@@ -35,6 +36,9 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
         NbButtonModule,
         NbCheckboxModule,
         ComponentsModule,
+    ],
+    providers: [
+        ...InterceptorProviders
     ]
 })
 export class SharedModule { }

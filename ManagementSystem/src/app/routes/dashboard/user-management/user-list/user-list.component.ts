@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NbToastrService } from '@nebular/theme';
 import { LocalDataSource } from 'ng2-smart-table';
+import { User } from 'src/app/entity/User';
 import { OptionalCellComponent } from 'src/app/shared/components/optional-cell.component';
-import { ICommonUser } from 'src/app/shared/utils';
 import { ClickCellComponent } from './click-cell.component';
 
 @Component({
@@ -63,12 +63,11 @@ export class UserListComponent implements OnInit {
             },
         },
     };
-    source: ICommonUser[] = [
+    source: User[] = [
         {
             name: 'niki',
-            role: 'admin',
             phoneno: '110',
-        }
+        } as any
     ];
 
     constructor(private toastrService: NbToastrService) { }
@@ -78,16 +77,16 @@ export class UserListComponent implements OnInit {
         this.recordLength = this.source.length;
     }
 
-    private async checkData(row: ICommonUser, toaster: boolean = true): Promise<boolean> //{
+    private async checkData(row: User, toaster: boolean = true): Promise<boolean> //{
         {
             return true;
         } //}
 
 
     async onCreateConfirm(event: {
-        newData: ICommonUser,
+        newData: User,
         source: LocalDataSource,
-        confirm: {resolve: (data: ICommonUser) => void, reject: () => void},
+        confirm: {resolve: (data: User) => void, reject: () => void},
     }) //{
     {
         if(!(await this.checkData(event.newData))) {
@@ -101,10 +100,10 @@ export class UserListComponent implements OnInit {
     } //}
 
     async onEditConfirm(event: {
-        data: ICommonUser,
-        newData: ICommonUser,
+        data: User,
+        newData: User,
         source: LocalDataSource,
-        confirm: {resolve: (data: ICommonUser) => void, reject: () => void},
+        confirm: {resolve: (data: User) => void, reject: () => void},
     }) //{
     {
         if(!(await this.checkData(event.newData))) {
@@ -117,9 +116,9 @@ export class UserListComponent implements OnInit {
     } //}
 
     async onDeleteConfirm(event: {
-        data: ICommonUser, 
+        data: User, 
         source: LocalDataSource,
-        confirm: {resolve: (data: ICommonUser) => void, reject: () => void},
+        confirm: {resolve: (data: User) => void, reject: () => void},
     }) //{
     {
         console.log(await event.source.getAll(), this.source);
