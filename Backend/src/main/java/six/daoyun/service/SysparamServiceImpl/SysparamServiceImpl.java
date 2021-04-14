@@ -22,8 +22,6 @@ public class SysparamServiceImpl implements SysparamService {
     private SysparamRepository repository;
     @Autowired
     private RedisTemplate<String, SystemParameter> cache;
-    @Autowired
-    private RedisTemplate<String, String> kvCache;
 
     private static String keyname(String key) {
         return "systemparam_" + key;
@@ -31,8 +29,8 @@ public class SysparamServiceImpl implements SysparamService {
 
     private void invalidateKey(String paramkey) {
         final String key = keyname(paramkey);
-        if(this.kvCache.hasKey(key)) {
-            this.kvCache.delete(key);
+        if(this.cache.hasKey(key)) {
+            this.cache.delete(key);
         }
     }
 
@@ -42,31 +40,32 @@ public class SysparamServiceImpl implements SysparamService {
 	}
 
 	@Override
-	public Optional<String> get(String paramkey) {
+	public Optional<SystemParameter> get(String paramkey) {
         final String key = keyname(paramkey);
-        ValueOperations<String, String> operation = this.kvCache.opsForValue();
+        ValueOperations<String, SystemParameter> operation = this.cache.opsForValue();
         if(this.cache.hasKey(key)) {
             return Optional.of(operation.get(key));
         }
 
         SystemParameter param = this.repository.findByParameterName(paramkey);
         if(param != null) {
-            operation.set(key, param.getParameterValue());
-            return Optional.of(param.getParameterValue());
+            operation.set(key, param);
+            return Optional.of(param);
         }
 
         return Optional.empty();
 	}
 
 	@Override
-	public void update(String key, String value) {
-        SystemParameter param = this.repository.findByParameterName(key);
+	public void update(SystemParameter sysparam) {
+        SystemParameter param = this.repository.findByParameterName(sysparam.getParameterName());
         if(param == null) {
-            throw new HttpNotFound(key + " doesn't exist");
+            throw new HttpNotFound(sysparam.getParameterName() + " doesn't exist");
         } else {
-            param.setParameterValue(value);
+            param.setParameterValue(sysparam.getParameterValue());
+            param.setRemark(sysparam.getRemark());
             this.repository.save(param);
-            this.invalidateKey(key);
+            this.invalidateKey(sysparam.getParameterName());
         }
 	}
 
@@ -82,9 +81,19 @@ public class SysparamServiceImpl implements SysparamService {
 	}
 
 	@Override
-	public Page<SystemParameter> getAll(Integer pageno, Integer size) {
-        Pageable page = PageRequest.of(pageno, size, Sort.by("parameterName"));
-        return this.repository.findAll(page);
+	public Page<SystemParameter> getAll(Integer pageno, Integer size, String sortKey, boolean desc, String filter) {
+        Sort sort = Sort.by(sortKey);
+        if(desc) {
+            sort = sort.descending();
+        } else {
+            sort = sort.ascending();
+        }
+        Pageable page = PageRequest.of(pageno, size, sort);
+        if(filter != null && filter.length() > 0) {
+            return this.repository.findAll(filter, page);
+        } else {
+            return this.repository.findAll(page);
+        }
 	}
 }
 

@@ -8,11 +8,11 @@ import six.daoyun.entity.SystemParameter;
 
 public interface SysparamService {
     void create(SystemParameter sysparam);
-    Optional<String> get(String key);
-    void update(String key, String value);
+    Optional<SystemParameter> get(String key);
+    void update(SystemParameter sysparam);
     void delete(String key);
 
     Iterable<SystemParameter> getAll();
-    Page<SystemParameter> getAll(Integer start, Integer length);
+    Page<SystemParameter> getAll(Integer start, Integer length, String sortKey, boolean desc, String filter);
 }
 

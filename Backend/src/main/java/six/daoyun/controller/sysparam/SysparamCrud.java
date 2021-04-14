@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import six.daoyun.controller.exception.HttpNotFound;
@@ -24,7 +25,9 @@ import six.daoyun.service.SysparamService;
 @RestController
 class SysparamCrud {
 
-    static class Req {
+    static class Req //{
+    {
+        @NotNull
         @Pattern(regexp = "\\w{2,48}", message = "")
         private String key;
         public String getKey() {
@@ -34,6 +37,7 @@ class SysparamCrud {
             this.key = key;
         }
 
+        @NotNull
         private String value;
         public String getValue() {
             return this.value;
@@ -41,9 +45,18 @@ class SysparamCrud {
         public void setValue(String value) {
             this.value = value;
         }
-    }
 
-    static class PageReq {
+        private String remark;
+        public String getRemark() {
+            return this.remark;
+        }
+        public void setRemark(String remark) {
+            this.remark = remark;
+        }
+    } //}
+
+    static class PageReq //{
+    {
         @NotNull
         @Min(0)
         private Integer pageno;
@@ -62,9 +75,10 @@ class SysparamCrud {
         public void setSize(Integer size) {
             this.size = size;
         }
-    }
+    } //}
 
-    static class PageResp {
+    static class PageResp //{
+    {
         private long total;
         public long getTotal() {
             return this.total;
@@ -80,7 +94,7 @@ class SysparamCrud {
         public void setPairs(Iterable<Req> pairs) {
             this.pairs = pairs;
         }
-    }
+    } //}
 
     @Autowired
     private SysparamService sysparamService;
@@ -90,25 +104,32 @@ class SysparamCrud {
         SystemParameter param = new SystemParameter();
         param.setParameterName(request.key);
         param.setParameterValue(request.value);
+        param.setRemark(request.remark);
 
         this.sysparamService.create(param);
     }
 
     @GetMapping("/apis/sysparam")
-    private Req getValue(@RequestBody @Valid Req request) {
+    private Req getValue(@RequestParam("key") String key) {
         final Req resp = new Req();
-        resp.value = this.sysparamService.get(request.key).orElseThrow(() -> new HttpNotFound());
+        final SystemParameter sp = this.sysparamService.get(key).orElseThrow(() -> new HttpNotFound());
+        resp.value = sp.getParameterValue();
+        resp.remark = sp.getRemark();
         return resp;
     }
 
     @PutMapping("/apis/sysparam")
     private void update(@RequestBody @Valid Req request) {
-        this.sysparamService.update(request.key, request.value);
+        final SystemParameter sysparam = new SystemParameter();
+        sysparam.setParameterName(request.getKey());
+        sysparam.setParameterValue(request.getValue());
+        sysparam.setRemark(request.getRemark());
+        this.sysparamService.update(sysparam);
     }
 
     @DeleteMapping("/apis/sysparam")
-    private void delete(@RequestBody @Valid Req request) {
-        this.sysparamService.delete(request.key);
+    private void delete(@RequestParam("key") String key) {
+        this.sysparamService.delete(key);
     }
 
     @GetMapping("/apis/sysparam/all-key")
@@ -124,13 +145,25 @@ class SysparamCrud {
     }
 
     @GetMapping("/apis/sysparam/page")
-    private PageResp getPage(@RequestBody @Valid PageReq req) {
+    private PageResp getPage(@RequestParam("pageno") int pageno, 
+                             @RequestParam("size") int size, 
+                             @RequestParam(name = "sortDir", defaultValue = "parameterName") String sortDir,
+                             @RequestParam(name = "sort", defaultValue = "ASC") String sortKey,
+                             @RequestParam(name = "filter", required = false) String filter) {
         final Collection<Req> ans = new ArrayList<>();
-        Page<SystemParameter> page = this.sysparamService.getAll(req.pageno, req.size);
+        String sortKeyM = "parameterName";
+        if(sortKey.equals("value")) {
+            sortKeyM = "parameterValue";
+        } else if (sortKey.equals("remark")) {
+            sortKeyM = "remark";
+        }
+
+        Page<SystemParameter> page = this.sysparamService.getAll(pageno - 1, size, sortKeyM, "desc".equalsIgnoreCase(sortDir), filter);
         page.forEach(v -> {
             Req res = new Req();
             res.key = v.getParameterName();
             res.value = v.getParameterValue();
+            res.remark = v.getRemark();
             ans.add(res);
         });
         final PageResp resp = new PageResp();

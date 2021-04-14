@@ -51,5 +51,14 @@ public class SystemParameter implements Serializable {
     public void setParameterValue(String parameterValue) {
         this.parameterValue = parameterValue;
     }
+
+    @Column
+    private String remark;
+    public String getRemark() {
+        return this.remark;
+    }
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 }
 

@@ -210,7 +210,8 @@ URI:`/apis/sysparam'`
 ```json
 {
   "key": "string",
-  "value": "string"
+  "value": "string",
+  "remark": "string"
 }
 ```
 
@@ -228,7 +229,9 @@ URI:`/apis/sysparam`
 返回值:
 ```json
 {
-  "value": "string"
+  "key": "string",
+  "value": "string",
+  "remark": "string"
 }
 ```
 
@@ -241,7 +244,8 @@ URI:`/apis/sysparam`
 ```json
 {
   "key": "string",
-  "value": "string"
+  "value": "string",
+  "remark": "string"
 }
 ```
 
@@ -265,7 +269,8 @@ URI: `/apis/sysparam/all-key`
 [
   {
     "key": "string",
-    "value": "string"
+    "value": "string",
+    "remark": "string"
   }
 ]
 ```
@@ -288,7 +293,8 @@ URI: `/apis/sysparam/page`
   "pairs": [
     {
       "key": "string",
-      "value": "string"
+      "value": "string",
+      "remark": "string"
     }
   ]
 }
