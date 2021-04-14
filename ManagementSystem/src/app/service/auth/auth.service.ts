@@ -36,16 +36,26 @@ export class AuthService {
         }
     }
 
-    async loginByUsername(loginreq: {userName: string, password: string, captcha: string}): Promise<void> {
-        const ans = await this.http.post(RESTfulAPI.Auth.login, loginreq).toPromise() as {token: string};
-
-        this.refresh_token = ans.token;
+    private async handleLoginResp(refreshToken: string): Promise<void> {
+        this.refresh_token = refreshToken;
         if(this.refresh_token == null) {
             throw new Error('recieve bad response');
         } else {
             this.localstorage.set<string>(StorageKeys.REFRESH_TOKEN, this.refresh_token);
             await this.refreshJWT();
         }
+    }
+
+    async loginByUsername(loginreq: {userName: string, password: string, captcha: string}): Promise<void> {
+        const ans = await this.http.post(RESTfulAPI.Auth.login, loginreq).toPromise() as {token: string};
+
+        await this.handleLoginResp(ans.token);
+    }
+
+    async loginByMessage(loginreq: {phone: string, messageCode: string, messageCodeToken: string}): Promise<void> {
+        const ans = await this.http.post(RESTfulAPI.Auth.loginByMessage, loginreq).toPromise() as {token: string};
+
+        await this.handleLoginResp(ans.token);
     }
 
     async logout() {

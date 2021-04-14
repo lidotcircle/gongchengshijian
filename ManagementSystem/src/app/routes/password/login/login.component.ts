@@ -27,7 +27,7 @@ export class LoginComponent extends NbLoginComponent implements OnInit {
 
     ngOnInit(): void {
         // TODO
-        this.user.captcha = 'hello world';
+        this.user.captcha = 'helloworld';
     }
 
     async login() {
