@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import java.io.Serializable;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,10 @@ public class MessageCodeServiceImpl implements MessageCodeService {
     private RedisTemplate<String, Long> prevCache;
     @Autowired
     private RedisTemplate<String, TokenCache> tokenCache;
-    private static long codeValidDur_ms = 5 * 1000 * 60;
-    private static long codeRequestWait_ms = 1 * 1000 * 60;
+    @Value("${daoyun.message.validMs}")
+    private long codeValidDur_ms;
+    @Value("${daoyun.message.waitMs}")
+    private long codeRequestWait_ms;
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MessageCodeServiceImpl.class);
 
     static class TokenCache implements Serializable //{
@@ -75,9 +78,7 @@ public class MessageCodeServiceImpl implements MessageCodeService {
         UUID ans = UUID.randomUUID();
 
         ValueOperations<String, TokenCache> top = this.tokenCache.opsForValue();
-        log.info("1发送短信到: {}, {}", phone, type);
         top.set(ans.toString(), token, codeValidDur_ms, TimeUnit.MILLISECONDS);
-        log.info("2发送短信到: {}, {}", phone, type);
 
         return ans.toString();
 	}

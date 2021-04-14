@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import six.daoyun.controller.exception.HttpBadRequest;
-import six.daoyun.controller.exception.HttpForbidden;
 import six.daoyun.controller.exception.HttpNotFound;
 import six.daoyun.controller.exception.HttpUnauthorized;
 import six.daoyun.entity.RefreshToken;
@@ -76,12 +75,12 @@ class Login {
         }
 
         @NotNull
-        private String code;
-        public String getCode() {
-            return this.code;
+        private String messageCode;
+        public String getMessageCode() {
+            return this.messageCode;
         }
-        public void setCode(String code) {
-            this.code = code;
+        public void setMessageCode(String messageCode) {
+            this.messageCode = messageCode;
         }
 
         @NotNull
@@ -130,7 +129,7 @@ class Login {
     private LoginResponse loginByMessage(@RequestBody @Valid LoginByMessage req) {
         if(!this.mcodeService.validate(req.getMessageCodeToken(), 
                                        req.getPhone(), 
-                                       req.getCode(), 
+                                       req.getMessageCode(), 
                                        MessageCodeService.MessageCodeType.login)) {
             throw new HttpUnauthorized();
         }

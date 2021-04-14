@@ -82,7 +82,9 @@ public class UserServiceImpl implements UserService {
                 final User user = this.getUser(username).get();
                 ObjUitl.assignFields(userinfo, user);
 
-                userinfo.setBirthday(user.getBirthday().getTime());
+                if(user.getBirthday() != null) {
+                    userinfo.setBirthday(user.getBirthday().getTime());
+                }
                 if(user.getProfilePhoto() != null && user.getProfilePhoto().length > 0) {
                     userinfo.setPhoto(new String(user.getProfilePhoto()));
                 }

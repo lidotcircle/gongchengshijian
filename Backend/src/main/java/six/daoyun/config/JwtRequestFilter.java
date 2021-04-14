@@ -31,6 +31,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         bypassURIs.add("/apis/auth/user");
         bypassURIs.add("/apis/auth/refresh-token");
         bypassURIs.add("/apis/auth/jwt");
+        bypassURIs.add("/apis/message");
     }
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JwtRequestFilter.class);
@@ -83,6 +84,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     return;
                 }
             } else {
+                response.setHeader("X-REASON", "REQUIRE JWT");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "require JWT");
                 return;
             }

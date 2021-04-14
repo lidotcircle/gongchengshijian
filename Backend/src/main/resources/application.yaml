@@ -32,4 +32,7 @@ daoyun:
   supersuper:
     enable: true
     name: daoyun
+  message:
+    waitMs: 3000
+    validMs: 300000
 

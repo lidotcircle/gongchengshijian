@@ -31,11 +31,14 @@ public class UserRud {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UserRud.class);
+
     @GetMapping("/apis/user")
     @ResponseBody
     public UserInfo getUserinfo(HttpServletRequest httpreq) //{
     {
         final String username = (String) httpreq.getAttribute("username");
+        log.info("/apis/user get userinfo {}", username);
         return this.userService.getUserInfo(username).get();
     } //}
 
