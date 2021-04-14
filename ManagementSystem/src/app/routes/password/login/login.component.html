@@ -16,7 +16,7 @@
 <form (ngSubmit)="login()" #form="ngForm" aria-labelledby="title">
 
     <div class="form-control-group">
-        <label class="label" for="input-username">用户名:</label>
+        <label class="label" for="input-username">用户名/手机号:</label>
         <input nbInput
                fullWidth
                [(ngModel)]="user.userName"
@@ -24,7 +24,7 @@
                name="userName"
                id="input-userName"
                pattern=".{2,}"
-               placeholder="用户名"
+               placeholder="用户名/手机号"
                fieldSize="large"
                autofocus
                [status]="userName.dirty ? (userName.invalid  ? 'danger' : 'success') : 'basic'"

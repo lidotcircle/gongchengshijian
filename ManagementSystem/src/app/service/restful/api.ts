@@ -7,8 +7,10 @@ export module API {
         export const loginByMessage = API_ADDRESS + '/apis/auth/refresh-token/message';
         export const jwt   = API_ADDRESS + '/apis/auth/jwt';
         export const signup = API_ADDRESS + '/apis/auth/user';
-        export const reset = API_ADDRESS + '/apis/auth/password';
         export const message = API_ADDRESS + '/apis/message';
+
+        export const requestReset = API_ADDRESS + '/apis/auth/password/reset-token';
+        export const reset = API_ADDRESS + '/apis/auth/password';
     }
 
     export module User {

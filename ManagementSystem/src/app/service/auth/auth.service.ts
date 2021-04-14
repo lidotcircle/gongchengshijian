@@ -74,6 +74,19 @@ export class AuthService {
         }
     }
 
+    async requestReset(req: {phone: string; messageCode: string; messageCodeToken: string}): Promise<String> {
+        return (await this.http.post(RESTfulAPI.Auth.requestReset, 
+                                     req).toPromise() as {resetToken: string}).resetToken;
+    }
+
+    async reset(req: {resetToken: string, password: string}) {
+        await this.http.put(RESTfulAPI.Auth.reset, req).toPromise();
+    }
+
+    async signup(req: {phone: string; userName: string; password: string; messageCode: string; messageCodeToken: string}) {
+        await this.http.post(RESTfulAPI.Auth.signup, req).toPromise();
+    }
+
     async refreshJWT() {
         const ans = await this.http.get(RESTfulAPI.Auth.jwt, {
             params: {
