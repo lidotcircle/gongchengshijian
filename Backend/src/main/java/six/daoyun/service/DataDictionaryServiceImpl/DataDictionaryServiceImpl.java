@@ -75,9 +75,9 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
 	}
 
 	@Override
-	public void deleteDictionaryData(DictionaryType dictType, String keyword) {
+    public void deleteDictionaryData(DictionaryType dictType, String keyword) {
         this.dataRepository.deleteByDictionaryTypeAndKeyword(dictType, keyword);
-	}
+    }
 
 	@Override
 	public Optional<DictionaryData> getDictionaryData(DictionaryType type, String keyword) {

@@ -36,7 +36,7 @@ public class DictionaryType implements Serializable {
         return this.modifiedDate;
     }
 
-    @Column(name = "uk_dict_type_name", unique = true)
+    @Column(name = "uk_dict_type_name", unique = true, nullable = false)
     private String typeName;
     public String getTypeName() {
         return this.typeName;
@@ -45,7 +45,7 @@ public class DictionaryType implements Serializable {
         this.typeName = typeName;
     }
 
-    @Column(name = "type_code", unique = true)
+    @Column(name = "type_code", unique = true, nullable = false)
     private String typeCode;
     public String getTypeCode() {
         return this.typeCode;

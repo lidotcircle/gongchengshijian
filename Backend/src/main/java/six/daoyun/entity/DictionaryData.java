@@ -44,7 +44,7 @@ public class DictionaryData implements Serializable {
         this.dictionaryType = dictionaryType;
     }
 
-    @Column(name = "keyword")
+    @Column(name = "keyword", nullable = false)
     private String keyword;
     public String getKeyword() {
         return this.keyword;
@@ -53,7 +53,7 @@ public class DictionaryData implements Serializable {
         this.keyword = keyword;
     }
 
-    @Column(name = "data_value")
+    @Column(name = "data_value", nullable = false)
     private String value;
     public String getValue() {
         return this.value;

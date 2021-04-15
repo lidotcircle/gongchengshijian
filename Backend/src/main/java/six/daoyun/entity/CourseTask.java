@@ -45,7 +45,7 @@ public class CourseTask implements Serializable {
         this.content = content;
     }
 
-    @OneToMany()
+    @OneToMany(mappedBy = "courseTask")
     private Collection<CommitTask> commitTasks;
     public Collection<CommitTask> getCommitTasks() {
         return this.commitTasks;

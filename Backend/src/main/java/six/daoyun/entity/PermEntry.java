@@ -64,7 +64,7 @@ public class PermEntry implements Serializable {
         this.parent = parent;
     }
 
-    @OneToMany()
+    @OneToMany(mappedBy = "parent")
     private Collection<PermEntry> children;
     public Collection<PermEntry> getChildren() {
         return children;
