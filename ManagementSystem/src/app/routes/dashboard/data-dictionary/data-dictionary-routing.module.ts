@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AddDictionaryComponent } from './add-dictionary/add-dictionary.component';
 import { DictionaryInfoComponent } from './dictionary-info/dictionary-info.component';
 import { DictionaryListComponent } from './dictionary-list/dictionary-list.component';
 
@@ -14,9 +13,10 @@ const routes: Routes = [
         component: DictionaryInfoComponent,
     },
     {
-        path: 'add-dict',
-        component: AddDictionaryComponent,
-    },
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'dict-list',
+    }
 ];
 
 @NgModule({

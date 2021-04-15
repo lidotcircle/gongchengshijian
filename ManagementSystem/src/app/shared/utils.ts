@@ -1,6 +1,4 @@
 
-export * from './utils/types';
-
 export function assert(expr: boolean, msg?: string) {
     if(!expr) {
         if(msg) {

@@ -81,7 +81,7 @@ export class ParameterListComponent implements OnInit {
             pagerLimitKey: 'size',
             sortFieldKey: 'sort',
             sortDirKey: 'sortDir',
-            filterFieldKey: 'filter',
+            filterFieldKey: '#field#',
             dataKey: 'pairs',
             totalKey: 'total',
         });
@@ -115,7 +115,7 @@ export class ParameterListComponent implements OnInit {
 
     onsearchenter(search: string) {
         this.source.addFilter({
-            field: 'filter',
+            field: 'searchWildcard',
             search: search.trim()
         });
         this.source.refresh();

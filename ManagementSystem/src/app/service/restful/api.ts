@@ -27,5 +27,19 @@ export module API {
         export const getPage = API_ADDRESS + '/apis/sysparam/page';
     }
 
+    export module DataDictionary {
+        export const getType = API_ADDRESS + '/apis/datadict/type';
+        export const putType = API_ADDRESS + '/apis/datadict/type';
+        export const postType = API_ADDRESS + '/apis/datadict/type';
+        export const deleteType = API_ADDRESS + '/apis/datadict/type';
+        export const getTypePage = API_ADDRESS + '/apis/datadict/type/page';
+
+        export const getData = API_ADDRESS + '/apis/datadict/data';
+        export const putData = API_ADDRESS + '/apis/datadict/data';
+        export const postData = API_ADDRESS + '/apis/datadict/data';
+        export const deleteData = API_ADDRESS + '/apis/datadict/data';
+        export const getDataPage = API_ADDRESS + '/apis/datadict/data/page';
+    }
+
 }
 

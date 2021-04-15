@@ -11,7 +11,7 @@
 </nb-card>
 
 <nb-card>
-    <nb-card-body [class]='!source.count ? "record-length-equal-zero" : ""'>
+    <nb-card-body [class]='!source.count() ? "record-length-equal-zero" : ""'>
         <ng2-smart-table [settings]="settings" [source]="source"
             (createConfirm)="onCreateConfirm($event)"
             (editConfirm)="onEditConfirm($event)"

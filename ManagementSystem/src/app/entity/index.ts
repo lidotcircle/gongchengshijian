@@ -9,3 +9,6 @@ export { PermMenu, ListToTree as PermMenuListToTree } from './Menu';
 export { Course } from './Course';
 export { SystemParameter } from './System-Parameter';
 
+export { DictionaryData } from './DictionaryData';
+export { DictionaryType } from './DictionaryType';
+

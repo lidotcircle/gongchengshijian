@@ -1,8 +1,17 @@
 
 <ngx-dashboard-header title='数据字典'></ngx-dashboard-header>
 
+<nb-card accent='primary'>
+  <nb-card-header>
+    数据字典类型数量: {{ source.count() }}
+  </nb-card-header>
+  <nb-card-body>
+    <app-search-bar (searchinput)='onsearchinput($event)' (searchenter)='onsearchenter($event)'></app-search-bar>
+  </nb-card-body>
+</nb-card>
+
 <nb-card>
-    <nb-card-body [class]='recordLength == 0 ? "record-length-eqaul-zero" : ""'>
+    <nb-card-body [class]='source.count() == 0 ? "record-length-equal-zero" : ""'>
         <ng2-smart-table [settings]="settings" [source]="source"
             (createConfirm)="onCreateConfirm($event)"
             (editConfirm)="onEditConfirm($event)"

@@ -1,7 +1,11 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NbToastrService } from '@nebular/theme';
-import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
-import { IDataDictionary } from 'src/app/shared/utils';
+import { Ng2SmartTableComponent, ServerDataSource } from 'ng2-smart-table';
+import { DictionaryType } from 'src/app/entity';
+import { DataDictionaryService } from 'src/app/service/datadict/data-dictionary.service';
+import { RESTfulAPI } from 'src/app/service/restful';
+import { Pattern } from 'src/app/shared/utils';
 import { ClickCellComponent } from './click-cell.component';
 
 @Component({
@@ -11,6 +15,8 @@ import { ClickCellComponent } from './click-cell.component';
     encapsulation: ViewEncapsulation.None,
 })
 export class DictionaryListComponent implements OnInit {
+
+    // settings //{
     settings = {
         actions: {
             columnTitle: '操作',
@@ -42,39 +48,63 @@ export class DictionaryListComponent implements OnInit {
                 title: '数据',
                 width: '4em',
                 editable: false,
+                filter: false,
                 type: 'custom',
                 renderComponent: ClickCellComponent,
             },
-            name: {
-                title: '名称',
-                type: 'text',
-            },
-            code: {
+            typeCode: {
                 title: '编码',
                 type: 'text',
+                filter: false,
+                editable: false,
+            },
+            typeName: {
+                title: '名称',
+                type: 'text',
+                filter: false,
             },
             remark: {
                 title: '备注',
                 type: 'text',
+                filter: false,
                 editor: {
                     type: 'textarea'
                 },
             },
         },
-    };
-    source: IDataDictionary[] = [
-        {name: '水果', code: 'fruit', remark: '水果可以吃'},
-    ];
+    }; //}
 
-    constructor(private toastrService: NbToastrService) { }
+    source: ServerDataSource;
 
-    recordLength: number;
-    ngOnInit(): void {
-        this.recordLength = this.source.length;
+    constructor(private toastrService: NbToastrService,
+                private http: HttpClient,
+                private datadictService: DataDictionaryService) {
     }
 
-    private static nameRegex = /.{2,10}/;
-    private static codeRegex = /[A-Za-z][A-Za-z0-9_\-@]{1,9}/;
+    ngOnInit(): void {
+        this.source = new ServerDataSource(this.http, {
+            endPoint: RESTfulAPI.DataDictionary.getTypePage,
+            pagerPageKey: 'pageno',
+            pagerLimitKey: 'size',
+            sortFieldKey: 'sort',
+            sortDirKey: 'sortDir',
+            filterFieldKey: '#field#',
+            dataKey: 'pairs',
+            totalKey: 'total',
+        });
+
+        (this.source as any).find = function (element: DictionaryType): Promise<any> {
+            const found = (this.data as DictionaryType[]).find(elem => elem.typeCode == element.typeCode);
+            if(found) {
+                return Promise.resolve(found);
+            } else {
+                return Promise.reject("NOT FOUND");
+            }
+        }
+    }
+
+    private static nameRegex = /^([a-zA-Z]|\p{Unified_Ideograph})(\w|\p{Unified_Ideograph}){1,7}$/u;
+    private static codeRegex = /^[a-zA-Z]\w{1,9}$/;
     private async checkData(name: string, code: string, toaster: boolean = true): Promise<boolean> //{
     {
         const nameTestFail = name == null || !DictionaryListComponent.nameRegex.test(name);
@@ -82,60 +112,103 @@ export class DictionaryListComponent implements OnInit {
 
         if(toaster && (nameTestFail || codeTestFail)) {
             let message = (nameTestFail ? 
-                '数据字典类型中的名称字段的字符长度在2~10之间' : 
-                '字典数据类型中的编码字段需由2~10长度的字母 数字 "_", "-", "@"组成');
-            this.toastrService.show(message, '数据字典类型', {
-                duration: 2000,
-                destroyByClick: true,
-                status: 'warning'
-            });
+                '名称字段的长度为2~8的中文 字母 数字 下划线组合, 首字符为中文或字母' : 
+                '编码字段需由2~10长度的字母 数字 下划线组成, 首字符为字母');
+            this.toastrService.warning(message, '数据字典', );
         }
 
         return !nameTestFail && !codeTestFail;
     } //}
 
 
+    onsearchinput(pair: [string, (hints: string[]) => void]) {
+        const input = pair[0];
+        const hook = pair[1];
+
+        const data: DictionaryType[] = (this.source as any).data;
+        let ans = [];
+        if(data && input.trim().length > 0) {
+            data.forEach((value) => {
+                if(value.typeName.match(input)) {
+                    ans.push(value.typeName);
+                }
+            })
+        }
+
+        hook(ans);
+    }
+
+    onsearchenter(search: string) {
+        this.source.addFilter({
+            field: 'searchWildcard',
+            search: search.trim()
+        });
+        this.source.refresh();
+    }
+
     async onCreateConfirm(event: {
-        newData: IDataDictionary, 
-        source: LocalDataSource,
-        confirm: {resolve: (data: IDataDictionary) => void, reject: () => void},
+        newData: DictionaryType, 
+        source: ServerDataSource,
+        confirm: {resolve: (data: DictionaryType) => void, reject: () => void},
     }) //{
     {
-        if(!(await this.checkData(event.newData.name, event.newData.code))) {
+        if(!(await this.checkData(event.newData.typeName, event.newData.typeCode))) {
             event.confirm.reject();
             return;
         }
 
-        console.log(await event.source.getAll());
-        this.recordLength++;
+        try {
+            await this.datadictService.postType(event.newData);
+            this.toastrService.success(`新建'${event.newData.typeName}'`, "数据字典");
+        } catch {
+            this.toastrService.danger(`创建数据字典'${event.newData.typeName}'失败`, "数据字典");
+            return event.confirm.reject();
+        }
+
         event.confirm.resolve(event.newData);
+        this.source.refresh();
     } //}
 
     async onEditConfirm(event: {
-        data: IDataDictionary,
-        newData: IDataDictionary,
-        source: LocalDataSource,
-        confirm: {resolve: (data: IDataDictionary) => void, reject: () => void},
+        data: DictionaryType,
+        newData: DictionaryType,
+        source: ServerDataSource,
+        confirm: {resolve: (data: DictionaryType) => void, reject: () => void},
     }) //{
     {
-        if(!(await this.checkData(event.newData.name, event.newData.code))) {
+        if(!(await this.checkData(event.newData.typeName, event.newData.typeCode))) {
             event.confirm.reject();
             return;
         }
 
-        console.log(await event.source.getAll());
+        try {
+            await this.datadictService.putType(event.newData);
+            this.toastrService.success(`修改'${event.data.typeName}'`, "数据字典");
+        } catch {
+            this.toastrService.danger(`编辑数据字典'${event.newData.typeName}'失败`, "数据字典");
+            return event.confirm.reject();
+        }
+
         event.confirm.resolve(event.newData);
+        this.source.refresh();
     } //}
 
     async onDeleteConfirm(event: {
-        data: IDataDictionary, 
-        source: LocalDataSource,
-        confirm: {resolve: (data: IDataDictionary) => void, reject: () => void},
+        data: DictionaryType, 
+        source: ServerDataSource,
+        confirm: {resolve: (data: DictionaryType) => void, reject: () => void},
     }) //{
     {
-        console.log(await event.source.getAll(), this.source);
-        this.recordLength--;
+        try {
+            await this.datadictService.deleteType(event.data.typeCode);
+            this.toastrService.success(`删除'${event.data.typeName}'`, "数据字典");
+        } catch {
+            this.toastrService.danger(`删除数据字典'${event.data.typeName}'失败`, "数据字典");
+            return event.confirm.reject();
+        }
+
         event.confirm.resolve(event.data);
+        this.source.refresh();
     } //}
 }
 
