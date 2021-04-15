@@ -53,7 +53,7 @@ public class DictionaryData implements Serializable {
         this.keyword = keyword;
     }
 
-    @Column(name = "value")
+    @Column(name = "data_value")
     private String value;
     public String getValue() {
         return this.value;
@@ -71,7 +71,7 @@ public class DictionaryData implements Serializable {
         this.isDefault = isDefault;
     }
 
-    @Column(name = "order")
+    @Column(name = "data_order")
     private int order;
     public int getOrder() {
         return this.order;
