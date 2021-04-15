@@ -103,8 +103,8 @@ export class DictionaryListComponent implements OnInit {
         }
     }
 
-    private static nameRegex = /^([a-zA-Z]|\p{Unified_Ideograph})(\w|\p{Unified_Ideograph}){1,7}$/u;
-    private static codeRegex = /^[a-zA-Z]\w{1,9}$/;
+    private static nameRegex = Pattern.Regex.uname;
+    private static codeRegex = Pattern.Regex.aname;
     private async checkData(name: string, code: string, toaster: boolean = true): Promise<boolean> //{
     {
         const nameTestFail = name == null || !DictionaryListComponent.nameRegex.test(name);
@@ -112,8 +112,8 @@ export class DictionaryListComponent implements OnInit {
 
         if(toaster && (nameTestFail || codeTestFail)) {
             let message = (nameTestFail ? 
-                '名称字段的长度为2~8的中文 字母 数字 下划线组合, 首字符为中文或字母' : 
-                '编码字段需由2~10长度的字母 数字 下划线组成, 首字符为字母');
+                `名称字段: ${DictionaryListComponent.nameRegex[Pattern.HintSym]}` : 
+                `编码字段: ${DictionaryListComponent.codeRegex[Pattern.HintSym]}`);
             this.toastrService.warning(message, '数据字典', );
         }
 

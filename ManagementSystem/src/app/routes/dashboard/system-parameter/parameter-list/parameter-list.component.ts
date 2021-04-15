@@ -121,14 +121,14 @@ export class ParameterListComponent implements OnInit {
         this.source.refresh();
     }
 
-    private keyRegex= new RegExp(Pattern.username.toString());
+    private keyRegex = Pattern.Regex.aname;
     private async checkData(row: SystemParameter, toastr: boolean = true): Promise<boolean> //{
     {
         if(this.keyRegex.test(row.key)) {
             return true;
         } else {
             if(toastr) {
-                this.toastrService.warning("非法系统参数键", "系统参数");
+                this.toastrService.warning(`非法名称字段: ${this.keyRegex[Pattern.HintSym]}`, "系统参数");
             }
             return false;
         }

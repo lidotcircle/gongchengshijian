@@ -47,5 +47,12 @@ export module Pattern {
 
     export const phone: String = new String(`^\\d{11}$`);
     phone[HintSym] = '请输入合法的11位手机号';
+
+    export module Regex {
+        export const uname = /^([a-zA-Z]|\p{Unified_Ideograph})(\w|\p{Unified_Ideograph}){1,7}$/u;
+        uname[HintSym] = '长度为2~8的中文 字母 数字 下划线组合, 首字符为中文或字母';
+        export const aname = /^[a-zA-Z]\w{1,9}$/;
+        aname[HintSym] = '长度为2~10的字母 数字 下划线组合, 首字符为中文或字母';
+    }
 }
 

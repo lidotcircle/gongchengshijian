@@ -6,6 +6,7 @@ import { ServerDataSource } from 'ng2-smart-table';
 import { DictionaryData, DictionaryType } from 'src/app/entity';
 import { DataDictionaryService } from 'src/app/service/datadict/data-dictionary.service';
 import { RESTfulAPI } from 'src/app/service/restful';
+import { Pattern } from 'src/app/shared/utils';
 
 @Component({
     selector: 'ngx-dictionary-info',
@@ -125,10 +126,7 @@ export class DictionaryInfoComponent implements OnInit {
             }
         }
 
-        this.source.addFilter({
-            field: 'typeCode',
-            search: this.dictType.typeCode
-        }, true, true);
+        this.refresh();
     } //}
 
     onsearchinput(pair: [string, (hints: string[]) => void]) //{
@@ -157,13 +155,32 @@ export class DictionaryInfoComponent implements OnInit {
             field: 'searchWildcard',
             search: search.trim()
         });
-        this.source.refresh();
+        this.refresh();
     } //}
 
-    private static internalValueRegex = /.{2,10}/;
-    private static dispalyValueRegex = /[A-Za-z][A-Za-z0-9_\-@]{1,9}/;
-    private async checkData(row: DictionaryData, toaster: boolean = true): Promise<boolean> //{
+    private refresh() {
+        this.source.addFilter({
+            field: 'typeCode',
+            search: this.dictType.typeCode
+        }, true, false);
+
+        this.source.refresh();
+    }
+
+    private keywordRegex = Pattern.Regex.aname;
+    private valueRegex = Pattern.Regex.uname;
+    private async checkData(row: DictionaryData): Promise<boolean> //{
     {
+        if(this.keywordRegex.test(row.keyword)) {
+            this.toastrService.danger("关键字字段非法: " + this.keywordRegex[Pattern.HintSym], "数据字典");
+            return false;
+        }
+
+        if(this.valueRegex.test(row.value)) {
+            this.toastrService.danger("值字段非法: " + this.valueRegex[Pattern.HintSym], "数据字典");
+            return false;
+        }
+
         return true;
     } //}
 
@@ -187,8 +204,9 @@ export class DictionaryInfoComponent implements OnInit {
             return event.confirm.reject();
         }
 
-        event.confirm.resolve(event.newData);
-        this.source.refresh();
+        this.refresh();
+        // TODO
+        event.confirm.reject();
     } //}
 
     async onEditConfirm(event: {
@@ -212,7 +230,7 @@ export class DictionaryInfoComponent implements OnInit {
         }
 
         event.confirm.resolve(event.newData);
-        this.source.refresh();
+        this.refresh();
     } //}
 
     async onDeleteConfirm(event: {
@@ -222,7 +240,7 @@ export class DictionaryInfoComponent implements OnInit {
     }) //{
     {
         try {
-            await this.datadictService.deleteType(event.data.typeCode);
+            await this.datadictService.deleteData(event.data.typeCode, event.data.keyword);
             this.toastrService.success(`删除'${event.data.keyword}'`, "数据字典");
         } catch {
             this.toastrService.danger(`删除字典数据'${event.data.keyword}'失败`, "数据字典");
@@ -230,7 +248,7 @@ export class DictionaryInfoComponent implements OnInit {
         }
 
         event.confirm.resolve(event.data);
-        this.source.refresh();
+        this.refresh();
     } //}
 }
 
