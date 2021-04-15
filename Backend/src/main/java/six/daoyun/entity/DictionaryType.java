@@ -37,21 +37,21 @@ public class DictionaryType implements Serializable {
     }
 
     @Column(name = "uk_dict_type_name", unique = true)
-    private String dictTypeName;
-    public String getDictTypeName() {
-        return this.dictTypeName;
+    private String typeName;
+    public String getTypeName() {
+        return this.typeName;
     }
-    public void setDictTypeName(String dictTypeName) {
-        this.dictTypeName = dictTypeName;
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
     }
 
-    @Column(name = "type_code")
-    private String typeCOde;
-    public String getTypeCOde() {
-        return this.typeCOde;
+    @Column(name = "type_code", unique = true)
+    private String typeCode;
+    public String getTypeCode() {
+        return this.typeCode;
     }
-    public void setTypeCOde(String typeCOde) {
-        this.typeCOde = typeCOde;
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
 
     @OneToMany()

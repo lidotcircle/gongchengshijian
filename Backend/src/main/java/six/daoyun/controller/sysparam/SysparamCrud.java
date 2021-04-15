@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -52,28 +51,6 @@ class SysparamCrud {
         }
         public void setRemark(String remark) {
             this.remark = remark;
-        }
-    } //}
-
-    static class PageReq //{
-    {
-        @NotNull
-        @Min(0)
-        private Integer pageno;
-        public Integer getPageno() {
-            return this.pageno;
-        }
-        public void setPageno(Integer pageno) {
-            this.pageno = pageno;
-        }
-        @NotNull
-        @Min(0)
-        private Integer size;
-        public Integer getSize() {
-            return this.size;
-        }
-        public void setSize(Integer size) {
-            this.size = size;
         }
     } //}
 
@@ -149,7 +126,7 @@ class SysparamCrud {
                              @RequestParam("size") int size, 
                              @RequestParam(name = "sortDir", defaultValue = "parameterName") String sortDir,
                              @RequestParam(name = "sort", defaultValue = "ASC") String sortKey,
-                             @RequestParam(name = "filter", required = false) String filter) {
+                             @RequestParam(name = "searchWildcard", required = false) String filter) {
         final Collection<Req> ans = new ArrayList<>();
         String sortKeyM = "parameterName";
         if(sortKey.equals("value")) {
