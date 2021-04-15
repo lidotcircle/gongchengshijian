@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NbToastrService } from '@nebular/theme';
@@ -106,7 +106,22 @@ export class DictionaryInfoComponent implements OnInit {
 
     private initSource() //{
     {
-        this.source = new ServerDataSource(this.http, {
+        const http = new Proxy(this.http, {
+            get: (target, prop) => {
+                if(prop === 'get') {
+                    const _this = this;
+                    return function (url, options) {
+                        const params: HttpParams = options.params;
+                        options.params = params.set('typeCode', _this.dictType.typeCode);
+                        return target.get(url, options);
+                    }
+                } else {
+                    return target[prop];
+                }
+            }
+        });
+
+        this.source = new ServerDataSource(http, {
             endPoint: RESTfulAPI.DataDictionary.getDataPage,
             pagerPageKey: 'pageno',
             pagerLimitKey: 'size',
@@ -159,11 +174,6 @@ export class DictionaryInfoComponent implements OnInit {
     } //}
 
     private refresh() {
-        this.source.addFilter({
-            field: 'typeCode',
-            search: this.dictType.typeCode
-        }, true, false);
-
         this.source.refresh();
     }
 
@@ -171,12 +181,12 @@ export class DictionaryInfoComponent implements OnInit {
     private valueRegex = Pattern.Regex.uname;
     private async checkData(row: DictionaryData): Promise<boolean> //{
     {
-        if(this.keywordRegex.test(row.keyword)) {
+        if(!this.keywordRegex.test(row.keyword)) {
             this.toastrService.danger("关键字字段非法: " + this.keywordRegex[Pattern.HintSym], "数据字典");
             return false;
         }
 
-        if(this.valueRegex.test(row.value)) {
+        if(!this.valueRegex.test(row.value)) {
             this.toastrService.danger("值字段非法: " + this.valueRegex[Pattern.HintSym], "数据字典");
             return false;
         }
@@ -204,9 +214,9 @@ export class DictionaryInfoComponent implements OnInit {
             return event.confirm.reject();
         }
 
+        // TODO 
+        event.confirm.resolve(event.newData);
         this.refresh();
-        // TODO
-        event.confirm.reject();
     } //}
 
     async onEditConfirm(event: {
