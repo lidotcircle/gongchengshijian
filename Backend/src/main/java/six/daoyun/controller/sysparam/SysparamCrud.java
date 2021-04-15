@@ -122,8 +122,8 @@ class SysparamCrud {
     }
 
     @GetMapping("/apis/sysparam/page")
-    private PageResp getPage(@RequestParam("pageno") int pageno, 
-                             @RequestParam("size") int size, 
+    private PageResp getPage(@RequestParam(value = "pageno", defaultValue = "1") int pageno, 
+                             @RequestParam(value = "size", defaultValue = "10") int size, 
                              @RequestParam(name = "sortDir", defaultValue = "parameterName") String sortDir,
                              @RequestParam(name = "sort", defaultValue = "ASC") String sortKey,
                              @RequestParam(name = "searchWildcard", required = false) String filter) {

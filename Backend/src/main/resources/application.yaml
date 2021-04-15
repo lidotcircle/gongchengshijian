@@ -9,9 +9,9 @@ spring:
 
   jpa:
     hibernate:
-      # ddl-auto: update
+      ddl-auto: update
       # ddl-auto: create
-      ddl-auto: none
+      # ddl-auto: none
       # ddl-auto: create-drop # DEV
 
 redis:

@@ -159,8 +159,8 @@ class DictData {
     } //}
 
     @GetMapping("/apis/datadict/data/page")
-    private PageResp getPage(@RequestParam("pageno") int pageno, 
-                             @RequestParam("size") int size, 
+    private PageResp getPage(@RequestParam(value = "pageno", defaultValue = "1") int pageno, 
+                             @RequestParam(value = "size", defaultValue = "10") int size, 
                              @RequestParam("typeCode") String typeCode,
                              @RequestParam(value = "sortDir", required = false) String sortDir,
                              @RequestParam(value = "sortKey", defaultValue = "keyword") String sortKey,
