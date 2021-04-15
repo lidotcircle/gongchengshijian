@@ -31,7 +31,10 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
 
 	@Override
 	public void updateDictionaryType(DictionaryType dictType) {
-        this.typeRepository.save(dictType);
+        DictionaryType type = this.typeRepository.findByTypeCode(dictType.getTypeCode());
+        type.setTypeName(dictType.getTypeName());
+        type.setRemark(dictType.getRemark());
+        this.typeRepository.save(type);
 	}
 
 	@Override
@@ -54,7 +57,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
             sort = sort.ascending();
         }
         Pageable page = PageRequest.of(pageno, size, sort);
-        if(filter != null && filter.length() > 0) {
+        if(filter == null || filter.isBlank()) {
             return this.typeRepository.findAll(page);
         } else {
             return this.typeRepository.findAll(filter, page);
@@ -92,7 +95,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
             sort = sort.ascending();
         }
         Pageable page = PageRequest.of(pageno, size, sort);
-        if(filter != null && filter.length() > 0) {
+        if(filter == null || filter.isBlank()) {
             return this.dataRepository.findByDictionaryType(type, page);
         } else {
             return this.dataRepository.findByDictionaryType(filter, type, page);

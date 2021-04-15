@@ -89,10 +89,10 @@ public class SysparamServiceImpl implements SysparamService {
             sort = sort.ascending();
         }
         Pageable page = PageRequest.of(pageno, size, sort);
-        if(filter != null && filter.length() > 0) {
-            return this.repository.findAll(filter, page);
-        } else {
+        if(filter == null || filter.isBlank()) {
             return this.repository.findAll(page);
+        } else {
+            return this.repository.findAll(filter, page);
         }
 	}
 }

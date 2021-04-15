@@ -93,6 +93,7 @@ class DictType {
 
         type.setTypeName(req.getTypeName());
         type.setRemark(req.getRemark());
+        this.dictService.updateDictionaryType(type);
     } //}
 
     @GetMapping("/apis/datadict/type")
@@ -121,12 +122,13 @@ class DictType {
                              @RequestParam(value = "sortDir", required = false) String sortDir,
                              @RequestParam(value = "sortKey", defaultValue = "typeName") String sortKey,
                              @RequestParam(value = "searchWildcard", required = false) String wildcard) //{
-     {
+    {
         PageResp ans = new PageResp();
 
         Page<DictionaryType> page = 
             this.dictService.getDictionaryTypePage(pageno - 1, size, sortKey, 
                                                    "desc".equalsIgnoreCase(sortDir), wildcard);
+
         Collection<Req> pairs = new ArrayList<>();
         page.forEach(v -> {
             Req res = new Req();
