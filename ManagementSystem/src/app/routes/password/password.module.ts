@@ -9,6 +9,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { NbAuthModule } from '@nebular/auth';
 import { RequestPasswordComponent } from './request-password/request-password.component';
 import { LoginByMessageCodeComponent } from './login-by-message-code/login-by-message-code.component';
+import { NgHcaptchaModule } from 'src/app/shared/ng-hcaptcha';
 
 
 @NgModule({
@@ -17,6 +18,10 @@ import { LoginByMessageCodeComponent } from './login-by-message-code/login-by-me
         CommonModule,
         PasswordRoutingModule,
         SharedModule,
+
+        NgHcaptchaModule.forRoot({
+            siteKey: 'e46186ab-3584-420b-8e06-40b049517be5',
+        }),
 
         NbAuthModule
     ]

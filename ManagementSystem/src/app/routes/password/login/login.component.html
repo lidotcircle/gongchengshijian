@@ -72,9 +72,11 @@
         <nb-checkbox name="rememberMe" [(ngModel)]="rememberMe" *ngIf="enableRememberMe">记住登录状态</nb-checkbox>
     </div>
 
-    <div class="h-captcha" data-sitekey="e46186ab-3584-420b-8e06-40b049517be5"></div>
-
-    <button nbButton
+    <button ngHcaptchaInvisibleButton [captchaEnabled]='requireCaptcha'
+            (verify)='onVerify($event)' 
+            (expired)='onExpired($event)' 
+            (error)='onError($event)'
+            nbButton
             fullWidth
             status="primary"
             size="large"

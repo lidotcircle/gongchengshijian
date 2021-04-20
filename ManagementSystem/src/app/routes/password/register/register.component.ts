@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NbAuthService, NbRegisterComponent } from '@nebular/auth';
@@ -36,8 +37,6 @@ export class RegisterComponent extends NbRegisterComponent implements OnInit {
     captchaResp: string;
     messageWaiting: number = 0;
     async sendMessage() {
-        this.captchaResp = 'helloworld';
-
         try {
             this.user.messageCodeToken = await this.messageService.sendMessageTo({
                 phone: this.user.phone, 
@@ -54,6 +53,12 @@ export class RegisterComponent extends NbRegisterComponent implements OnInit {
                     }
                 });
         } catch (err) {
+            if(err instanceof HttpErrorResponse && err.status == 403 && err.error.reason == 'require captcha') {
+                this.toastrService.info("需要先完成验证码", "登录");
+                this.requireCaptcha = true;
+                return;
+            }
+
             this.toastrService.danger(`获取验证码失败, ${err?.error?.reason}`, "注册");
         }
     }
@@ -73,6 +78,18 @@ export class RegisterComponent extends NbRegisterComponent implements OnInit {
         } catch (err) {
             this.toastrService.danger(`注册失败: ${err?.error?.reason || "错误"}`, "注册");
         }
+    }
+
+    requireCaptcha: boolean = false;
+    async onVerify(token: string) {
+        this.captchaResp = token;
+        await this.sendMessage();
+    }
+    async onExpired(error: string) {
+        this.toastrService.warning(error, '注册');
+    } 
+    async onError(error: string) {
+        this.toastrService.warning(error, '注册');
     }
 }
 

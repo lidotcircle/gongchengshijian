@@ -34,10 +34,9 @@ export class LoginByMessageCodeComponent extends NbLoginComponent implements OnI
     }
 
     captchaResp: string;
+    requireCaptcha: boolean = false;
     messageWaiting: number = 0;
     async sendMessage() {
-        this.captchaResp = 'helloworld';
-
         try {
             this.user.messageCodeToken = await this.messageService.sendMessageTo({
                 phone: this.user.phone, 
@@ -54,7 +53,13 @@ export class LoginByMessageCodeComponent extends NbLoginComponent implements OnI
                     }
                 });
         } catch (err) {
-            this.toastrService.danger(`获取验证码失败, ${err?.reason}`);
+            if(err instanceof HttpErrorResponse && err.status == 403 && err.error.reason == 'require captcha') {
+                this.toastrService.info("需要先完成验证码", "登录");
+                this.requireCaptcha = true;
+                return;
+            }
+
+            this.toastrService.danger(`获取验证码失败, ${err?.error?.reason}`);
         }
     }
     get WaitText(): String {
@@ -84,6 +89,17 @@ export class LoginByMessageCodeComponent extends NbLoginComponent implements OnI
             this.errors.push(errorMsg);
             this.showMessages = {error: true};
         }
+    }
+
+    async onVerify(token: string) {
+        this.captchaResp = token;
+        await this.sendMessage();
+    }
+    async onExpired(error: string) {
+        this.toastrService.warning(error, '登录');
+    } 
+    async onError(error: string) {
+        this.toastrService.warning(error, '登录');
     }
 }
 

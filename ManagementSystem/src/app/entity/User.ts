@@ -1,3 +1,4 @@
+declare var require;
 export const defaultProfileImage = require('!url-loader!./profile-image.png').default;
 
 const genderMap = {

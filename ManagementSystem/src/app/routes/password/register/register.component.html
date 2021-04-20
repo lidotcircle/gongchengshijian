@@ -84,7 +84,11 @@
                  required
                  [attr.aria-invalid]="messageCode.invalid && messageCode.touched ? true : null">
 
-          <button nbButton
+          <button ngHcaptchaInvisibleButton [captchaEnabled]='requireCaptcha'
+                  (verify)='onVerify($event)' 
+                  (expired)='onExpired($event)' 
+                  (error)='onError($event)'
+                  nbButton
                   fullWidth
                   type='button'
                   status="primary"

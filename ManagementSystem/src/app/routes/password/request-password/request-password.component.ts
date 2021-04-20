@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NbAuthService, NbRequestPasswordComponent } from '@nebular/auth';
@@ -33,10 +34,9 @@ export class RequestPasswordComponent extends NbRequestPasswordComponent impleme
     }
 
     captchaResp: string;
+    requireCaptcha: boolean = false;
     messageWaiting: number = 0;
     async sendMessage() {
-        this.captchaResp = 'helloworld';
-
         try {
             this.user.messageCodeToken = await this.messageService.sendMessageTo({
                 phone: this.user.phone, 
@@ -53,6 +53,12 @@ export class RequestPasswordComponent extends NbRequestPasswordComponent impleme
                     }
                 });
         } catch (err) {
+            if(err instanceof HttpErrorResponse && err.status == 403 && err.error.reason == 'require captcha') {
+                this.toastrService.info("需要先完成验证码", "重置密码");
+                this.requireCaptcha = true;
+                return;
+            }
+
             this.toastrService.danger(`获取验证码失败, ${err?.reason}`);
         }
     }
@@ -72,6 +78,17 @@ export class RequestPasswordComponent extends NbRequestPasswordComponent impleme
         } catch (err) {
             this.toastrService.danger("重置密码失败: ", err?.reason || "错误");
         }
+    }
+
+    async onVerify(token: string) {
+        this.captchaResp = token;
+        await this.sendMessage();
+    }
+    async onExpired(error: string) {
+        this.toastrService.warning(error, '重置密码');
+    } 
+    async onError(error: string) {
+        this.toastrService.warning(error, '重置密码');
     }
 }
 
