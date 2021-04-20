@@ -25,7 +25,7 @@ public class ObjUitl {
         return Optional.empty();
     } //}
 
-    public static Collection<String> assignFields(final Object target, final Object source, final Set<String> ignores) //{
+    public static Collection<String> assignFields(final Object target, final Object source, final Set<String> ignores, final boolean ignoreNull) //{
     {
         Collection<String> ans = new ArrayList<>();
         Set<String> fields = new TreeSet<>();
@@ -53,7 +53,7 @@ public class ObjUitl {
                 sourceField.setAccessible(true);
 
                 Object v = sourceField.get(source);
-                if(v != null) {
+                if(v != null || !ignoreNull) {
                     targetField.set(target, v);
                     ans.add(fieldName);
                 }
@@ -69,7 +69,7 @@ public class ObjUitl {
 
     public static Collection<String> assignFields(final Object target, final Object source) //{
     {
-        return assignFields(target, source, new HashSet<>());
+        return assignFields(target, source, new HashSet<>(), true);
     } //}
 
 }

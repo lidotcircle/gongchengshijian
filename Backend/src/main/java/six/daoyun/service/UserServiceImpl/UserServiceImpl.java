@@ -6,6 +6,10 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -104,6 +108,22 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Optional<User> getUserByPhone(String phone) {
         return Optional.ofNullable(this.userRepository.getUserByPhone(phone));
+	}
+
+	@Override
+	public Page<User> getUserPage(int pageno, int size, String sortKey, boolean desc, String filter) {
+        Sort sort = Sort.by(sortKey);
+        if(desc) {
+            sort = sort.descending();
+        } else {
+            sort = sort.ascending();
+        }
+        Pageable page = PageRequest.of(pageno, size, sort);
+        if(filter == null || filter.isBlank()) {
+            return this.userRepository.findAll(page);
+        } else {
+            return this.userRepository.findAll(filter, page);
+        }
 	}
 }
 

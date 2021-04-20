@@ -3,6 +3,8 @@ package six.daoyun.service;
 import java.util.Collection;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+
 import six.daoyun.entity.User;
 import six.daoyun.exchange.UserInfo;
 
@@ -16,5 +18,7 @@ public interface UserService {
     Optional<User> getUserByPhone(String phone);
 
     Collection<User> getAllUsers();
+
+    Page<User> getUserPage(int pageno, int size, String sortKey, boolean desc, String filter);
 }
 
