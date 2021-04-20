@@ -39,7 +39,7 @@ daoyun:
     name: daoyun
   message:
     enable: false
-    waitMs: 3000
+    waitMs: 6000
     validMs: 300000
   reset:
     validMs: 300000
@@ -50,4 +50,9 @@ daoyun:
       signup: SMS_205462496
       reset: SMS_205462496
       bindPhoneNum: SMS_205462496
+  hcaptcha:
+    allowNum: 3
+    retainS: 300
+    endpoint: https://hcaptcha.com/siteverify
+    sitesecret: '0x77CFb863E1Fceb0139Ccd56dB08ffEA6584C67A6'
 

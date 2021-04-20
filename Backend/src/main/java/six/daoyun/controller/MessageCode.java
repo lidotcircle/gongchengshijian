@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import six.daoyun.controller.exception.HttpForbidden;
+import six.daoyun.controller.exception.HttpRequireCaptcha;
+import six.daoyun.service.CaptchaService;
 import six.daoyun.service.MessageCodeService;
 import six.daoyun.service.UserService;
 
@@ -21,6 +23,8 @@ public class MessageCode {
     private MessageCodeService mcodeService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private CaptchaService captchaService;
 
     private static Map<String, MessageCodeService.MessageCodeType> type2type;
     static {
@@ -73,8 +77,12 @@ public class MessageCode {
 
     @PostMapping("/apis/message")
     private MessageCodeResp getMessageCodeToken(@RequestBody @Valid MessageCodeReq req) {
-        if(!this.mcodeService.captcha(req.getCaptcha())) {
-            throw new HttpForbidden("验证码错误");
+        if(!this.captchaService.validate(req.getPhone() + req.getType(), req.getCaptcha())) {
+            if(req.getCaptcha() == null) {
+                throw new HttpRequireCaptcha();
+            } else {
+                throw new HttpForbidden("验证码错误");
+            }
         }
 
         MessageCodeService.MessageCodeType type = type2type.get(req.getType());

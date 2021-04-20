@@ -1,5 +1,6 @@
 package six.daoyun.controller.auth;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -14,10 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import six.daoyun.controller.exception.HttpBadRequest;
 import six.daoyun.controller.exception.HttpNotFound;
+import six.daoyun.controller.exception.HttpRequireCaptcha;
 import six.daoyun.controller.exception.HttpUnauthorized;
 import six.daoyun.entity.RefreshToken;
 import six.daoyun.entity.User;
 import six.daoyun.service.AuthService;
+import six.daoyun.service.CaptchaService;
 import six.daoyun.service.MessageCodeService;
 import six.daoyun.service.UserService;
 
@@ -31,6 +34,8 @@ class Login {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private CaptchaService captchaService;
 
     static public class LoginByUsernameRequest //{
     {
@@ -106,9 +111,13 @@ class Login {
     } //}
 
     @PostMapping("/apis/auth/refresh-token")
-    private LoginResponse login(@RequestBody @Valid LoginByUsernameRequest request) {
-        if(!this.mcodeService.captcha(request.captcha)) {
-            throw new HttpUnauthorized("验证码错误");
+    private LoginResponse login(@RequestBody @Valid LoginByUsernameRequest request, HttpServletRequest httpreq) {
+        if(!this.captchaService.validate(httpreq.getRemoteAddr() + request.getUserName(), request.captcha)) {
+            if(request.getCaptcha() == null) {
+                throw new HttpRequireCaptcha();
+            } else {
+                throw new HttpUnauthorized("验证码错误");
+            }
         }
 
         User user;

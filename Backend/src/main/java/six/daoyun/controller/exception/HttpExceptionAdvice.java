@@ -36,6 +36,13 @@ public class HttpExceptionAdvice {
         return this.processHttpException(ex);
     }
 
+    @ExceptionHandler(HttpRequireCaptcha.class)
+    @ResponseStatus(code = HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public Object processRequireCaptcha(HttpException ex) {
+        return this.processHttpException(ex);
+    }
+
     @ExceptionHandler(HttpInternalServerError.class)
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody

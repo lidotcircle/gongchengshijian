@@ -125,12 +125,6 @@ public class MessageCodeServiceImpl implements MessageCodeService {
 	}
 
 	@Override
-	public boolean captcha(String captchaResponse) {
-        // TODO
-        return "helloworld".equals(captchaResponse);
-	}
-
-	@Override
 	public void removeToken(String token) {
         this.tokenCache.delete(token);
 	}
