@@ -26,6 +26,11 @@ logging:
 jwt:
   secret: helloworld
 
+# using environment variable
+# AliyunAccessKeyId: 
+# AliyunAccessKeySecret: 
+
+
 daoyun:
   # super admin, just for testing api 
   # set HTTP Header 'X-IM_ADMIN: supersuper.name'
@@ -38,4 +43,11 @@ daoyun:
     validMs: 300000
   reset:
     validMs: 300000
+  aliyun:
+    AliyunSmsSignName: 生意专家
+    TemplateCode:
+      login: SMS_205462496
+      signup: SMS_205462496
+      reset: SMS_205462496
+      bindPhoneNum: SMS_205462496
 

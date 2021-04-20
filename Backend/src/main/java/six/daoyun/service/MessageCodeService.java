@@ -3,7 +3,7 @@ package six.daoyun.service;
 
 public interface MessageCodeService {
     public enum MessageCodeType {
-        signup, login, reset
+        signup, login, reset, bindPhoneNum
     }
 
     public class MessageNeedWait extends Exception {

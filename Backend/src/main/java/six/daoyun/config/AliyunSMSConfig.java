@@ -14,8 +14,11 @@ public class AliyunSMSConfig {
     @Value("${AliyunAccessKeySecret:}")
     private String aliyunAccessKeySecret;
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AliyunSMSConfig.class);
     @Bean
     public Client createClient() {
+        log.info("accessKey id: {}", this.aliyunAccessKeyId);
+        log.info("accessKey secret: {}", this.aliyunAccessKeySecret);
         Config config = new Config()
             .setAccessKeyId(this.aliyunAccessKeyId)
             .setAccessKeySecret(this.aliyunAccessKeySecret);
