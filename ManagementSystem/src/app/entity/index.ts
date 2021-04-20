@@ -12,3 +12,6 @@ export { SystemParameter } from './System-Parameter';
 export { DictionaryData } from './DictionaryData';
 export { DictionaryType } from './DictionaryType';
 
+export { User, defaultProfileImage } from './User';
+
+

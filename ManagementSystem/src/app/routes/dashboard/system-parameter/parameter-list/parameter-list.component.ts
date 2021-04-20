@@ -96,7 +96,8 @@ export class ParameterListComponent implements OnInit {
         }
     }
 
-    onsearchinput(pair: [string, (hints: string[]) => void]) {
+    onsearchinput(pair: [string, (hints: string[]) => void]) //{
+    {
         const input = pair[0];
         const hook = pair[1];
 
@@ -111,15 +112,16 @@ export class ParameterListComponent implements OnInit {
         }
 
         hook(ans);
-    }
+    } //}
 
-    onsearchenter(search: string) {
+    onsearchenter(search: string) //{
+    {
         this.source.addFilter({
             field: 'searchWildcard',
             search: search.trim()
         });
         this.source.refresh();
-    }
+    } //}
 
     private keyRegex = Pattern.Regex.aname;
     private async checkData(row: SystemParameter, toastr: boolean = true): Promise<boolean> //{

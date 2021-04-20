@@ -182,13 +182,5 @@ export class UserInfoViewerComponent implements OnInit, OnDestroy {
         }
 
     }
-
-    get roles(): string {
-        if(!this.user.roles || this.user.roles.length == 0) {
-            return "无";
-        } else {
-            return this.user.roles.join(', ');
-        }
-    }
 }
 

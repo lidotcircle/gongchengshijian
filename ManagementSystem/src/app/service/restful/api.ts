@@ -41,5 +41,12 @@ export module API {
         export const getDataPage = API_ADDRESS + '/apis/datadict/data/page';
     }
 
+    export module AdminUser {
+        export const get = API_ADDRESS + '/apis/admin/user';
+        export const put = API_ADDRESS + '/apis/admin/user';
+        export const post = API_ADDRESS + '/apis/admin/user';
+        export const deleteUser = API_ADDRESS + '/apis/admin/user';
+        export const getPage = API_ADDRESS + '/apis/admin/user/page';
+    }
 }
 

@@ -7,7 +7,7 @@ const genderMap = {
 };
 
 export class User {
-    userName: String;
+    userName: string;
 
     name: string;
     birthday: number;
@@ -34,6 +34,14 @@ export class User {
 
     get Photo(): string {
         return this.photo || defaultProfileImage;
+    }
+
+    get Roles(): string {
+        if(!this.roles || this.roles.length == 0) {
+            return "无";
+        } else {
+            return this.roles.join(', ');
+        }
     }
 }
 
