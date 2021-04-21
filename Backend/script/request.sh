@@ -32,7 +32,7 @@ commands:
   auth              [ login | logout | jwt | signup ]
   user              [ get | set | setP | create ]
   sysparam          [ get | put | post | delete | getall | getpage ]
-  course            [ create | update | get | delete ]
+  course            [ create | update | get | delete | getpage | getpage_t | getpage_s ]
 EOF
 }
 

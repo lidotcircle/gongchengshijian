@@ -11,13 +11,17 @@ import six.daoyun.entity.Course;
 import six.daoyun.entity.User;
 
 public interface CourseRepository extends PagingAndSortingRepository<Course, Integer> {
-    @Query("SELECT cr FROM Course cr WHERE cr.courseName LIKE %?1%")
-    Page<Course> findByTeacher(User user, String filter, Pageable request);
-    Page<Course> findByTeacher(User user, Pageable request);
-
-    @Query("SELECT cr FROM Course cr WHERE cr.teacher LIKE %?1% OR cr.courseName LIKE %?1%")
+    @Query("SELECT cr FROM Course cr WHERE cr.teacher.userName LIKE %?1% OR cr.teacher.name LIKE %?1% OR cr.courseName LIKE %?1%")
     Page<Course> findAll(String filter, Pageable request);
     Page<Course> findAll(Pageable request);
+
+    @Query("SELECT cr FROM Course cr WHERE cr.courseName LIKE %?1%")
+    Page<Course> findByTeacher(String filter, User teacher, Pageable request);
+    Page<Course> findByTeacher(User teacher, Pageable request);
+
+    @Query("SELECT cr FROM Course cr WHERE cr.teacher.userName LIKE %?1% OR cr.teacher.name LIKE %?1% OR cr.courseName LIKE %?1%")
+    Page<Course> findByStudents(String filter, User students, Pageable request);
+    Page<Course> findByStudents(User students, Pageable request);
 
     Course findByCourseExId(String exId);
 

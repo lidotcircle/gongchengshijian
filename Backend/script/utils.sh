@@ -19,11 +19,11 @@ jsonStringify()
             value="null"
         fi
 
-        if [[ ! "$value" =~ ^[0-9]+(\.[0-9]+)?|true|false|null$ ]]; then
+        if [[ ! "$value" =~ ^(\".*|[0-9]+(\.[0-9]+)?|true|false|null)$ ]]; then
             value=\"$value\"
         fi
         
-        outputRef=$outputRef"\"$key\": "$value","
+        outputRef=$outputRef"\"$key\": "$value", "
     done
 
     if [ -n "$hasKey" ]; then

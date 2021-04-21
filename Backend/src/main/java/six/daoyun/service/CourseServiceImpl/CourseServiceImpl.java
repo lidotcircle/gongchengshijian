@@ -5,6 +5,9 @@ import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import six.daoyun.entity.Course;
@@ -56,22 +59,52 @@ public class CourseServiceImpl implements CourseService {
 
 	@Override
 	public Page<Course> getCoursePage(int pageno, int size, String sortKey, boolean desc, String filter) {
-		// TODO Auto-generated method stub
-		return null;
+        Sort sort = Sort.by(sortKey);
+        if(desc) {
+            sort = sort.descending();
+        } else {
+            sort = sort.ascending();
+        }
+        Pageable page = PageRequest.of(pageno, size, sort);
+        if(filter == null || filter.isBlank()) {
+            return this.courseRepository.findAll(page);
+        } else {
+            return this.courseRepository.findAll(filter, page);
+        }
 	}
 
 	@Override
 	public Page<Course> getTeacherCoursePage(User teacher, int pageno, int size, String sortKey, boolean desc,
 			String filter) {
-		// TODO Auto-generated method stub
-		return null;
+        Sort sort = Sort.by(sortKey);
+        if(desc) {
+            sort = sort.descending();
+        } else {
+            sort = sort.ascending();
+        }
+        Pageable page = PageRequest.of(pageno, size, sort);
+        if(filter == null || filter.isBlank()) {
+            return this.courseRepository.findByTeacher(teacher, page);
+        } else {
+            return this.courseRepository.findByTeacher(filter, teacher, page);
+        }
 	}
 
 	@Override
 	public Page<Course> getStudentCoursePage(User student, int pageno, int size, String sortKey, boolean desc,
 			String filter) {
-		// TODO Auto-generated method stub
-		return null;
+        Sort sort = Sort.by(sortKey);
+        if(desc) {
+            sort = sort.descending();
+        } else {
+            sort = sort.ascending();
+        }
+        Pageable page = PageRequest.of(pageno, size, sort);
+        if(filter == null || filter.isBlank()) {
+            return this.courseRepository.findByStudents(student, page);
+        } else {
+            return this.courseRepository.findByStudents(filter, student, page);
+        }
 	}
 
 	@Override

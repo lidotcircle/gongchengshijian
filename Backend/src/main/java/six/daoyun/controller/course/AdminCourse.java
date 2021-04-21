@@ -3,10 +3,13 @@ package six.daoyun.controller.course;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +33,8 @@ public class AdminCourse {
     @Autowired
     private UserService userService;
 
-    static class CourseDTOX //{
+
+    static class PostCourseDTOX //{
     {
         private String courseExId;
         public String getCourseExId() {
@@ -41,6 +45,7 @@ public class AdminCourse {
         }
 
         @NotNull
+        @Pattern(regexp = "\\w{2,}")
         private String courseName;
         public String getCourseName() {
             return this.courseName;
@@ -50,6 +55,42 @@ public class AdminCourse {
         }
 
         @NotNull
+        private String teacherName;
+        public String getTeacherName() {
+            return this.teacherName;
+        }
+        public void setTeacherName(String teacherName) {
+            this.teacherName = teacherName;
+        }
+
+        private String briefDescription;
+        public String getBriefDescription() {
+            return this.briefDescription;
+        }
+        public void setBriefDescription(String briefDescription) {
+            this.briefDescription = briefDescription;
+        }
+    } //}
+    static class PutCourseDTOX //{
+    {
+        @NotNull
+        private String courseExId;
+        public String getCourseExId() {
+            return this.courseExId;
+        }
+        public void setCourseExId(String courseExId) {
+            this.courseExId = courseExId;
+        }
+
+        @Pattern(regexp = "\\w{2,}")
+        private String courseName;
+        public String getCourseName() {
+            return this.courseName;
+        }
+        public void setCourseName(String courseName) {
+            this.courseName = courseName;
+        }
+
         private String teacherName;
         public String getTeacherName() {
             return this.teacherName;
@@ -164,18 +205,15 @@ public class AdminCourse {
         }
     } //}
 
-    @GetMapping("/apis/course")
-    public CourseDTO getCourse(@RequestParam("courseExId") String courseExId) //{
+    private void course2courseDTO(final CourseDTO target, final Course course) //{
     {
-        final CourseDTO ans = new CourseDTO();
-        final Course course = this.courseService.getCourse(courseExId).orElseThrow(() -> new HttpNotFound("找不到课程"));
-        ans.setCourseExId(courseExId);
-        ans.setCourseName(course.getCourseName());
+        target.setCourseExId(course.getCourseExId());
+        target.setCourseName(course.getCourseName());
 
         final Teacher teacher = new Teacher();
         teacher.setUserName(course.getTeacher().getUserName());
         teacher.setName(course.getTeacher().getName());
-        ans.setTeacher(teacher);
+        target.setTeacher(teacher);
 
         final Collection<Student> students = new ArrayList<>();
         course.getStudents().forEach((student) -> {
@@ -183,8 +221,15 @@ public class AdminCourse {
             ObjUitl.assignFields(s, student);
             students.add(s);
         });
-        ans.setStudents(students);
+        target.setStudents(students);
+    } //}
 
+    @GetMapping("/apis/course")
+    public CourseDTO getCourse(@RequestParam("courseExId") String courseExId) //{
+    {
+        final CourseDTO ans = new CourseDTO();
+        final Course course = this.courseService.getCourse(courseExId).orElseThrow(() -> new HttpNotFound("找不到课程"));
+        this.course2courseDTO(ans, course);
         return ans;
     } //}
 
@@ -199,7 +244,7 @@ public class AdminCourse {
         }
     } //}
     @PostMapping("/apis/course")
-    public CourseExIdDTO createCourse(@RequestBody @Valid CourseDTOX coursex) //{
+    public CourseExIdDTO createCourse(@RequestBody @Valid PostCourseDTOX coursex) //{
     {
         final Course course = new Course();
         ObjUitl.assignFields(course, coursex);
@@ -215,7 +260,7 @@ public class AdminCourse {
     } //}
 
     @PutMapping("/apis/course")
-    public void updateCourse(@RequestBody CourseDTOX coursex) //{
+    public void updateCourse(@RequestBody @Valid PutCourseDTOX coursex) //{
     {
         final Course course = this.courseService.getCourse(coursex.getCourseExId())
             .orElseThrow(() -> new HttpNotFound("课程不存在"));
@@ -233,6 +278,106 @@ public class AdminCourse {
     public void deleteCourse(@RequestParam("courseExId") String courseExId) //{
     {
         this.courseService.deleteCourse(courseExId);
+    } //}
+
+    @GetMapping("/apis/course/page")
+    private CoursePageDTO getPage(@RequestParam(value = "pageno", defaultValue = "1") int pageno, 
+            @RequestParam(value = "size", defaultValue = "10") int size, 
+            @RequestParam(value = "sortDir", required = false) String sortDir,
+            @RequestParam(value = "sortKey", defaultValue = "keyword") String sortKey,
+            @RequestParam(value = "searchWildcard", required = false) String wildcard) //{
+    {
+        CoursePageDTO ans = new CoursePageDTO();
+        String sortKeyM = sortKey;
+        if("value".equals(sortKey)) {
+            sortKeyM = sortKey;
+        } else if ("remark".equals(sortKey)) {
+            sortKeyM = sortKey;
+        }
+
+        Page<Course> page = 
+            this.courseService.getCoursePage(pageno - 1, size, sortKeyM, 
+                    "desc".equalsIgnoreCase(sortDir), wildcard);
+        Collection<CourseDTO> pairs = new ArrayList<>();
+        page.forEach(v -> {
+            CourseDTO res = new CourseDTO();
+            this.course2courseDTO(res, v);
+            pairs.add(res);
+        });
+        ans.setPairs(pairs);
+        ans.setTotal(page.getTotalElements());
+
+        return ans;
+    } //}
+
+    @GetMapping("/apis/course/page/teacher")
+    private CoursePageDTO getPageTeacher(HttpServletRequest httpreq,
+            @RequestParam(value = "pageno", defaultValue = "1") int pageno, 
+            @RequestParam(value = "size", defaultValue = "10") int size, 
+            @RequestParam(value = "sortDir", required = false) String sortDir,
+            @RequestParam(value = "sortKey", defaultValue = "keyword") String sortKey,
+            @RequestParam(value = "searchWildcard", required = false) String wildcard) //{
+    {
+        final String teacherName = (String)httpreq.getAttribute("username");
+        final User teacher = this.userService.getUser(teacherName)
+            .orElseThrow(() -> new HttpNotFound("teacher not found"));
+
+        CoursePageDTO ans = new CoursePageDTO();
+        String sortKeyM = sortKey;
+        if("value".equals(sortKey)) {
+            sortKeyM = sortKey;
+        } else if ("remark".equals(sortKey)) {
+            sortKeyM = sortKey;
+        }
+
+        Page<Course> page = 
+            this.courseService.getTeacherCoursePage(teacher, pageno - 1, size, sortKeyM, 
+                    "desc".equalsIgnoreCase(sortDir), wildcard);
+        Collection<CourseDTO> pairs = new ArrayList<>();
+        page.forEach(v -> {
+            CourseDTO res = new CourseDTO();
+            this.course2courseDTO(res, v);
+            pairs.add(res);
+        });
+        ans.setPairs(pairs);
+        ans.setTotal(page.getTotalElements());
+
+        return ans;
+    } //}
+
+    @GetMapping("/apis/course/page/student")
+    private CoursePageDTO getPageStudent(HttpServletRequest httpreq,
+            @RequestParam(value = "pageno", defaultValue = "1") int pageno, 
+            @RequestParam(value = "size", defaultValue = "10") int size, 
+            @RequestParam(value = "sortDir", required = false) String sortDir,
+            @RequestParam(value = "sortKey", defaultValue = "keyword") String sortKey,
+            @RequestParam(value = "searchWildcard", required = false) String wildcard) //{
+    {
+        final String studentName = (String)httpreq.getAttribute("username");
+        final User student = this.userService.getUser(studentName)
+            .orElseThrow(() -> new HttpNotFound("student not found"));
+
+        CoursePageDTO ans = new CoursePageDTO();
+        String sortKeyM = sortKey;
+        if("value".equals(sortKey)) {
+            sortKeyM = sortKey;
+        } else if ("remark".equals(sortKey)) {
+            sortKeyM = sortKey;
+        }
+
+        Page<Course> page = 
+            this.courseService.getStudentCoursePage(student, pageno - 1, size, sortKeyM, 
+                    "desc".equalsIgnoreCase(sortDir), wildcard);
+        Collection<CourseDTO> pairs = new ArrayList<>();
+        page.forEach(v -> {
+            CourseDTO res = new CourseDTO();
+            this.course2courseDTO(res, v);
+            pairs.add(res);
+        });
+        ans.setPairs(pairs);
+        ans.setTotal(page.getTotalElements());
+
+        return ans;
     } //}
 }
 
