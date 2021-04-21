@@ -28,6 +28,15 @@ public class Course implements Serializable {
         this.id = id;
     }
 
+    @Column(unique = true)
+    private String courseExId;
+    public String getCourseExId() {
+        return this.courseExId;
+    }
+    public void setCourseExId(String courseExId) {
+        this.courseExId = courseExId;
+    }
+
     @Column(name = "course_name")
     private String courseName;
     public String getCourseName() {
@@ -35,6 +44,15 @@ public class Course implements Serializable {
     }
     public void setCourseName(String courseName) {
         this.courseName = courseName;
+    }
+
+    @Column()
+    private String briefDescription;
+    public String getBriefDescription() {
+        return this.briefDescription;
+    }
+    public void setBriefDescription(String briefDescription) {
+        this.briefDescription = briefDescription;
     }
 
     @ManyToOne()
