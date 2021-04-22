@@ -6,6 +6,7 @@ import { CourseListComponent } from './course-list/course-list.component';
 import { CourseInfoComponent } from './course-info/course-info.component';
 import { CourseCreateComponent } from './course-create/course-create.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 
 @NgModule({
@@ -13,6 +14,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
     imports: [
         CommonModule,
         SharedModule,
+        NgxPaginationModule,
         CourseManagementRoutingModule
     ]
 })

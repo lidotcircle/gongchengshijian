@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Course } from 'src/app/entity';
-import { CourseService } from '../course.service';
+import { CourseService } from 'src/app/service/course/course.service';
 
 @Component({
     selector: 'ngx-course-info',
@@ -23,15 +23,9 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
             this.courseUID = parseInt(params.get('courseUID'));
             this.refreshCourse();
         });
-        this.courseService.courses
-        .pipe(takeUntil(this.$destroy))
-        .subscribe(() => this.refreshCourse());
-
-        this.courseService.refresh();
     }
 
     private refreshCourse() {
-        this.course = this.courseService.getCourseByUID(this.courseUID);
     }
 
     ngOnDestroy(): void {

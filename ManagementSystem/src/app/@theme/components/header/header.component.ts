@@ -57,7 +57,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.userService.getUser()
       .pipe(takeUntil(this.destroy$))
       .subscribe(user => this.user = user);
-    this.userService.trigger();
 
     this.menuService.onItemClick()
       .pipe(takeUntil(this.destroy$))

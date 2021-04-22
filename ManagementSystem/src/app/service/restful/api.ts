@@ -48,5 +48,14 @@ export module API {
         export const deleteUser = API_ADDRESS + '/apis/admin/user';
         export const getPage = API_ADDRESS + '/apis/admin/user/page';
     }
+
+    export module Course {
+        export const get = API_ADDRESS + '/apis/course';
+        export const put = API_ADDRESS + '/apis/course';
+        export const post = API_ADDRESS + '/apis/course';
+        export const deleteCourse = API_ADDRESS + '/apis/course';
+
+        export const getPage = API_ADDRESS + '/apis/course/page';
+    }
 }
 

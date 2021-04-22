@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, Subscription, timer } from 'rxjs';
 import { RESTfulAPI } from '../restful';
 import { LocalStorageService, SessionStorageService, StorageKeys } from '../storage';
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -16,7 +16,15 @@ export class AuthService {
     private jwtHelper: JwtHelperService;
 
     private jwtSubject: Subject<JwtClaim | null>;
-    get JwtClaim(): Observable<JwtClaim | null> {return this.jwtSubject;}
+    getJwtClaim(): Observable<JwtClaim | null> {
+        return new Observable(subscriber => {
+            if(this.jwt_token) {
+                subscriber.next(this.jwtToClaim(this.jwt_token));
+            }
+
+            return this.jwtSubject.subscribe(subscriber);
+        });
+    }
 
     constructor(private localstorage: LocalStorageService,
                 private sessionStorage: SessionStorageService,
@@ -28,11 +36,27 @@ export class AuthService {
         this.jwtHelper = new JwtHelperService();
 
         if(this.refresh_token && this.jwt_token) {
-            if(!this.jwtHelper.isTokenExpired(this.jwt_token)) {
-                this.jwtSubject.next(this.jwtToClaim(this.jwt_token));
-            } else {
+            if(this.jwtHelper.isTokenExpired(this.jwt_token)) {
                 this.jwt_token = null;
+            } else {
+                this.setRefreshTimer();
             }
+        }
+    }
+
+    private refreshSubscription: Subscription;
+    private setRefreshTimer() {
+        this.cancelRefreshTimer();
+        const claim = this.jwtToClaim(this.jwt_token);
+        const wait = claim.exp * 10**3 - Date.now();
+        this.refreshSubscription = timer(claim.exp).subscribe(() => {
+            this.refreshJWT();
+        });
+    }
+    private cancelRefreshTimer() {
+        if(this.refreshSubscription) {
+            this.refreshSubscription.unsubscribe();
+            this.refreshSubscription = null;
         }
     }
 
@@ -59,6 +83,7 @@ export class AuthService {
     }
 
     async logout() {
+        this.cancelRefreshTimer();
         try {
             await this.http.delete(RESTfulAPI.Auth.login, {
                 params: {
@@ -95,16 +120,13 @@ export class AuthService {
         }).toPromise() as {jwtToken: string};
         this.jwt_token = ans.jwtToken;
         this.sessionStorage.set<string>(StorageKeys.JWT_TOKEN, this.jwt_token);
+        this.setRefreshTimer();
         this.jwtSubject.next(this.jwtToClaim(this.jwt_token));
     }
 
     private jwtToClaim(jwt: string): JwtClaim {
         const obj = this.jwtHelper.decodeToken(jwt) as object;
         return obj && Object.create(JwtClaim.prototype, Object.getOwnPropertyDescriptors(obj));
-    }
-
-    trigger() {
-        this.jwtSubject.next(this.jwt_token && this.jwtToClaim(this.jwt_token));
     }
 
     forgetLogin() {

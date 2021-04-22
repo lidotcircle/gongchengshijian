@@ -26,17 +26,19 @@ export class UserInfoViewerComponent implements OnInit, OnDestroy {
     constructor(private userService: UserService,
                 private toastService: NbToastrService,
                 private windowService: NbWindowService) {
+        this.user = new User();
+        this.updatedUser = new User();
+
         this.userService.getUser()
         .pipe(takeUntil(this.destroy$))
         .subscribe(user => {
             this.user = user || new User();
-            this.updatedUser = Object.assign({}, this.user);
+            this.updatedUser = Object.create(User.prototype, Object.getOwnPropertyDescriptors(this.user));
+
             if(this.user.birthday != null) {
                 this.birthday = new Date(this.user.birthday);
             }
         });
-
-        this.userService.trigger();
     }
 
     ngOnDestroy(): void {

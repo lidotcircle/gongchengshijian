@@ -26,9 +26,20 @@ export class SearchBarComponent implements OnInit {
 
     ngOnInit(): void {}
 
-    oninput() {
+    oninput(event: InputEvent) {
+        let val = this.inputvalue;
+
+        if(!this.inputvalue.endsWith(event.data) && event.data){
+            if(event.data.match(/.*\p{Unified_Ideograph}.*/u)) {
+                val += event.data;
+            } else {
+                return;
+            }
+        }
+
         let called = false;
         const hintsHook = (hints: string[]) => {
+            hints = hints.filter((v, idx, self) => self.indexOf(v) === idx);
             if(called) {
                 debugger;
                 throw new Error('debug here');
@@ -36,7 +47,7 @@ export class SearchBarComponent implements OnInit {
             called = true;
             this.hints = hints.slice(0);
         }
-        this._input.next([this.inputvalue, hintsHook]);
+        this._input.next([val, hintsHook]);
     }
 
     onkeyup(ev: KeyboardEvent) {
