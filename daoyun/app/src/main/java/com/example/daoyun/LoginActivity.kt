@@ -44,7 +44,7 @@ class LoginActivity : AppCompatActivity() {
             else if(binding.etLoginPwd.text.toString()=="")
                 showAlertDialog("请输入密码!")
             else{
-
+                startActivity(Intent(this, MainActivity::class.java))
             }
         }
 
@@ -61,5 +61,9 @@ class LoginActivity : AppCompatActivity() {
 
     private fun sendRequestWithHttpURLConnection(username:String?, password:String?){
 
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        ActivityCollector.removeActivity(this)
     }
 }
