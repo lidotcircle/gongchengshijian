@@ -2,7 +2,9 @@ package six.daoyun.controller.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class HttpBadRequest extends HttpException {
+import six.daoyun.exception.DYException;
+
+public class HttpBadRequest extends DYException {
 	private static final long serialVersionUID = 90831973211938486L;
 
     public HttpBadRequest(String reason) {
