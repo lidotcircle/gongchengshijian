@@ -56,3 +56,34 @@ export module Pattern {
     }
 }
 
+export function sortObject(props: {prop: string; asc?: boolean;}[]) {
+    return function(obja: object, objb: object): number {
+        for(const {prop, asc} of props) {
+            const v1 = obja[prop];
+            const v2 = objb[prop];
+            if(v1 === v2) continue;
+            const one = asc ? -1 : 1;
+            if(v1 == null && v2 != null) {
+                return -one;
+            }
+            if(v2 == null) {
+                return one;
+            }
+            switch(typeof v1) {
+                case 'boolean':
+                case 'string':
+                case 'bigint':
+                case 'number':
+                    return v1 > v2 ? one : -one;
+                case 'object':
+                case 'symbol':
+                case 'function':
+                case 'undefined':
+                    continue;
+            }
+        }
+
+        return 0;
+    }
+}
+

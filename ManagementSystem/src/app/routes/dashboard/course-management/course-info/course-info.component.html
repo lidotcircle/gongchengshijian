@@ -9,23 +9,39 @@
       <div>课程号</div>
       <div>{{ course.courseExId }}</div>
       <div>任课老师</div>
-      <div>{{ course.teacher }}</div>
+      <div>{{ course.Teacher }}</div>
       <div>学生数量</div>
-      <div>{{ course.students.length }}</div>
+      <div>{{ course.Students.length }}</div>
     </div>
 
-    <nb-card accent='info'>
-      <nb-card-body> {{ course.BriefDescription }} </nb-card-body>
-    </nb-card>
+    <div class='brief-description' *ngIf='course.BriefDescription.trim().length > 0'>
+      {{ course.BriefDescription }} 
+    </div>
   </nb-card-body>
+
+  <nb-card-footer class='footer-buttons'>
+    <div></div>
+    <button nbButton hero status='primary' (click)='editBasic()'>编辑</button>
+  </nb-card-footer>
 </nb-card>
 
 <nb-card status='info'>
-  <nb-card-header>学生列表</nb-card-header>
-  <nb-card-body [class]='course.students?.length > 0 ? "" : "record-length-equal-zero"'>
-    <nb-list>
-      <nb-list-item *ngFor='let student of course.students || []'>
-        {{ student }}
+  <nb-card-header class='header-a'>
+    <div>学生列表</div>
+    <app-search-bar (searchenter)='onStudentsEnter($event)'></app-search-bar>
+  </nb-card-header>
+
+  <nb-card-body [class]='students.length > 0 ? "" : "record-length-equal-zero"'>
+    <nb-list class='students'>
+      <nb-list-item>
+        <div class="student-name">姓名</div>
+        <div class="student-id">学号</div>
+      </nb-list-item>
+      <nb-list-item class='data' *ngFor='let student of students; let i = index'>
+        <div class="student-name">{{ student.name || student.userName }}</div>
+        <div class="student-id">{{ student.studentTeacherId }}</div>
+        <div class="take-space"></div>
+        <button nbButton hero status='danger' (click)='deleteStudent(i)'>删除</button>
       </nb-list-item>
     </nb-list>
     <div class="empty-state">
@@ -33,13 +49,22 @@
       <div class="warning">暂无</div>
     </div>
   </nb-card-body>
+
+  <nb-card-footer class="footer-buttons">
+    <div></div>
+    <button nbButton hero status='primary' (click)='addStudent()'>添加学生</button>
+  </nb-card-footer>
 </nb-card>
 
 <nb-card status='info'>
-  <nb-card-header>任务列表</nb-card-header>
-  <nb-card-body [class]='course.taskList?.length > 0 ? "" : "record-length-equal-zero"'>
+  <nb-card-header class='header-a'>
+    <div>任务列表</div>
+    <app-search-bar (searchenter)='onTasksEnter($event)'></app-search-bar>
+  </nb-card-header>
+
+  <nb-card-body [class]='tasks.length > 0 ? "" : "record-length-equal-zero"'>
     <nb-list>
-      <nb-list-item *ngFor='let task of course.taskList || []'>
+      <nb-list-item *ngFor='let task of tasks'>
         {{ task }}
       </nb-list-item>
     </nb-list>
@@ -48,13 +73,22 @@
       <div class="warning">暂无</div>
     </div>
   </nb-card-body>
+
+  <nb-card-footer class="footer-buttons">
+    <div></div>
+    <button nbButton hero status='primary' (click)='assignTask()'>发布任务</button>
+  </nb-card-footer>
 </nb-card>
 
 <nb-card status='info'>
-  <nb-card-header>通知列表</nb-card-header>
-  <nb-card-body [class]='course.infoList?.length > 0 ? "" : "record-length-equal-zero"'>
+  <nb-card-header class='header-a'>
+    <div>通知列表</div>
+    <app-search-bar (searchenter)='onInfosEnter($event)'></app-search-bar>
+  </nb-card-header>
+
+  <nb-card-body [class]='infos.length > 0 ? "" : "record-length-equal-zero"'>
     <nb-list>
-      <nb-list-item *ngFor='let info of course.infoList || []'>
+      <nb-list-item *ngFor='let info of infos'>
         {{ info }}
       </nb-list-item>
     </nb-list>
@@ -63,13 +97,22 @@
       <div class="warning">暂无</div>
     </div>
   </nb-card-body>
+
+  <nb-card-footer class="footer-buttons">
+    <div></div>
+    <button nbButton hero status='primary' (click)='startInfo()'>发布通知</button>
+  </nb-card-footer>
 </nb-card>
 
 <nb-card status='info'>
-  <nb-card-header>签到列表</nb-card-header>
-  <nb-card-body [class]='course.checkInList?.length > 0 ? "" : "record-length-equal-zero"'>
+  <nb-card-header class='header-a'>
+    <div>签到列表</div>
+    <app-search-bar (searchenter)='onCheckInsEnter($event)'></app-search-bar>
+  </nb-card-header>
+
+  <nb-card-body [class]='checkIns.length > 0 ? "" : "record-length-equal-zero"'>
     <nb-list>
-      <nb-list-item *ngFor='let checkIn of course.checkInList || []'>
+      <nb-list-item *ngFor='let checkIn of checkIns || []'>
         {{ checkIn }}
       </nb-list-item>
     </nb-list>
@@ -78,5 +121,10 @@
       <div class="warning">暂无</div>
     </div>
   </nb-card-body>
+
+  <nb-card-footer class="footer-buttons">
+    <div></div>
+    <button nbButton hero status='primary' (click)='startCheckIn()'>发起签到</button>
+  </nb-card-footer>
 </nb-card>
 

@@ -45,15 +45,22 @@ export class CourseService {
 
     async post(course: {
         courseName: string;
-        briefDescription: string;
+        briefDescription?: string;
     }): Promise<string> {
         const req = Object.assign({teacherName: this.userService.getUser});
 
-        const ans = await this.http.post(RESTfulAPI.Course.get, {
-        }).toPromise();
-
+        const ans = await this.http.post(RESTfulAPI.Course.get, req).toPromise();
         return ans['courseExId'];
     }
+
+    async put(course: {
+        courseExId: string;
+        courseName?: string;
+        briefDescription?: string;
+    }): Promise<void> {
+        const ans = await this.http.put(RESTfulAPI.Course.get, course).toPromise();
+    }
+
 
     async getPage(request: {
         pageno?: number;
@@ -77,6 +84,35 @@ export class CourseService {
         }
 
         return resp;
+    }
+
+    async invite(courseExId: string, studentName: string) {
+        await this.http.post(RESTfulAPI.Course.invite, {
+            courseExId: courseExId,
+            studentName: studentName,
+        }).toPromise();
+    }
+
+    async deleteStudent(courseExId: string, studentName: string) {
+        await this.http.delete(RESTfulAPI.Course.deleteStudent, {
+            params: {
+                courseExId: courseExId,
+                studentName: studentName,
+            }
+        }).toPromise();
+    }
+
+    async join(courseExId: string) {
+        await this.http.post(RESTfulAPI.Course.join, {
+            courseExId: courseExId,
+        }).toPromise();
+    }
+    async exit(courseExId: string) {
+        await this.http.delete(RESTfulAPI.Course.exit, {
+            params: {
+                courseExId: courseExId,
+            }
+        }).toPromise();
     }
 }
 

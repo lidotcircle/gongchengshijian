@@ -56,6 +56,11 @@ export module API {
         export const deleteCourse = API_ADDRESS + '/apis/course';
 
         export const getPage = API_ADDRESS + '/apis/course/page';
+
+        export const invite = API_ADDRESS + '/apis/course/student';
+        export const deleteStudent = API_ADDRESS + '/apis/course/student';
+        export const join = API_ADDRESS + '/apis/course/student/me';
+        export const exit = API_ADDRESS + '/apis/course/student/me';
     }
 }
 
