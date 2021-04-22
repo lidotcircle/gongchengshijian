@@ -3,6 +3,7 @@
 source $(dirname ${BASH_SOURCE[0]})/utils.sh
 source $(dirname ${BASH_SOURCE[0]})/auth.sh
 source $(dirname ${BASH_SOURCE[0]})/course.sh
+source $(dirname ${BASH_SOURCE[0]})/courseJoin.sh
 source $(dirname ${BASH_SOURCE[0]})/message.sh
 source $(dirname ${BASH_SOURCE[0]})/role.sh
 source $(dirname ${BASH_SOURCE[0]})/sysparam.sh
@@ -33,6 +34,7 @@ commands:
   user              [ get | set | setP | create ]
   sysparam          [ get | put | post | delete | getall | getpage ]
   course            [ create | update | get | delete | getpage | getpage_t | getpage_s ]
+  courseJoin        [ join | exit | invite | delete ]
 EOF
 }
 
@@ -59,12 +61,13 @@ case $COMMAND in
         usage
         exit 0
         ;;
-    "role"     ) role     $@ ;;
-    "message"  ) message  $@ ;;
-    "auth"     ) auth     $@ ;;
-    "user"     ) user     $@ ;;
-    "sysparam" ) sysparam $@ ;;
-    "course"   ) course   $@ ;;
+    "role"       ) role       $@ ;;
+    "message"    ) message    $@ ;;
+    "auth"       ) auth       $@ ;;
+    "user"       ) user       $@ ;;
+    "sysparam"   ) sysparam   $@ ;;
+    "course"     ) course     $@ ;;
+    "courseJoin" ) courseJoin $@ ;;
     *)
         usage
         exit 1

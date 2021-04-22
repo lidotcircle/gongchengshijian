@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +28,7 @@ import six.daoyun.utils.ObjUitl;
 
 
 @RestController
+@RequestMapping("/apis/course")
 public class AdminCourse {
     @Autowired
     private CourseService courseService;
@@ -231,7 +233,7 @@ public class AdminCourse {
         target.setStudents(students);
     } //}
 
-    @GetMapping("/apis/course")
+    @GetMapping()
     public CourseDTO getCourse(@RequestParam("courseExId") String courseExId) //{
     {
         final CourseDTO ans = new CourseDTO();
@@ -250,7 +252,7 @@ public class AdminCourse {
             this.courseExId = courseExId;
         }
     } //}
-    @PostMapping("/apis/course")
+    @PostMapping()
     public CourseExIdDTO createCourse(@RequestBody @Valid PostCourseDTOX coursex) //{
     {
         final Course course = new Course();
@@ -266,7 +268,7 @@ public class AdminCourse {
         return ans;
     } //}
 
-    @PutMapping("/apis/course")
+    @PutMapping()
     public void updateCourse(@RequestBody @Valid PutCourseDTOX coursex) //{
     {
         final Course course = this.courseService.getCourse(coursex.getCourseExId())
@@ -281,13 +283,13 @@ public class AdminCourse {
         this.courseService.updateCourse(course);
     } //}
 
-    @DeleteMapping("/apis/course")
+    @DeleteMapping()
     public void deleteCourse(@RequestParam("courseExId") String courseExId) //{
     {
         this.courseService.deleteCourse(courseExId);
     } //}
 
-    @GetMapping("/apis/course/page")
+    @GetMapping("/page")
     private CoursePageDTO getPage(HttpServletRequest httpreq,
             @RequestParam(value = "role", required = false) String role, 
             @RequestParam(value = "pageno", defaultValue = "1") int pageno, 
