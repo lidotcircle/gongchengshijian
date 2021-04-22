@@ -102,9 +102,6 @@ course_update() {
 course_getpage_target() {
     local target=$1
     shift 1
-    if [ -n "$target" ]; then
-        target="/${target}"
-    fi
     assert "[ $# -le 5 ]" "at most 5 argument"
 
     local -A request=(
@@ -113,6 +110,9 @@ course_getpage_target() {
         ["sortDir"]="${3:-desc}"
         ["sortKey"]="${4:-courseName}"
     )
+    if [ -n "$target" ]; then
+        request['role']="$target"
+    fi
     if [ $# -eq 5 ]; then
         request['searchWildcard']=$5
     fi
@@ -121,7 +121,7 @@ course_getpage_target() {
 
     $GET $NOPROXY \
         "${BYPASS_AUTHORIZATION[@]}" \
-        $DESTINATION/apis/course/page$target?$params
+        $DESTINATION/apis/course/page?$params
 }
 
 course_getpage() {

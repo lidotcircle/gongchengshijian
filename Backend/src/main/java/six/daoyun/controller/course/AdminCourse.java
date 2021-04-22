@@ -170,6 +170,14 @@ public class AdminCourse {
             this.courseName = courseName;
         }
 
+        private String briefDescription;
+        public String getBriefDescription() {
+            return this.briefDescription;
+        }
+        public void setBriefDescription(String briefDescription) {
+            this.briefDescription = briefDescription;
+        }
+
         private Teacher teacher;
         public Teacher getTeacher() {
             return this.teacher;
@@ -207,8 +215,7 @@ public class AdminCourse {
 
     private void course2courseDTO(final CourseDTO target, final Course course) //{
     {
-        target.setCourseExId(course.getCourseExId());
-        target.setCourseName(course.getCourseName());
+        ObjUitl.assignFields(target, course);
 
         final Teacher teacher = new Teacher();
         teacher.setUserName(course.getTeacher().getUserName());
@@ -281,93 +288,35 @@ public class AdminCourse {
     } //}
 
     @GetMapping("/apis/course/page")
-    private CoursePageDTO getPage(@RequestParam(value = "pageno", defaultValue = "1") int pageno, 
-            @RequestParam(value = "size", defaultValue = "10") int size, 
-            @RequestParam(value = "sortDir", required = false) String sortDir,
-            @RequestParam(value = "sortKey", defaultValue = "keyword") String sortKey,
-            @RequestParam(value = "searchWildcard", required = false) String wildcard) //{
-    {
-        CoursePageDTO ans = new CoursePageDTO();
-        String sortKeyM = sortKey;
-        if("value".equals(sortKey)) {
-            sortKeyM = sortKey;
-        } else if ("remark".equals(sortKey)) {
-            sortKeyM = sortKey;
-        }
-
-        Page<Course> page = 
-            this.courseService.getCoursePage(pageno - 1, size, sortKeyM, 
-                    "desc".equalsIgnoreCase(sortDir), wildcard);
-        Collection<CourseDTO> pairs = new ArrayList<>();
-        page.forEach(v -> {
-            CourseDTO res = new CourseDTO();
-            this.course2courseDTO(res, v);
-            pairs.add(res);
-        });
-        ans.setPairs(pairs);
-        ans.setTotal(page.getTotalElements());
-
-        return ans;
-    } //}
-
-    @GetMapping("/apis/course/page/teacher")
-    private CoursePageDTO getPageTeacher(HttpServletRequest httpreq,
+    private CoursePageDTO getPage(HttpServletRequest httpreq,
+            @RequestParam(value = "role", required = false) String role, 
             @RequestParam(value = "pageno", defaultValue = "1") int pageno, 
             @RequestParam(value = "size", defaultValue = "10") int size, 
             @RequestParam(value = "sortDir", required = false) String sortDir,
-            @RequestParam(value = "sortKey", defaultValue = "keyword") String sortKey,
+            @RequestParam(value = "sortKey", defaultValue = "courseName") String sortKey,
             @RequestParam(value = "searchWildcard", required = false) String wildcard) //{
     {
-        final String teacherName = (String)httpreq.getAttribute("username");
-        final User teacher = this.userService.getUser(teacherName)
-            .orElseThrow(() -> new HttpNotFound("teacher not found"));
-
         CoursePageDTO ans = new CoursePageDTO();
-        String sortKeyM = sortKey;
-        if("value".equals(sortKey)) {
-            sortKeyM = sortKey;
-        } else if ("remark".equals(sortKey)) {
-            sortKeyM = sortKey;
-        }
 
-        Page<Course> page = 
-            this.courseService.getTeacherCoursePage(teacher, pageno - 1, size, sortKeyM, 
+        Page<Course> page;
+        if(role == null) {
+            page = this.courseService.getCoursePage(pageno - 1, size, sortKey, 
+                        "desc".equalsIgnoreCase(sortDir), wildcard);
+        } else if (role.equals("teacher")) {
+            final String teacherName = (String)httpreq.getAttribute("username");
+            final User teacher = this.userService.getUser(teacherName)
+                .orElseThrow(() -> new HttpNotFound("teacher not found"));
+            page = this.courseService.getTeacherCoursePage(teacher, pageno - 1, size, sortKey, 
                     "desc".equalsIgnoreCase(sortDir), wildcard);
-        Collection<CourseDTO> pairs = new ArrayList<>();
-        page.forEach(v -> {
-            CourseDTO res = new CourseDTO();
-            this.course2courseDTO(res, v);
-            pairs.add(res);
-        });
-        ans.setPairs(pairs);
-        ans.setTotal(page.getTotalElements());
 
-        return ans;
-    } //}
-
-    @GetMapping("/apis/course/page/student")
-    private CoursePageDTO getPageStudent(HttpServletRequest httpreq,
-            @RequestParam(value = "pageno", defaultValue = "1") int pageno, 
-            @RequestParam(value = "size", defaultValue = "10") int size, 
-            @RequestParam(value = "sortDir", required = false) String sortDir,
-            @RequestParam(value = "sortKey", defaultValue = "keyword") String sortKey,
-            @RequestParam(value = "searchWildcard", required = false) String wildcard) //{
-    {
-        final String studentName = (String)httpreq.getAttribute("username");
-        final User student = this.userService.getUser(studentName)
-            .orElseThrow(() -> new HttpNotFound("student not found"));
-
-        CoursePageDTO ans = new CoursePageDTO();
-        String sortKeyM = sortKey;
-        if("value".equals(sortKey)) {
-            sortKeyM = sortKey;
-        } else if ("remark".equals(sortKey)) {
-            sortKeyM = sortKey;
-        }
-
-        Page<Course> page = 
-            this.courseService.getStudentCoursePage(student, pageno - 1, size, sortKeyM, 
+        } else {
+            final String studentName = (String)httpreq.getAttribute("username");
+            final User student = this.userService.getUser(studentName)
+                .orElseThrow(() -> new HttpNotFound("student not found"));
+            page = this.courseService.getStudentCoursePage(student, pageno - 1, size, sortKey, 
                     "desc".equalsIgnoreCase(sortDir), wildcard);
+
+        }
         Collection<CourseDTO> pairs = new ArrayList<>();
         page.forEach(v -> {
             CourseDTO res = new CourseDTO();
