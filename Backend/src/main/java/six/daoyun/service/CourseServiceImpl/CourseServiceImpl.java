@@ -1,7 +1,6 @@
 package six.daoyun.service.CourseServiceImpl;
 
 import java.util.Optional;
-import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,8 +10,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import six.daoyun.entity.Course;
+import six.daoyun.entity.CourseStudent;
 import six.daoyun.entity.User;
+import six.daoyun.exception.Forbidden;
+import six.daoyun.exception.NotFound;
 import six.daoyun.repository.CourseRepository;
+import six.daoyun.repository.CourseStudentRepository;
 import six.daoyun.service.CourseService;
 import six.daoyun.utils.MiscUtil;
 
@@ -20,6 +23,8 @@ import six.daoyun.utils.MiscUtil;
 public class CourseServiceImpl implements CourseService {
     @Autowired
     private CourseRepository courseRepository;
+    @Autowired
+    private CourseStudentRepository csRepository;
 
 	@Override
 	public String createCourse(Course course) {
@@ -41,20 +46,24 @@ public class CourseServiceImpl implements CourseService {
 
 	@Override
 	public void joinIntoCourse(Course course, User student) {
-        final Collection<User> students = course.getStudents();
-        if(!students.contains(student)) {
-            students.add(student);
-            this.courseRepository.save(course);
+        if(csRepository.findByCourseAndStudent(course, student).isPresent()){
+            throw new Forbidden();
         }
+
+        final CourseStudent sc = new CourseStudent();
+        sc.setGrade(0);
+        sc.setCourse(course);
+        sc.setStudent(student);
+
+        this.csRepository.save(sc);
 	}
 
 	@Override
 	public void exitCourse(Course course, User student) {
-        final Collection<User> students = course.getStudents();
-        if(students.contains(student)) {
-            students.remove(student);
-            this.courseRepository.save(course);
-        }
+        final CourseStudent sc = csRepository.findByCourseAndStudent(course, student)
+            .orElseThrow(() -> new NotFound());
+
+        this.csRepository.delete(sc);
 	}
 
 	@Override
@@ -91,7 +100,7 @@ public class CourseServiceImpl implements CourseService {
 	}
 
 	@Override
-	public Page<Course> getStudentCoursePage(User student, int pageno, int size, String sortKey, boolean desc,
+	public Page<Course> getCourseStudentPage(User student, int pageno, int size, String sortKey, boolean desc,
 			String filter) {
         Sort sort = Sort.by(sortKey);
         if(desc) {
@@ -101,9 +110,9 @@ public class CourseServiceImpl implements CourseService {
         }
         Pageable page = PageRequest.of(pageno, size, sort);
         if(filter == null || filter.isBlank()) {
-            return this.courseRepository.findByStudents(student, page);
+            return this.courseRepository.findByStudents_Student(student, page);
         } else {
-            return this.courseRepository.findByStudents(filter, student, page);
+            return this.courseRepository.findByStudents_Student(filter, student, page);
         }
 	}
 

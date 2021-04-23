@@ -1,5 +1,6 @@
 package six.daoyun.repository;
 
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.domain.Page;
@@ -20,8 +21,8 @@ public interface CourseRepository extends PagingAndSortingRepository<Course, Int
     Page<Course> findByTeacher(User teacher, Pageable request);
 
     @Query("SELECT cr FROM Course cr WHERE cr.teacher.userName LIKE %?1% OR cr.teacher.name LIKE %?1% OR cr.courseName LIKE %?1%")
-    Page<Course> findByStudents(String filter, User students, Pageable request);
-    Page<Course> findByStudents(User students, Pageable request);
+    Page<Course> findByStudents_Student(String filter, User students, Pageable request);
+    Page<Course> findByStudents_Student(User students, Pageable request);
 
     Course findByCourseExId(String exId);
 

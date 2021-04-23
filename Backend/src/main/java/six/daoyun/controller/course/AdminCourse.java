@@ -227,7 +227,7 @@ public class AdminCourse {
         final Collection<Student> students = new ArrayList<>();
         course.getStudents().forEach((student) -> {
             Student s = new Student();
-            ObjUitl.assignFields(s, student);
+            ObjUitl.assignFields(s, student.getStudent());
             students.add(s);
         });
         target.setStudents(students);
@@ -315,7 +315,7 @@ public class AdminCourse {
             final String studentName = (String)httpreq.getAttribute("username");
             final User student = this.userService.getUser(studentName)
                 .orElseThrow(() -> new HttpNotFound("student not found"));
-            page = this.courseService.getStudentCoursePage(student, pageno - 1, size, sortKey, 
+            page = this.courseService.getCourseStudentPage(student, pageno - 1, size, sortKey, 
                     "desc".equalsIgnoreCase(sortDir), wildcard);
 
         }

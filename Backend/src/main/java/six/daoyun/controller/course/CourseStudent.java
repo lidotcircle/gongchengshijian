@@ -1,7 +1,5 @@
 package six.daoyun.controller.course;
 
-import java.util.Collection;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -73,12 +71,7 @@ public class CourseStudent {
             throw new HttpForbidden("教师不可以加入自己的课程");
         }
 
-        final Collection<User> students = course.getStudents();
-        if(students.contains(student)) {
-            throw new HttpForbidden("用户已加入课程");
-        }
-        students.add(student);
-        this.courseService.updateCourse(course);
+        this.courseService.joinIntoCourse(course, student);
     } //}
 
     @DeleteMapping()
@@ -99,11 +92,7 @@ public class CourseStudent {
             throw new HttpUnauthorized("不是课程的教师");
         }
 
-        if(!course.getStudents().contains(student)) {
-            throw new HttpForbidden("班课中不存在该学生");
-        }
-        course.getStudents().remove(student);
-        this.courseService.updateCourse(course);
+        this.courseService.exitCourse(course, student);
     } //}
 
     static class JoinDTO //{
@@ -127,16 +116,11 @@ public class CourseStudent {
         final Course course = this.courseService.getCourse(join.getCourseExId())
             .orElseThrow(() -> new HttpNotFound("找不到课程"));
 
-        if(course.getStudents().contains(user)) {
-            throw new HttpForbidden("学生已在班课中");
-        }
-
         if(course.getTeacher().equals(user)) {
             throw new HttpForbidden("教师不可以加入自己的班课");
         }
 
-        course.getStudents().add(user);
-        this.courseService.updateCourse(course);
+        this.courseService.joinIntoCourse(course, user);
     } //}
 
     @DeleteMapping("/me")
@@ -149,12 +133,7 @@ public class CourseStudent {
         final Course course = this.courseService.getCourse(courseExId)
             .orElseThrow(() -> new HttpNotFound("找不到课程"));
 
-        if(!course.getStudents().contains(user)) {
-            throw new HttpForbidden("用户不在班课中");
-        }
-
-        course.getStudents().remove(user);
-        this.courseService.updateCourse(course);
+        this.courseService.exitCourse(course, user);
     } //}
 }
 

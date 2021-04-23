@@ -1,12 +1,12 @@
 package six.daoyun.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -64,13 +64,19 @@ public class Course implements Serializable {
         this.teacher = teacher;
     }
 
-    @ManyToMany
-    private Collection<User> students;
-    public Collection<User> getStudents() {
+    @OneToMany(mappedBy = "course")
+    private Collection<CourseStudent> students;
+    public Collection<CourseStudent> getStudents() {
         return this.students;
     }
-    public void setStudents(Collection<User> students) {
+    public void setStudents(Collection<CourseStudent> students) {
         this.students = students;
+    }
+
+    public Collection<User> getTrueStudents() {
+        Collection<User> ans = new ArrayList<>();
+        this.getStudents().forEach(val -> ans.add(val.getStudent()));
+        return ans;
     }
 
     @OneToMany(mappedBy = "course")

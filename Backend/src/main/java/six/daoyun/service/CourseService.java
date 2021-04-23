@@ -19,6 +19,6 @@ public interface CourseService {
 
     Page<Course> getCoursePage(int pageno, int size, String sortKey, boolean desc, String filter);
     Page<Course> getTeacherCoursePage(User teacher, int pageno, int size, String sortKey, boolean desc, String filter);
-    Page<Course> getStudentCoursePage(User student, int pageno, int size, String sortKey, boolean desc, String filter);
+    Page<Course> getCourseStudentPage(User student, int pageno, int size, String sortKey, boolean desc, String filter);
 }
 
