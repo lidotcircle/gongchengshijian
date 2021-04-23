@@ -3,6 +3,7 @@
 source $(dirname ${BASH_SOURCE[0]})/utils.sh
 source $(dirname ${BASH_SOURCE[0]})/auth.sh
 source $(dirname ${BASH_SOURCE[0]})/course.sh
+source $(dirname ${BASH_SOURCE[0]})/courseTask.sh
 source $(dirname ${BASH_SOURCE[0]})/courseJoin.sh
 source $(dirname ${BASH_SOURCE[0]})/message.sh
 source $(dirname ${BASH_SOURCE[0]})/role.sh
@@ -35,6 +36,7 @@ commands:
   sysparam          [ get | put | post | delete | getall | getpage ]
   course            [ create | update | get | delete | getpage | getpage_t | getpage_s ]
   courseJoin        [ join | exit | invite | delete ]
+  courseTask        [ get | delete | create | update | list ]
 EOF
 }
 
@@ -68,6 +70,7 @@ case $COMMAND in
     "sysparam"   ) sysparam   $@ ;;
     "course"     ) course     $@ ;;
     "courseJoin" ) courseJoin $@ ;;
+    "courseTask" ) courseTask $@ ;;
     *)
         usage
         exit 1

@@ -12,6 +12,7 @@ import six.daoyun.entity.User;
 import six.daoyun.exception.NotFound;
 import six.daoyun.repository.CommitTaskRepository;
 import six.daoyun.repository.CourseTaskRepository;
+import six.daoyun.service.CourseService;
 import six.daoyun.service.CourseTaskService;
 
 
@@ -21,6 +22,8 @@ public class CourseTaskServiceImpl implements CourseTaskService {
     private CourseTaskRepository taskRepository;
     @Autowired
     private CommitTaskRepository commitRespository;
+    @Autowired
+    private CourseService courseService;
 
 	@Override
 	public long createCourseTask(CourseTask task) {
@@ -48,7 +51,7 @@ public class CourseTaskServiceImpl implements CourseTaskService {
         final CourseTask task = this.getCourseTask(taskId)
             .orElseThrow(() -> new NotFound("班课任务不存在"));
 
-        if(!task.getCourse().getStudents().contains(student)) {
+        if(this.courseService.courseHasStudent(task.getCourse(), student)) {
             throw new NotFound("班课中不存在该用户");
         }
 

@@ -120,4 +120,14 @@ public class CourseServiceImpl implements CourseService {
 	public Optional<Course> getCourse(String courseExId) {
         return Optional.ofNullable(this.courseRepository.findByCourseExId(courseExId));
 	}
+
+	@Override
+	public boolean courseHasStudent(Course course, User student) {
+        return this.csRepository.findByCourseAndStudent(course, student).isPresent();
+	}
+
+	@Override
+	public boolean isMemberOfCourse(Course course, User user) {
+        return course.getTeacher().equals(user) || this.courseHasStudent(course, user);
+	}
 }

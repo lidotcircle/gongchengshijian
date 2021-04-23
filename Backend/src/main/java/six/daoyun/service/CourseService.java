@@ -14,6 +14,8 @@ public interface CourseService {
 
     void joinIntoCourse(Course course, User student);
     void exitCourse(Course course, User student);
+    boolean courseHasStudent(Course course, User student);
+    boolean isMemberOfCourse(Course course, User user);
 
     Optional<Course> getCourse(String courseExId);
 

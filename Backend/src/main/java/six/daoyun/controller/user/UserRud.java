@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import six.daoyun.controller.DYUtil;
 import six.daoyun.controller.exception.HttpBadRequest;
 import six.daoyun.controller.exception.HttpUnauthorized;
 import six.daoyun.controller.user.proto.UserUpdating;
@@ -31,23 +32,19 @@ public class UserRud {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UserRud.class);
-
     @GetMapping("/apis/user")
     @ResponseBody
     public UserInfo getUserinfo(HttpServletRequest httpreq) //{
     {
-        final String username = (String) httpreq.getAttribute("username");
-        log.info("/apis/user get userinfo {}", username);
-        return this.userService.getUserInfo(username).get();
+        final User user = DYUtil.getHttpRequestUser(httpreq);
+        return this.userService.getUserInfo(user.getUserName()).get();
     } //}
 
     @PutMapping("/apis/user")
     @ResponseBody
     public Collection<String> modifyUserInfo(HttpServletRequest httpreq, @RequestBody UserUpdating request) //{
     {
-        String username = (String) httpreq.getAttribute("username");
-        User user = this.userService.getUser(username).orElseThrow(() -> new HttpBadRequest("user not found: " + username));
+        final User user = DYUtil.getHttpRequestUser(httpreq);
         Collection<String> ans = ObjUitl.assignFields(user, request);
 
         if(request.getBirthday() >= 0) {
@@ -76,8 +73,7 @@ public class UserRud {
     @ResponseBody
     public Collection<String> modifyUserInfoPriv(HttpServletRequest httpreq, @RequestBody @Valid UserUpdatingPriv request) //{
     {
-        String username = (String) httpreq.getAttribute("username");
-        User user = this.userService.getUser(username).orElseThrow(() -> new HttpBadRequest("user not found: " + username));
+        final User user = DYUtil.getHttpRequestUser(httpreq);
 
         if(!this.passwordEncoder.matches(request.getRequiredPassword(), user.getPassword())) {
             throw new HttpUnauthorized("密码错误");

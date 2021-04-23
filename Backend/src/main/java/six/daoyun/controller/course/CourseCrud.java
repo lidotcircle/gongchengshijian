@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import six.daoyun.controller.DYUtil;
 import six.daoyun.controller.exception.HttpNotFound;
 import six.daoyun.entity.Course;
 import six.daoyun.entity.User;
@@ -29,7 +30,7 @@ import six.daoyun.utils.ObjUitl;
 
 @RestController
 @RequestMapping("/apis/course")
-public class AdminCourse {
+public class CourseCrud {
     @Autowired
     private CourseService courseService;
     @Autowired
@@ -152,6 +153,14 @@ public class AdminCourse {
         public void setStudentTeacherId(String studentTeacherId) {
             this.studentTeacherId = studentTeacherId;
         }
+
+        private Long score;
+        public Long getScore() {
+            return this.score;
+        }
+        public void setScore(Long score) {
+            this.score = score;
+        }
     } //}
 
     static class CourseDTO //{
@@ -228,6 +237,7 @@ public class AdminCourse {
         course.getStudents().forEach((student) -> {
             Student s = new Student();
             ObjUitl.assignFields(s, student.getStudent());
+            s.setScore(student.getGrade());
             students.add(s);
         });
         target.setStudents(students);
@@ -305,16 +315,12 @@ public class AdminCourse {
             page = this.courseService.getCoursePage(pageno - 1, size, sortKey, 
                         "desc".equalsIgnoreCase(sortDir), wildcard);
         } else if (role.equals("teacher")) {
-            final String teacherName = (String)httpreq.getAttribute("username");
-            final User teacher = this.userService.getUser(teacherName)
-                .orElseThrow(() -> new HttpNotFound("teacher not found"));
+            final User teacher = DYUtil.getHttpRequestUser(httpreq);
             page = this.courseService.getTeacherCoursePage(teacher, pageno - 1, size, sortKey, 
                     "desc".equalsIgnoreCase(sortDir), wildcard);
 
         } else {
-            final String studentName = (String)httpreq.getAttribute("username");
-            final User student = this.userService.getUser(studentName)
-                .orElseThrow(() -> new HttpNotFound("student not found"));
+            final User student = DYUtil.getHttpRequestUser(httpreq);
             page = this.courseService.getCourseStudentPage(student, pageno - 1, size, sortKey, 
                     "desc".equalsIgnoreCase(sortDir), wildcard);
 

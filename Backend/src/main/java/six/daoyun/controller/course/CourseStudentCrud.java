@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import six.daoyun.controller.DYUtil;
 import six.daoyun.controller.exception.HttpForbidden;
 import six.daoyun.controller.exception.HttpNotFound;
 import six.daoyun.controller.exception.HttpUnauthorized;
@@ -23,7 +24,7 @@ import six.daoyun.service.UserService;
 
 @RestController()
 @RequestMapping("/apis/course/student")
-public class CourseStudent {
+public class CourseStudentCrud {
     @Autowired
     private CourseService courseService;
     @Autowired
@@ -59,8 +60,7 @@ public class CourseStudent {
         final User student = this.userService.getUser(invitation.getStudentName())
             .orElseThrow(() -> new HttpNotFound("找不到学生用户"));
 
-        final String userName = (String)httpreq.getAttribute("username");
-        final User user = this.userService.getUser(userName).get();
+        final User user = DYUtil.getHttpRequestUser(httpreq);
 
         // TODO
         if(!course.getTeacher().getUserName().equals(user.getUserName())) {
@@ -84,8 +84,7 @@ public class CourseStudent {
         final User student = this.userService.getUser(studentName)
             .orElseThrow(() -> new HttpNotFound("找不到学生用户"));
 
-        final String userName = (String)httpreq.getAttribute("username");
-        final User user = this.userService.getUser(userName).get();
+        final User user = DYUtil.getHttpRequestUser(httpreq);
 
         // TODO
         if(!course.getTeacher().getUserName().equals(user.getUserName())) {
@@ -110,8 +109,7 @@ public class CourseStudent {
     @PostMapping("/me")
     private void joinInto(HttpServletRequest httpreq, @RequestBody @Valid JoinDTO join) //{
     {
-        final String userName = (String)httpreq.getAttribute("username");
-        final User user = this.userService.getUser(userName).get();
+        final User user = DYUtil.getHttpRequestUser(httpreq);
 
         final Course course = this.courseService.getCourse(join.getCourseExId())
             .orElseThrow(() -> new HttpNotFound("找不到课程"));
@@ -127,8 +125,7 @@ public class CourseStudent {
     private void exit(HttpServletRequest httpreq,
             @RequestParam("courseExId") String courseExId) //{
     {
-        final String userName = (String)httpreq.getAttribute("username");
-        final User user = this.userService.getUser(userName).get();
+        final User user = DYUtil.getHttpRequestUser(httpreq);
 
         final Course course = this.courseService.getCourse(courseExId)
             .orElseThrow(() -> new HttpNotFound("找不到课程"));
