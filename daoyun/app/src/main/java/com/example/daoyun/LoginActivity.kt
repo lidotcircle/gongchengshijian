@@ -38,6 +38,7 @@ class LoginActivity : AppCompatActivity() {
 
         //登录
         binding.btLoginSubmit.setOnClickListener {
+
             if(binding.etLoginUsername.text.toString() == ""){
                 showAlertDialog("请输入账号!")
             }
