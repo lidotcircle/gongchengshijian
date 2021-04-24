@@ -14,7 +14,6 @@ courseTask_usage() {
         delete           taskId
         create           courseExId title content [committable [deadline]]
         update           taskId prop newvalue
-        list             courseExId
 EOF
 }
 
@@ -35,7 +34,6 @@ courseTask() {
         "delete" ) courseTask_delete $@ ;;
         "create" ) courseTask_create $@ ;;
         "update" ) courseTask_update $@ ;;
-        "list" )   courseTask_list $@ ;;
         * )
             error "unknow subcommand courseTask '$1'"
             exit 1

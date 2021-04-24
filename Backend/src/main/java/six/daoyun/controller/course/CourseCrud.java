@@ -2,11 +2,14 @@ package six.daoyun.controller.course;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import six.daoyun.controller.DYUtil;
+import six.daoyun.controller.exception.HttpForbidden;
 import six.daoyun.controller.exception.HttpNotFound;
 import six.daoyun.entity.Course;
 import six.daoyun.entity.User;
@@ -163,6 +167,57 @@ public class CourseCrud {
         }
     } //}
 
+    static class CourseTaskDTO //{
+    {
+        private long id;
+        public long getId() {
+            return this.id;
+        }
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", shape = JsonFormat.Shape.STRING)
+        private Date releaseDate;
+        public Date getReleaseDate() {
+            return this.releaseDate;
+        }
+        public void setReleaseDate(Date releaseDate) {
+            this.releaseDate = releaseDate;
+        }
+
+        private Date deadline;
+        public Date getDeadline() {
+            return this.deadline;
+        }
+        public void setDeadline(Date deadline) {
+            this.deadline = deadline;
+        }
+
+        private boolean committable;
+        public boolean getCommittable() {
+            return this.committable;
+        }
+        public void setCommittable(boolean committable) {
+            this.committable = committable;
+        }
+
+        private String taskTitle;
+        public String getTaskTitle() {
+            return this.taskTitle;
+        }
+        public void setTaskTitle(String taskTitle) {
+            this.taskTitle = taskTitle;
+        }
+
+        private String content;
+        public String getContent() {
+            return this.content;
+        }
+        public void setContent(String content) {
+            this.content = content;
+        }
+    } //}
     static class CourseDTO //{
     {
         private String courseExId;
@@ -204,6 +259,14 @@ public class CourseCrud {
         public void setStudents(Collection<Student> students) {
             this.students = students;
         }
+
+        private Collection<CourseTaskDTO> tasks;
+        public Collection<CourseTaskDTO> getTasks() {
+            return this.tasks;
+        }
+        public void setTasks(Collection<CourseTaskDTO> tasks) {
+            this.tasks = tasks;
+        }
     } //}
     static class CoursePageDTO //{
     {
@@ -241,15 +304,35 @@ public class CourseCrud {
             students.add(s);
         });
         target.setStudents(students);
+
+        final Collection<CourseTaskDTO> tasks = new ArrayList<>();
+        course.getTasks().forEach(task -> {
+            CourseTaskDTO dtask = new CourseTaskDTO();
+            ObjUitl.assignFields(dtask, task);
+            dtask.setReleaseDate(task.getCreatedDate());
+            tasks.add(dtask);
+        });
+        target.setTasks(tasks);
     } //}
 
-    @GetMapping()
+    @GetMapping("/super")
     public CourseDTO getCourse(@RequestParam("courseExId") String courseExId) //{
     {
         final CourseDTO ans = new CourseDTO();
         final Course course = this.courseService.getCourse(courseExId).orElseThrow(() -> new HttpNotFound("找不到课程"));
         this.course2courseDTO(ans, course);
         return ans;
+    } //}
+    @GetMapping()
+    public CourseDTO getCourse(HttpServletRequest httpreq,
+            @RequestParam("courseExId") String courseExId) //{
+    {
+        User user = DYUtil.getHttpRequestUser(httpreq);
+        if(!this.courseService.isMemberOfCourse(courseExId, user)) {
+            throw new HttpForbidden("不是课程的成员");
+        }
+
+        return this.getCourse(courseExId);
     } //}
 
     static class CourseExIdDTO //{
@@ -262,13 +345,10 @@ public class CourseCrud {
             this.courseExId = courseExId;
         }
     } //}
-    @PostMapping()
-    public CourseExIdDTO createCourse(@RequestBody @Valid PostCourseDTOX coursex) //{
+    private CourseExIdDTO createCourse(PostCourseDTOX coursex, User teacher) //{
     {
         final Course course = new Course();
         ObjUitl.assignFields(course, coursex);
-        final User teacher = this.userService.getUser(coursex.getTeacherName())
-            .orElseThrow(() -> new HttpNotFound("教师不存在"));
         course.setTeacher(teacher);
 
         this.courseService.createCourse(course);
@@ -277,26 +357,61 @@ public class CourseCrud {
         ans.setCourseExId(course.getCourseExId());
         return ans;
     } //}
+    @PostMapping("/super")
+    public CourseExIdDTO createCourse(@RequestBody @Valid PostCourseDTOX coursex) //{
+    {
+        final User teacher = this.userService.getUser(coursex.getTeacherName())
+            .orElseThrow(() -> new HttpNotFound("教师不存在"));
 
-    @PutMapping()
+        return this.createCourse(coursex, teacher);
+    } //}
+    @PostMapping()
+    public CourseExIdDTO createCourse(HttpServletRequest httpreq, 
+            @RequestBody @Valid PostCourseDTOX coursex) //{
+    {
+        final User teacher = DYUtil.getHttpRequestUser(httpreq);
+
+        return this.createCourse(coursex, teacher);
+    } //}
+
+    @PutMapping("/super")
     public void updateCourse(@RequestBody @Valid PutCourseDTOX coursex) //{
     {
         final Course course = this.courseService.getCourse(coursex.getCourseExId())
             .orElseThrow(() -> new HttpNotFound("课程不存在"));
         ObjUitl.assignFields(course, coursex);
-        if(coursex.getTeacherName() != null) {
-            final User teacher = this.userService.getUser(coursex.getTeacherName())
-                .orElseThrow(() -> new HttpNotFound("教师不存在"));
-
-            course.setTeacher(teacher);
+        this.courseService.updateCourse(course);
+    } //}
+    @PutMapping()
+    public void updateCourse(HttpServletRequest httpreq, 
+            @RequestBody @Valid PutCourseDTOX coursex) //{
+    {
+        final User user = DYUtil.getHttpRequestUser(httpreq);
+        final Course course = this.courseService.getCourse(coursex.getCourseExId())
+            .orElseThrow(() -> new HttpNotFound("课程不存在"));
+        if(!course.getTeacher().equals(user)) {
+            throw new HttpForbidden("不是课程的老师");
         }
+        ObjUitl.assignFields(course, coursex);
         this.courseService.updateCourse(course);
     } //}
 
-    @DeleteMapping()
+    @DeleteMapping("/super")
     public void deleteCourse(@RequestParam("courseExId") String courseExId) //{
     {
         this.courseService.deleteCourse(courseExId);
+    } //}
+    @DeleteMapping()
+    public void deleteCourse(HttpServletRequest httpreq, 
+            @RequestParam("courseExId") String courseExId) //{
+    {
+        final User user = DYUtil.getHttpRequestUser(httpreq);
+        final Course course = this.courseService.getCourse(courseExId)
+            .orElseThrow(() -> new HttpNotFound("课程不存在"));
+        if(!course.getTeacher().equals(user)) {
+            throw new HttpForbidden("不是课程的老师");
+        }
+        this.deleteCourse(courseExId);
     } //}
 
     @GetMapping("/page")

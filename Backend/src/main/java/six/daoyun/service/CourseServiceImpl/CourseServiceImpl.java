@@ -130,4 +130,11 @@ public class CourseServiceImpl implements CourseService {
 	public boolean isMemberOfCourse(Course course, User user) {
         return course.getTeacher().equals(user) || this.courseHasStudent(course, user);
 	}
+
+	@Override
+	public boolean isMemberOfCourse(String courseExId, User user) {
+        final Course course = this.getCourse(courseExId)
+            .orElseThrow(() -> new NotFound());
+        return this.isMemberOfCourse(course, user);
+	}
 }
