@@ -4,6 +4,7 @@ export interface Student {
     userName: string; 
     name: string; 
     studentTeacherId: string
+    score: string;
 }
 
 interface Teacher {
@@ -11,9 +12,32 @@ interface Teacher {
     name: string;
 }
 
+export interface CourseInfo {
+    courseExId?: string;
+    taskId: number;
+    taskTitle: string;
+    content: string;
+    releaseDate: Date;
+
+    Content: String;
+}
+
+export interface CourseTask extends CourseInfo {
+    deadline: Date;
+    committable: boolean;
+}
+
 export type CourseCheckIn = string;
-export type CourseTask = string;
-export type CourseInfo = string;
+
+function briefy(text: string): string {
+    if(!text) return '';
+
+    if(text.length < 20) {
+        return text;
+    } else {
+        return text.substr(0, 18) + '...';
+    }
+}
 
 export class Course {
     courseExId: string;
@@ -21,30 +45,46 @@ export class Course {
     briefDescription: string;
 
     teacher: Teacher;
-    students: Student[];
+    students: Student[] = [];
 
     checkInList: CourseCheckIn[];
-    taskList: CourseTask[];
-    infoList: CourseInfo[];
+    tasks: CourseTask[] = [];
 
-    get Students(): Student[]          {return this.students || [];}
+    get Students(): Student[]          {return this.students;}
     get CheckInList(): CourseCheckIn[] {return this.checkInList || [];}
-    get TaskList(): CourseTask[]       {return this.taskList || [];}
-    get InfoList(): CourseInfo[]       {return this.infoList || [];}
+    get Tasks(): CourseTask[] {
+        return this.tasks.filter(task => task.committable);
+    }
+    get Infos(): CourseInfo[] {
+        return this.tasks.filter(task => !task.committable);
+    }
 
     get BriefDescription(): string {
-        if(!this.briefDescription) return '';
-
-        if(this.briefDescription.length < 20) {
-            return this.briefDescription;
-        } else {
-            return this.briefDescription.substr(0, 18) + '...';
-        }
+        return briefy(this.briefDescription);
     }
 
     get Teacher(): string {
         if(!this.teacher) return '';
         return this.teacher.name || this.teacher.userName;
+    }
+
+    static obj2Task(obj: object) {
+        const task = obj as CourseTask;
+        task.taskId = (obj as any).id;
+        task.deadline = task.deadline && new Date(task.deadline);
+        task.releaseDate = task.releaseDate && new Date(task.releaseDate);
+        task.Content = briefy(task.content);
+        return task;
+    }
+
+    static fromObject(obj: object) {
+        const ans = Object.create(Course.prototype, Object.getOwnPropertyDescriptors(obj)) as Course;
+        ans.tasks = ans.tasks || [];
+        ans.students = ans.students || [];
+
+        ans.tasks.forEach(task => Course.obj2Task(task));
+
+        return ans;
     }
 }
 

@@ -5,10 +5,13 @@ import { Observable, Subject, from, of } from 'rxjs';
 import { concatMap, map, takeUntil, tap } from 'rxjs/operators';
 import { Course } from 'src/app/entity';
 import { CourseCheckIn, CourseInfo, CourseTask, Student } from 'src/app/entity/Course';
+import { CourseTaskService } from 'src/app/service/course/course-task.service';
 import { CourseService } from 'src/app/service/course/course.service';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window.component';
 import { sortObject } from 'src/app/shared/utils';
 import { BasicInfoEditorComponent } from './basic-info-editor.component';
+import { CourseInfoViewComponent } from './course-info-viewer.component';
+import { CourseTaskEditorComponent } from './course-task-editor.component';
 import { JustInputComponent } from './just-input.component';
 
 @Component({
@@ -38,15 +41,15 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
             });
     }
     private runTasksFilter() {
-        this.tasks = this.course.TaskList.filter(task => {
+        this.tasks = this.course.Tasks.filter(task => {
             return this.tasksFilter.trim().length == 0 ||
-                task.match(this.tasksFilter);
+                task.taskTitle.match(this.tasksFilter);
         });
     }
     private runInfosFilter() {
-        this.infos = this.course.InfoList.filter(info => {
+        this.infos = this.course.Infos.filter(info => {
             return this.infosFilter.trim().length == 0 ||
-                info.match(this.infosFilter);
+                info.taskTitle.match(this.infosFilter);
         });
     }
     private runCheckInsFilter() {
@@ -86,6 +89,7 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
     } //}
 
     constructor(private courseService: CourseService,
+                private courseTaskService: CourseTaskService,
                 private windowService: NbWindowService,
                 private toastrService: NbToastrService,
                 private activatedRoute: ActivatedRoute) {
@@ -177,13 +181,77 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
         }
     } //}
 
-    async assignTask() {
-    }
+    async assignTask() //{
+    {
+        const win = this.windowService.open(CourseTaskEditorComponent, {
+            title: '新建课程任务',
+            context: {
+                committable: true,
+            }
+        });
+        await win.onClose.toPromise();
+
+        if(win.config.context['isConfirmed']) {
+            const task: CourseTask = win.config.context['courseTask'];
+            task.courseExId = this.course.courseExId;
+            try {
+                await this.courseTaskService.postTask(task);
+                await this.refreshCourseFrom(this.course.courseExId);
+            } catch {
+                this.toastrService.danger("新建任务失败", "课程管理");
+            }
+        }
+    } //}
 
     async startCheckIn() {
     }
 
-    async startInfo() {
+    async startInfo() //{
+    {
+        const win = this.windowService.open(CourseTaskEditorComponent, {
+            title: '新建课程通知',
+            context: {
+                committable: false,
+            }
+        });
+        await win.onClose.toPromise();
+
+        if(win.config.context['isConfirmed']) {
+            const info: CourseInfo = win.config.context['courseTask'];
+            info.courseExId = this.course.courseExId;
+            try {
+                await this.courseTaskService.postInfo(info);
+                await this.refreshCourseFrom(this.course.courseExId);
+            } catch {
+                this.toastrService.danger("新建课程通知失败", "课程管理");
+            }
+        }
+
+    } //}
+
+    async viewTask(n: number) {
+        const task: CourseTask = this.tasks[n];
+        // TODO
     }
+    async viewInfo(n: number) //{
+    {
+        const info: CourseInfo = this.infos[n];
+        const win = this.windowService.open(CourseInfoViewComponent, {
+            title: '课程通知',
+            context: {
+                courseInfo: info,
+            }
+        });
+        await win.onClose.toPromise();
+
+        if(win.config.context['delete']) {
+            try {
+                await this.courseTaskService.deleteTask(info.taskId);
+                await this.refreshCourseFrom(this.course.courseExId);
+            } catch {
+                this.toastrService.danger("删除通知失败", "课程管理");
+            }
+        }
+    } //}
 }
 

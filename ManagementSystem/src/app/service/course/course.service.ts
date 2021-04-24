@@ -32,11 +32,11 @@ export class CourseService {
             }
         }).toPromise();
 
-        return Object.create(Course.prototype, Object.getOwnPropertyDescriptors(ans)) as Course;
+        return Course.fromObject(ans);
     }
 
     async delete(courseExId: string): Promise<void> {
-        await this.http.delete(RESTfulAPI.Course.get, {
+        await this.http.delete(RESTfulAPI.Course.deleteCourse, {
             params: {
                 courseExId: courseExId
             }
@@ -49,7 +49,7 @@ export class CourseService {
     }): Promise<string> {
         const req = Object.assign({teacherName: this.userService.getUser});
 
-        const ans = await this.http.post(RESTfulAPI.Course.get, req).toPromise();
+        const ans = await this.http.post(RESTfulAPI.Course.post, req).toPromise();
         return ans['courseExId'];
     }
 
@@ -58,7 +58,7 @@ export class CourseService {
         courseName?: string;
         briefDescription?: string;
     }): Promise<void> {
-        const ans = await this.http.put(RESTfulAPI.Course.get, course).toPromise();
+        const ans = await this.http.put(RESTfulAPI.Course.put, course).toPromise();
     }
 
 
@@ -80,7 +80,7 @@ export class CourseService {
 
         if(resp.pairs) {
             resp.pairs = resp.pairs
-                .map(value => Object.create(Course.prototype, Object.getOwnPropertyDescriptors(value)));
+                .map(value => Course.fromObject(value));
         }
 
         return resp;

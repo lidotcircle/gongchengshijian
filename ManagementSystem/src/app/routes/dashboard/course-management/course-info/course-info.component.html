@@ -20,6 +20,12 @@
   </nb-card-body>
 
   <nb-card-footer class='footer-buttons'>
+    <div class='nav-section'>
+      <a nbButton outline status='info'>学生</a>
+      <a nbButton outline status='info'>任务</a>
+      <a nbButton outline status='info'>通知</a>
+      <a nbButton outline status='info'>签到</a>
+    </div>
     <div></div>
     <button nbButton hero status='primary' (click)='editBasic()'>编辑</button>
   </nb-card-footer>
@@ -27,7 +33,7 @@
 
 <nb-card status='info'>
   <nb-card-header class='header-a'>
-    <div>学生列表</div>
+    <div id='students'>学生列表</div>
     <app-search-bar (searchenter)='onStudentsEnter($event)'></app-search-bar>
   </nb-card-header>
 
@@ -36,10 +42,12 @@
       <nb-list-item>
         <div class="student-name">姓名</div>
         <div class="student-id">学号</div>
+        <div class="student-score">经验值</div>
       </nb-list-item>
       <nb-list-item class='data' *ngFor='let student of students; let i = index'>
         <div class="student-name">{{ student.name || student.userName }}</div>
         <div class="student-id">{{ student.studentTeacherId }}</div>
+        <div class="student-score">{{ student.score }}</div>
         <div class="take-space"></div>
         <button nbButton hero status='danger' (click)='deleteStudent(i)'>删除</button>
       </nb-list-item>
@@ -63,9 +71,22 @@
   </nb-card-header>
 
   <nb-card-body [class]='tasks.length > 0 ? "" : "record-length-equal-zero"'>
-    <nb-list>
-      <nb-list-item *ngFor='let task of tasks'>
-        {{ task }}
+    <nb-list class='tasks'>
+      <nb-list-item>
+        <div class="view"></div>
+        <div class="task-title">任务标题</div>
+        <div class="release-date">发布时间</div>
+        <div class="task-deadline">截止时间</div>
+        <div class="take-space"></div>
+        <div class="task-content">内容</div>
+      </nb-list-item>
+      <nb-list-item class='date' *ngFor='let task of tasks; let i=index'>
+        <div class="view"><button nbButton status='primary' outline size='medium' (click)='viewTask(i)'>查看</button></div>
+        <div class="task-title">{{ task.taskTitle }}</div>
+        <div class="release-date">{{ task.releaseDate && task.releaseDate.toLocaleString() }}</div>
+        <div class="task-deadline">{{ task.deadline && task.deadline.toLocaleString() }}</div>
+        <div class="take-space"></div>
+        <div class="task-content">{{ task.Content }}</div>
       </nb-list-item>
     </nb-list>
     <div class="empty-state">
@@ -87,9 +108,20 @@
   </nb-card-header>
 
   <nb-card-body [class]='infos.length > 0 ? "" : "record-length-equal-zero"'>
-    <nb-list>
-      <nb-list-item *ngFor='let info of infos'>
-        {{ info }}
+    <nb-list class='tasks'>
+      <nb-list-item>
+        <div class="view"></div>
+        <div class="task-title">通知标题</div>
+        <div class="release-date">发布时间</div>
+        <div class="take-space"></div>
+        <div class="task-content">内容</div>
+      </nb-list-item>
+      <nb-list-item class='date' *ngFor='let task of infos; let i=index'>
+        <div class="view"><button nbButton status='primary' outline size='medium' (click)='viewInfo(i)'>查看</button></div>
+        <div class="task-title">{{ task.taskTitle }}</div>
+        <div class="release-date">{{ task.releaseDate && task.releaseDate.toLocaleString() }}</div>
+        <div class="take-space"></div>
+        <div class="task-content">{{ task.Content }}</div>
       </nb-list-item>
     </nb-list>
     <div class="empty-state">

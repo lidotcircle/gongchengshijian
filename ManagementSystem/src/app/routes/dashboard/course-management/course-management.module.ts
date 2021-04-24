@@ -9,10 +9,16 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { BasicInfoEditorComponent } from './course-info/basic-info-editor.component';
 import { JustInputComponent } from './course-info/just-input.component';
+import { CourseInfoViewComponent } from './course-info/course-info-viewer.component';
+import { CourseTaskEditorComponent } from './course-info/course-task-editor.component';
 
 
 @NgModule({
-    declarations: [CourseListComponent, CourseInfoComponent, CourseCreateComponent, BasicInfoEditorComponent, JustInputComponent],
+    declarations: [
+        CourseListComponent, CourseInfoComponent, CourseCreateComponent, 
+        BasicInfoEditorComponent, JustInputComponent,
+        CourseInfoViewComponent, CourseTaskEditorComponent,
+    ],
     imports: [
         CommonModule,
         SharedModule,

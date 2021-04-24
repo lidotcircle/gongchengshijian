@@ -31,10 +31,15 @@
 .header-a, .footer-buttons {
     display: flex;
     flex-direction: row;
+    align-items: center;
     justify-content: space-between;
+
+    .nav-section a {
+        margin: 0em 0.5em;
+    }
 }
 
-.students {
+.students, .tasks {
     nb-list-item {
         display: flex;
         flex-direction: row;
@@ -49,14 +54,43 @@
             background: nb-theme(background-basic-color-2);
         }
 
-        .student-name {
-            width: 15%;
-            min-width: 3em;
+        div {
+            padding: 0em 0.5em;
         }
 
-        .student-id {
-            width: 30%;
-            min-width: 6em;
+        & {
+            .student-name {
+                width: 15%;
+                min-width: 3em;
+            }
+
+            .student-id {
+                width: 30%;
+                min-width: 6em;
+            }
+
+            .student-score {
+                width: 15%;
+                min-width: 3em;
+            }
+        }
+
+        & {
+            .view {
+                width: 13%;
+            }
+            .task-title {
+                width: 12%;
+                min-width: 4em;
+            }
+            .task-deadline, .release-date {
+                width: 18%;
+                min-width: 6em;
+            }
+            .task-content {
+                width: 35%;
+                min-width: 8em;
+            }
         }
 
         .take-space {
