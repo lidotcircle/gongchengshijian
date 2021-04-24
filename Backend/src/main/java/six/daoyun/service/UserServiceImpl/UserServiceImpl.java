@@ -14,15 +14,21 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import six.daoyun.entity.PermEntry;
+import six.daoyun.entity.Role;
 import six.daoyun.entity.User;
+import six.daoyun.exception.Forbidden;
 import six.daoyun.exchange.UserInfo;
 import six.daoyun.repository.UserRepository;
+import six.daoyun.service.RoleService;
 import six.daoyun.service.UserService;
 import six.daoyun.utils.ObjUitl;
 
 @Service
 public class UserServiceImpl implements UserService {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UserServiceImpl.class);
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     private RedisTemplate<String, UserInfo> userinfoCache;
@@ -125,5 +131,36 @@ public class UserServiceImpl implements UserService {
             return this.userRepository.findAll(filter, page);
         }
 	}
+
+	@Override
+	public void addRole(User user, Role role) {
+        if(user.getRoles().contains(role)) {
+            throw new Forbidden("用户已拥有角色");
+        }
+
+        user.getRoles().add(role);
+        this.userRepository.save(user);
+	}
+
+	@Override
+    public void removeRole(User user, Role role) {
+        if(!user.getRoles().contains(role)) {
+            throw new Forbidden("用户未拥有角色");
+        }
+
+        user.getRoles().remove(role);
+        this.userRepository.save(user);
+	}
+
+	@Override
+	public boolean hasPermission(User user, PermEntry perm) //{
+    {
+        for(final Role role: user.getRoles()) {
+            if(this.roleService.hasPermission(role, perm)) {
+                return true;
+            }
+        }
+        return false;
+	} //}
 }
 

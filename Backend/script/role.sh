@@ -12,7 +12,6 @@ role() {
         "get"    ) getRoleByName $@ ;;
         "getall" ) getRoles $@ ;;
         "create" ) addRole $@ ;;
-        "update" ) updateRoleName $@ ;;
         * )
             error "unknow subcommand role '$1'"
             exit 1
@@ -31,33 +30,21 @@ addRole() {
         $DESTINATION/apis/role
 }
 
-updateRoleName() {
-    assert "[ $# -eq 2 ]" "oldRoleName newRoleName"
-    local old=$1
-    local new=$2
-    local json='{"oldRoleName": "'$old'", "newRoleName": "'$new'"}'
-    debug JSON $json
-
-    $POST $NOPROXY "${BYPASS_AUTHORIZATION[@]}" \
-        "${APPLICATION_JSON[@]}" \
-        --data "$json" \
-        $DESTINATION/apis/role/rename
-}
-
 getRoleByName() {
     assert "[ $# -eq 1 ]" "require rolename"
-    local rolename=$1
-    local json='{"roleName": "'$rolename'"}'
+    local -A request=(
+        ["roleName"]=$1
+    )
+    local params
+    paramsStringify  request params
 
     $GET $NOPROXY "${BYPASS_AUTHORIZATION[@]}" \
-        "${APPLICATION_JSON[@]}" \
-        --data "$json" \
-        $DESTINATION/apis/role/by-name
+        $DESTINATION/apis/role?$params
 }
 
 getRoles() {
     $GET $NOPROXY "${BYPASS_AUTHORIZATION[@]}" \
-        $DESTINATION/apis/role/all
+        $DESTINATION/apis/role/list
 }
 
 

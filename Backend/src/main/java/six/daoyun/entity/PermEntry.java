@@ -28,16 +28,26 @@ public class PermEntry implements Serializable {
         this.id = id;
     }
 
-    @Column(name = "perm_entry_name")
-    private String perm_entryName;
-    public String getMenuName() {
-        return this.perm_entryName;
+    @Column(unique = true, nullable = false)
+    private String descriptor;
+    public String getDescriptor() {
+        return this.descriptor;
     }
-    public void setMenuName(String perm_entryName) {
-        this.perm_entryName = perm_entryName;
+    public void setDescriptor(String descriptor) {
+        this.descriptor = descriptor;
     }
 
-    @Column(name = "uk_link")
+    @Column(name = "perm_entry_name")
+    private String permEntryName;
+    public String getPermEntryName() {
+        return this.permEntryName;
+    }
+    public void setPermEntryName(String permEntryName) {
+        this.permEntryName = permEntryName;
+    }
+
+    // format Method:Path eg. GET:/apis/user
+    @Column(name = "uk_link", unique = true)
     private String link;
     public String getLink() {
         return this.link;
