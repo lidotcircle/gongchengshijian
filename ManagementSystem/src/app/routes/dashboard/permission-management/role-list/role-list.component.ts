@@ -1,10 +1,11 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { NbToastrService } from '@nebular/theme';
+import { NbToastrService, NbWindowService } from '@nebular/theme';
 import { LocalDataSource } from 'ng2-smart-table';
+import { Observable, from } from 'rxjs';
 import { Role } from 'src/app/entity';
+import { RoleService } from 'src/app/service/role/role.service';
+import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window.component';
 import { ButtonsCellComponent } from './buttons-cell.component';
-
-type DataType = Role;
 
 @Component({
     selector: 'ngx-role-list',
@@ -13,11 +14,13 @@ type DataType = Role;
     encapsulation: ViewEncapsulation.None,
 })
 export class RoleListComponent implements OnInit {
+
+    // settings //{
     settings = {
         actions: {
             columnTitle: '操作',
             add: true,
-            edit: true,
+            edit: false,
             delete: true,
             position: 'right',
         },
@@ -50,43 +53,51 @@ export class RoleListComponent implements OnInit {
             },
             roleName: {
                 title: '名称',
+                filter: false,
                 type: 'text',
             },
             createdDate: {
                 title: '创建日期',
+                filter: false,
                 editable: false,
                 type: 'text',
             },
             modifiedDate: {
                 title: '修改日期',
+                filter: false,
                 editable: false,
                 type: 'text',
             },
         },
-    };
-    source: DataType[] = [
-        {roleName: "管理员", createdDate: new Date(), modifiedDate: new Date()},
-    ];
+    }; //}
 
-    constructor(private toastrService: NbToastrService) { }
+    source: LocalDataSource;
 
-    recordLength: number;
+    constructor(private toastrService: NbToastrService,
+                private windowService: NbWindowService,
+                private roleService: RoleService) {
+        this.source = new LocalDataSource();
+        this.refresh();
+    }
+
     ngOnInit(): void {
-        this.recordLength = this.source.length;
+    }
+
+    private refresh() {
+        from(this.roleService.getList()).subscribe(list => {
+            this.source.load(list);
+        }, error => {
+            this.toastrService.danger("加载角色列表失败", "角色管理");
+        });
     }
 
     private static nameRegex = /.{2,10}/;
-    private async checkData(name: string, toaster: boolean = true): Promise<boolean> //{
+    private async checkData(name: string): Promise<boolean> //{
     {
         const nameTestFail = name == null || !RoleListComponent.nameRegex.test(name);
 
-        if(toaster && nameTestFail) {
-            let message = "错误的角色名";
-            this.toastrService.show(message, '角色管理', {
-                duration: 2000,
-                destroyByClick: true,
-                status: 'warning'
-            });
+        if(nameTestFail) {
+            this.toastrService.danger("错误的角色名", '角色管理');
         }
 
         return !nameTestFail;
@@ -94,9 +105,9 @@ export class RoleListComponent implements OnInit {
 
 
     async onCreateConfirm(event: {
-        newData: DataType, 
+        newData: Role, 
         source: LocalDataSource,
-        confirm: {resolve: (data: DataType) => void, reject: () => void},
+        confirm: {resolve: (data: Role) => void, reject: () => void},
     }) //{
     {
         if(!(await this.checkData(event.newData.roleName))) {
@@ -104,36 +115,39 @@ export class RoleListComponent implements OnInit {
             return;
         }
 
-        console.log(await event.source.getAll());
-        this.recordLength++;
-        event.confirm.resolve(event.newData);
-    } //}
-
-    async onEditConfirm(event: {
-        data: DataType,
-        newData: DataType,
-        source: LocalDataSource,
-        confirm: {resolve: (data: DataType) => void, reject: () => void},
-    }) //{
-    {
-        if(!(await this.checkData(event.newData.roleName))) {
+        try {
+            await this.roleService.post(event.newData.roleName); 
+            event.confirm.resolve(event.newData);
+        } catch {
+            this.toastrService.danger("新增角色失败", "角色管理");
             event.confirm.reject();
-            return;
+            event.source.remove(event.newData);
+        } finally {
+            this.refresh();
         }
-
-        console.log(await event.source.getAll());
-        event.confirm.resolve(event.newData);
     } //}
+
 
     async onDeleteConfirm(event: {
-        data: DataType, 
+        data: Role, 
         source: LocalDataSource,
-        confirm: {resolve: (data: DataType) => void, reject: () => void},
+        confirm: {resolve: (data: Role) => void, reject: () => void},
     }) //{
     {
-        console.log(await event.source.getAll(), this.source);
-        this.recordLength--;
-        event.confirm.resolve(event.data);
+        const win = this.windowService.open(ConfirmWindowComponent, {
+            title: `删除 ${event.data.roleName}`,
+            context: {}
+        });
+        await win.onClose.toPromise();
+        if(win.config.context['isConfirmed']) {
+            try {
+                await this.roleService.delete(event.data.roleName);
+                event.confirm.resolve(event.data);
+            }catch {
+                this.toastrService.danger("删除角色失败", "角色管理");
+                event.confirm.reject();
+            }
+        }
     } //}
 }
 

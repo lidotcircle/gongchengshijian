@@ -69,5 +69,14 @@ export module API {
             export const deleteTask = API_ADDRESS + '/apis/course/task'
         }
     }
+
+    export module Role {
+        export const post = API_ADDRESS + '/apis/role';
+        export const deleteRole = API_ADDRESS + '/apis/role';
+        export const getList = API_ADDRESS + '/apis/role/list';
+
+        export module Perm {
+        }
+    }
 }
 
