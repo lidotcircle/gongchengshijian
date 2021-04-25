@@ -93,7 +93,7 @@ public class RoleServiceImpl implements RoleService {
         PermEntry perm = this.permEntryRepository.findByDescriptor(descriptor)
             .orElseThrow(() -> new NotFound());
         if(role.getPermEntries().contains(perm)) {
-            throw new Forbidden();
+            throw new Forbidden("角色已拥有该菜单: " + descriptor);
         }
 
         role.getPermEntries().add(perm);
@@ -135,7 +135,7 @@ public class RoleServiceImpl implements RoleService {
 
         for(final PermEntry sperm: permlist) {
             if(!role.getPermEntries().contains(sperm)) {
-                role.getPermEntries().add(perm);
+                role.getPermEntries().add(sperm);
             }
         }
         this.roleRepository.save(role);
@@ -154,7 +154,7 @@ public class RoleServiceImpl implements RoleService {
 
         for(final PermEntry sperm: permlist) {
             if(role.getPermEntries().contains(sperm)) {
-                role.getPermEntries().remove(perm);
+                role.getPermEntries().remove(sperm);
             }
         }
         this.roleRepository.save(role);
@@ -162,12 +162,12 @@ public class RoleServiceImpl implements RoleService {
 
     private boolean isChildDescriptor(String parentDescriptor, String childDescriptor) //{
     {
-        if(!childDescriptor.startsWith(parentDescriptor + ".")) {
+        if(parentDescriptor != null && !childDescriptor.startsWith(parentDescriptor + ".")) {
             return false;
         }
 
-        final String rml = childDescriptor.substring(parentDescriptor.length() + 1);
-        return Pattern.matches("[a-zA-Z][a-zA-Z0-9_]*", rml);
+        final String rml = parentDescriptor == null ? childDescriptor : childDescriptor.substring(parentDescriptor.length() + 1);
+        return Pattern.matches("[a-zA-Z][a-zA-Z0-9_]+", rml);
     } //}
     private PermEntry getPermEntry(String descriptor) //{
     {
@@ -184,17 +184,16 @@ public class RoleServiceImpl implements RoleService {
 
         PermEntry perm = new PermEntry();
         ObjUitl.assignFields(perm, permx);
-        if(parentDescriptor != null) {
-            if(this.isChildDescriptor(parentDescriptor, permx.getDescriptor())) {
-                throw new Forbidden("bad descriptor");
-            }
-
-            final PermEntry entry = this.getPermEntry(parentDescriptor);
-            entry.getChildren().add(perm);
-            this.permEntryRepository.save(entry);
-        } else {
-            this.permEntryRepository.save(perm);
+        if(!this.isChildDescriptor(parentDescriptor, permx.getDescriptor())) {
+            throw new Forbidden("bad descriptor");
         }
+
+        if(parentDescriptor != null) {
+            final PermEntry parentEntry = this.getPermEntry(parentDescriptor);
+            perm.setParent(parentEntry);
+        }
+
+        this.permEntryRepository.save(perm);
 	} //}
 
 	@Override
@@ -224,6 +223,7 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public void updatePermEntry(String descriptor, PermEntryItem perm) //{
     {
+        perm.setDescriptor(descriptor);
         final PermEntry entry = this.getPermEntry(descriptor);
         ObjUitl.assignFields(entry, perm);
         this.permEntryRepository.save(entry);
@@ -232,13 +232,17 @@ public class RoleServiceImpl implements RoleService {
     private PermEntryTree PermEntryToPermEntryTree(PermEntry entry) //{
     {
         PermEntryTree ans = new PermEntryTree();
-        ans.setChildren(new ArrayList<>());
+        Collection<PermEntryTree> children = new ArrayList<>();
         ObjUitl.assignFields(ans, entry);
 
-        for(final PermEntry e: entry.getChildren()) {
-            ans.getChildren().add(this.PermEntryToPermEntryTree(e));
+        final Collection<PermEntry> childrenx = entry.getChildren();
+        if(childrenx != null) {
+            for(final PermEntry e: childrenx) {
+                children.add(this.PermEntryToPermEntryTree(e));
+            }
         }
 
+        ans.setChildren(children);
         return ans;
     } //}
 	@Override

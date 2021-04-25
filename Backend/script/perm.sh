@@ -9,7 +9,8 @@ perm_usage() {
     subcommands:
         get          descriptor
         delete       [-r|--recursive] descriptor
-        create       descriptor link [parentDescriptor]
+        create       descriptor link type name [parentDescriptor]
+        update       descriptor property newvalue
         gettree
         getrole      roleName
 
@@ -28,6 +29,7 @@ perm() {
         "get"    )  perm_get $@ ;;
         "delete" )  perm_delete $@ ;;
         "create" )  perm_create $@ ;;
+        "update" )  perm_update $@ ;;
         "gettree" ) perm_tree $@ ;;
         "getrole" ) perm_role $@ ;;
 
@@ -71,23 +73,42 @@ perm_delete() {
 }
 
 perm_create() {
-    assert "[ $# -ge 2 ]"
+    assert "[ $# -ge 4 ]"
     local -A request=(
         ["descriptor"]="$1"
         ["link"]="$2"
+        ["entryType"]="$3"
+        ["permEntryName"]="$4"
     )
-    if [ $# -ge 3 ]; then
-        request["parentDescriptor"]="$3"
+    if [ $# -ge 5 ]; then
+        request["parentDescriptor"]="$5"
     fi
     local json
     jsonStringify request json
     debug JSON "$json"
 
-    $DELETE $NOPROXY \
+    $POST $NOPROXY \
         "${BYPASS_AUTHORIZATION[@]}" \
         "${APPLICATION_JSON[@]}" \
         --data "$json" \
-        $DESTINATION/apis/perm?$params
+        $DESTINATION/apis/perm
+}
+
+perm_update() {
+    assert "[ $# -eq 3 ]"
+    local -A request=(
+        ["descriptor"]="$1"
+        ["$2"]="$3"
+    )
+    local json
+    jsonStringify request json
+    debug JSON "$json"
+
+    $PUT $NOPROXY \
+        "${BYPASS_AUTHORIZATION[@]}" \
+        "${APPLICATION_JSON[@]}" \
+        --data "$json" \
+        $DESTINATION/apis/perm
 }
 
 perm_tree() {
@@ -106,7 +127,7 @@ perm_role() {
 
     $GET $NOPROXY \
         "${BYPASS_AUTHORIZATION[@]}" \
-        $DESTINATION/apis/role/perm-list?$params
+        $DESTINATION/apis/perm/role?$params
 }
 
 perm_enable() {
@@ -119,12 +140,14 @@ perm_enable() {
     fi
     request["descriptor"]="$1"
     request["roleName"]="$2"
-    local params
-    paramsStringify request params
+    local json
+    jsonStringify request json
 
     $POST $NOPROXY \
         "${BYPASS_AUTHORIZATION[@]}" \
-        $DESTINATION/apis/role/perm?$params
+        "${APPLICATION_JSON[@]}" \
+        --data "$json" \
+        $DESTINATION/apis/role/perm
 }
 
 perm_disable() {

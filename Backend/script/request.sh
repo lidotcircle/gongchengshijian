@@ -6,6 +6,7 @@ source $(dirname ${BASH_SOURCE[0]})/course.sh
 source $(dirname ${BASH_SOURCE[0]})/courseTask.sh
 source $(dirname ${BASH_SOURCE[0]})/courseJoin.sh
 source $(dirname ${BASH_SOURCE[0]})/message.sh
+source $(dirname ${BASH_SOURCE[0]})/perm.sh
 source $(dirname ${BASH_SOURCE[0]})/role.sh
 source $(dirname ${BASH_SOURCE[0]})/sysparam.sh
 source $(dirname ${BASH_SOURCE[0]})/user.sh
@@ -37,6 +38,7 @@ commands:
   course            [ create | update | get | delete | getpage | getpage_t | getpage_s ]
   courseJoin        [ join | exit | invite | delete ]
   courseTask        [ get | delete | create | update | list ]
+  perm              [ get | delete | create | gettree | getrole | enable | disable ]
 EOF
 }
 
@@ -71,6 +73,7 @@ case $COMMAND in
     "course"     ) course     $@ ;;
     "courseJoin" ) courseJoin $@ ;;
     "courseTask" ) courseTask $@ ;;
+    "perm"       ) perm $@ ;;
     *)
         usage
         exit 1

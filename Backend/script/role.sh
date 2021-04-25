@@ -2,6 +2,16 @@
 
 source $(dirname ${BASH_SOURCE[0]})/utils.sh
 
+role_usage() {
+    cat <<EOF
+    role subcommand <arguments>
+
+    subcommands:
+        get        roleName
+        getall
+        create     roleName
+EOF
+}
 
 role() {
     assert "[ $# -ge 1 ]"
@@ -9,6 +19,7 @@ role() {
     shift 1
 
     case $command in
+        "-h" | "--help" ) role_usage; exit 0 ;;
         "get"    ) getRoleByName $@ ;;
         "getall" ) getRoles $@ ;;
         "create" ) addRole $@ ;;

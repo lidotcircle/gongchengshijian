@@ -83,7 +83,7 @@ public class PermEntry implements Serializable {
         this.children = children;
     }
 
-    @ManyToMany()
+    @ManyToMany(mappedBy = "permEntries")
     private Collection<Role> roles;
     public Collection<Role> getRoles() {
         return this.roles;

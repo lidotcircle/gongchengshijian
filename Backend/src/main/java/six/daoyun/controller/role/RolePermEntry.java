@@ -39,7 +39,6 @@ public class RolePermEntry {
             this.roleName = roleName;
         }
 
-        @NotNull
         private boolean recursive;
         public boolean getRecursive() {
             return this.recursive;

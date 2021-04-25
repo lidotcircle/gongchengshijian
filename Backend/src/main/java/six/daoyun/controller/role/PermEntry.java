@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -54,7 +55,6 @@ public class PermEntry {
             this.descriptor = descriptor;
         }
 
-        @NotNull
         @Pattern(regexp = "([a-zA-Z][a-zA-Z0-9_]{1,}\\.)*[a-zA-Z][a-zA-Z0-9_]{1,}")
         private String parentDescriptor;
         public String getParentDescriptor() {
@@ -97,6 +97,49 @@ public class PermEntry {
         RoleService.PermEntryItem pentry = new RoleService.PermEntryItem();
         ObjUitl.assignFields(pentry, entry);
         this.roleService.addPermEntry(entry.getParentDescriptor(), pentry);
+    } //}
+
+    static class PermEntryUpdateDTO //{
+    {
+        @NotNull
+        private String descriptor;
+        public String getDescriptor() {
+            return this.descriptor;
+        }
+        public void setDescriptor(String descriptor) {
+            this.descriptor = descriptor;
+        }
+
+        private String link;
+        public String getLink() {
+            return this.link;
+        }
+        public void setLink(String link) {
+            this.link = link;
+        }
+
+        private String entryType;
+        public String getEntryType() {
+            return this.entryType;
+        }
+        public void setEntryType(String entryType) {
+            this.entryType = entryType;
+        }
+
+        private String permEntryName;
+        public String getPermEntryName() {
+            return this.permEntryName;
+        }
+        public void setPermEntryName(String permEntryName) {
+            this.permEntryName = permEntryName;
+        }
+    } //}
+    @PutMapping
+    public void updatePermEntry(@RequestBody PermEntryUpdateDTO entry) //{
+    {
+        RoleService.PermEntryItem item = new RoleService.PermEntryItem();
+        ObjUitl.assignFields(item, entry);
+        this.roleService.updatePermEntry(entry.descriptor, item);
     } //}
 
     @GetMapping("/tree")
