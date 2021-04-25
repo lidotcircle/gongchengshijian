@@ -23,7 +23,7 @@ import six.daoyun.service.RoleService;
 
 @RestController
 @RequestMapping("/apis/role")
-class Crud {
+class RoleCrud {
     @Autowired
     private RoleService roleService;
 

@@ -61,7 +61,7 @@ public interface RoleService {
             this.permEntryName = permEntryName;
         }
     } //}
-    static class PermEntryTree extends PermEntryItem //{
+    public static class PermEntryTree extends PermEntryItem //{
     {
         private Collection<PermEntryTree> children;
         public Collection<PermEntryTree> getChildren() {
