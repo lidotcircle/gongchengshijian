@@ -12,3 +12,17 @@
     }
 }
 
+.title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    
+    .vlaue {
+        padding: 0.3em 0.8em;
+    }
+
+    .take-space {
+        flex-grow: 1;
+    }
+}
+

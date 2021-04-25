@@ -42,6 +42,7 @@ import { PermMenuService } from 'src/app/service/role/perm-menu.service';
     `
       nb-card {
         overflow: scroll;
+        min-width: 25em;
       }
 
       .kv {

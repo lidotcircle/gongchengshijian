@@ -2,6 +2,7 @@ import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { NbToastrService, NbWindowService } from '@nebular/theme';
 import { PermMenu } from 'src/app/entity';
 import { PermMenuService } from 'src/app/service/role/perm-menu.service';
+import { MenuEditorComponent } from './menu-editor.component';
 import { MenuRoleListComponent } from './menu-role-list.component';
 
 @Component({
@@ -56,7 +57,7 @@ export class MenuTreeComponent implements OnInit {
 
         await this.windowService.open(
             MenuRoleListComponent, {
-                title: `${this.menu.permEntryName} |  ${this.menu.link} | 角色列表`,
+                title: `角色列表`,
                 context: { menu: this.menu },
             }).onClose.toPromise();
     }
@@ -118,9 +119,40 @@ export class MenuTreeComponent implements OnInit {
     } //}
 
     async addChildEntry() {
+        const win = this.windowService.open(MenuEditorComponent, {
+            context: {},
+            title: "添加子菜单",
+        });
+
+        await win.onClose.toPromise();
+
+        if(win.config.context['isConfirmed']) {
+            const menu = win.config.context['menu'] as PermMenu;
+            menu.descriptor = this.menu.descriptor + '.' + menu.descriptor;
+            try {
+                await this.permMenuService.create(this.menu.descriptor, menu);
+            } catch {
+                this.toastrService.danger("创建菜单失败", "菜单管理")
+            }
+        }
     }
 
     async editPermEntry() {
+        const menu = Object.create(PermMenu.prototype, Object.getOwnPropertyDescriptors(this.menu)) as PermMenu;
+        const win = this.windowService.open(MenuEditorComponent, {
+            context: {menu: menu},
+            title: "编辑菜单",
+        });
+
+        await win.onClose.toPromise();
+
+        if(win.config.context['isConfirmed']) {
+            try {
+                await this.permMenuService.update(menu);
+            } catch {
+                this.toastrService.danger("编辑菜单失败", "菜单管理")
+            }
+        }
     }
 }
 

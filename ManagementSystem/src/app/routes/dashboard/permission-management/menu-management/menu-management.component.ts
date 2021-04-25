@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
-import { NbToastrService } from '@nebular/theme';
+import { NbToastrService, NbWindowService } from '@nebular/theme';
 import { Subject } from 'rxjs';
 import { concatMap, map, takeUntil, tap } from 'rxjs/operators';
 import { PermMenu } from 'src/app/entity';
 import { PermMenuService } from 'src/app/service/role/perm-menu.service';
+import { MenuEditorComponent } from './menu-tree/menu-editor.component';
 
 @Component({
     selector: 'ngx-menu-management',
@@ -19,6 +20,7 @@ export class MenuManagementComponent implements OnInit, OnDestroy {
 
     constructor(private activatedRouter: ActivatedRoute,
                 private permMenuService: PermMenuService,
+                private windowService: NbWindowService,
                 private toastrService: NbToastrService) {
         this.refreshMe = new Subject<void>();
         this.refreshMe
@@ -65,6 +67,30 @@ export class MenuManagementComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+    }
+
+    inAdding: boolean = false;
+    async addRootEntry() {
+        if(this.inAdding) return;
+        this.inAdding = true;
+
+        const win = this.windowService.open(MenuEditorComponent, {
+            context: {},
+            title: "添加根节点菜单",
+        });
+
+        try {
+            await win.onClose.toPromise();
+
+            if(win.config.context['isConfirmed']) {
+                const menu = win.config.context['menu'] as PermMenu;
+                await this.permMenuService.create(null, menu);
+            }
+        } catch {
+            this.toastrService.danger("创建菜单失败", "菜单管理")
+        } finally {
+            this.inAdding = false;
+        }
     }
 }
 

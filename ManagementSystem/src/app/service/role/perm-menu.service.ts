@@ -74,11 +74,12 @@ export class PermMenuService {
         this.duk.next();
     } //}
 
-    async delete(descriptor: string): Promise<void> //{
+    async delete(descriptor: string, recursive: boolean = false): Promise<void> //{
     {
         await this.http.delete(RESTfulAPI.Role.Perm.deletePerm, {
             params: {
-                descriptor: descriptor
+                descriptor: descriptor,
+                recursive: `${recursive}`
             }
         }).toPromise();
         this.duk.next();

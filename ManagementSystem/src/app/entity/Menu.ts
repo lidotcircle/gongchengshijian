@@ -42,7 +42,13 @@ export class PermMenu {
         return true;
     } //}
 
-    get baseDescriptor(): string {
+    get ParentDescriptor(): string | null {
+        const dv = this.descriptor.split('.');
+        dv.pop();
+        if(dv.length == 0) return null;
+        return dv.join('.');
+    }
+    get BaseDescriptor(): string {
         return this.descriptor && this.descriptor.split('.').pop();
     }
 
