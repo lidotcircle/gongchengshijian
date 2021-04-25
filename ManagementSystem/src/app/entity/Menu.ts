@@ -1,48 +1,60 @@
 import { assert } from 'src/app/shared/utils';
 
 export class PermMenu {
-    menuId?: number;
-    name: string;
-    icon?: string;
+    permEntryName: string;
     link: string;
-    parentId?: number;
-    order?: number;
-    isMenu?: boolean;
-    isPage?: boolean;
-    isButton?: boolean;
-    isShow?: boolean;
+    descriptor: string;
+    entryType: string;
 
-    parent?: PermMenu;
-    children?: PermMenu[];
-}
+    children: PermMenu[];
+    enabled: boolean = true;
 
-export function ListToTree(menus: PermMenu[]): PermMenu {
-    const ans = new PermMenu();
-    ans.children = [];
-
-    const idMap: Map<number, PermMenu> = new Map();
-    for(const menu of menus) {
-        assert(!idMap.has(menu.menuId) && typeof menu.menuId === 'number');
-        idMap.set(menu.menuId, menu);
-    }
-
-    for(const menu of menus) {
-        if (idMap.has(menu.parentId) && menu.parentId != menu.menuId) {
-            const par = idMap.get(menu.parentId);
-            par.children = par.children || [];
-            par.children.push(menu);
-            menu.parent = par;
-        } else {
-            ans.children.push(menu);
+    private setEnableStatus(enabled: boolean, recursive: boolean) //{
+    {
+        this.enabled = enabled;
+        if(recursive) {
+            for(const child of this.children || []) {
+                child.setEnableStatus(enabled, true);
+            }
         }
-    }
+    } //}
+    enable(recursive?: boolean) {this.setEnableStatus(true, !!recursive);}
+    disable(recursive?: boolean) {this.setEnableStatus(false, !!recursive);}
 
-    for(const menu of menus) {
-        if(menu.children) {
-            menu.children.sort((a, b) => a.order < b.order ? -1 : 1);
+    get disabledRecursively(): boolean //{
+    {
+        if(this.enabled) return false;
+        for(const child of this.children || []) {
+            if (!child.disabledRecursively) {
+                return false;
+            }
         }
+        return true;
+    } //}
+    get enabledRecursively(): boolean //{
+    {
+        if(!this.enabled) return false;
+        for(const child of this.children || []) {
+            if (!child.enabledRecursively) {
+                return false;
+            }
+        }
+        return true;
+    } //}
+
+    get baseDescriptor(): string {
+        return this.descriptor && this.descriptor.split('.').pop();
     }
 
-    return ans;
+    static fromObject(obj: object): PermMenu {
+        const objv = obj as PermMenu;
+        const ans = Object.create(PermMenu.prototype, Object.getOwnPropertyDescriptors(objv)) as PermMenu;
+        ans.children = [];
+        for(const objs of objv.children || []) {
+            ans.children.push(PermMenu.fromObject(objs));
+        }
+
+        return ans;
+    }
 }
 

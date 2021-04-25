@@ -10,9 +10,7 @@
   </nb-card-header>
 
   <nb-card-body>
-    <div *ngFor='let menu of menus'>
-      <ngx-menu-tree [menu]='menu' [roleName]='roleName'></ngx-menu-tree>
-    </div>
+    <ngx-menu-tree *ngFor='let menu of menus' [menu]='menu' [roleName]='roleName'></ngx-menu-tree>
   </nb-card-body>
 
   <nb-card-footer>

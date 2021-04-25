@@ -5,7 +5,7 @@ export function Deserialize<T extends {new(...args: any[])}>(json: string, const
 }
 
 export { Role } from './Role';
-export { PermMenu, ListToTree as PermMenuListToTree } from './Menu';
+export { PermMenu } from './Menu';
 export { Course } from './Course';
 export { SystemParameter } from './System-Parameter';
 

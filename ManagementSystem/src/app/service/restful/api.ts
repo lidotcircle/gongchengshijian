@@ -76,6 +76,19 @@ export module API {
         export const getList = API_ADDRESS + '/apis/role/list';
 
         export module Perm {
+            export const get = API_ADDRESS + '/apis/perm';
+            export const post = API_ADDRESS + '/apis/perm';
+            export const put = API_ADDRESS + '/apis/perm';
+            export const deletePerm = API_ADDRESS + '/apis/perm';
+
+            export const getTree = API_ADDRESS + '/apis/perm/tree';
+            export const getRolePerms = API_ADDRESS + '/apis/role/perm/list';
+
+            export const getPermRoles = API_ADDRESS + '/apis/perm/role';
+
+            export const enable  = API_ADDRESS + '/apis/role/perm';
+            export const disable = API_ADDRESS + '/apis/role/perm';
+            export const hasPerm = API_ADDRESS + '/apis/role/perm';
         }
     }
 }

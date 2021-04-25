@@ -3,6 +3,12 @@
 @import 'src/app/@theme/styles/themes';
 
 
+ngx-menu-tree{
+
+&:last-child .tree-container .properties {
+    border-bottom: none;
+}
+
 .tree-container {
     display: flex;
     flex-direction: column;
@@ -13,8 +19,8 @@
         flex-direction: row;
         align-items: center;
         padding: 0.5em 0.6em;
-        border-radius: 0.3em;
         font-size: medium;
+        border-bottom: 1pt solid nb-theme(color-basic-500);
 
         &:hover {
             background-color: nb-theme(background-basic-color-2)
@@ -79,6 +85,7 @@
 
     .children {
         display: none;
+        flex-direction: column;
 
         &.children-show {
             display: flex;
@@ -90,5 +97,6 @@
             width: 100%;
         }
     }
+}
 }
 
