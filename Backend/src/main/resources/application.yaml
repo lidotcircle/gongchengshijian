@@ -38,7 +38,7 @@ daoyun:
     enable: true
     name: daoyun
   message:
-    enable: false
+    enable: true
     waitMs: 6000
     validMs: 300000
   reset:

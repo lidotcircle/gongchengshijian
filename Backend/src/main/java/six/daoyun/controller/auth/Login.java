@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +26,7 @@ import six.daoyun.service.MessageCodeService;
 import six.daoyun.service.UserService;
 
 @RestController()
+@RequestMapping("/apis/auth")
 class Login {
     @Autowired
     private UserService UserService;
@@ -110,8 +112,9 @@ class Login {
         }
     } //}
 
-    @PostMapping("/apis/auth/refresh-token")
-    private LoginResponse login(@RequestBody @Valid LoginByUsernameRequest request, HttpServletRequest httpreq) {
+    @PostMapping("refresh-token")
+    private LoginResponse login(@RequestBody @Valid LoginByUsernameRequest request, HttpServletRequest httpreq) //{
+    {
         if(!this.captchaService.validate(httpreq.getRemoteAddr() + request.getUserName(), request.captcha)) {
             if(request.getCaptcha() == null) {
                 throw new HttpRequireCaptcha();
@@ -139,10 +142,11 @@ class Login {
         }
 
         return resp;
-    }
+    } //}
 
-    @PostMapping("/apis/auth/refresh-token/message")
-    private LoginResponse loginByMessage(@RequestBody @Valid LoginByMessage req) {
+    @PostMapping("/refresh-token/message")
+    private LoginResponse loginByMessage(@RequestBody @Valid LoginByMessage req) //{
+    {
         if(!this.mcodeService.validate(req.getMessageCodeToken(), 
                                        req.getPhone(), 
                                        req.getMessageCode(), 
@@ -155,9 +159,9 @@ class Login {
         RefreshToken token = this.authService.login(user);
         resp.setToken(token.getToken());
         return resp;
-    }
+    } //}
 
-    @DeleteMapping("/apis/auth/refresh-token")
+    @DeleteMapping("/refresh-token")
     private void logout(@RequestParam("refreshToken") String refreshToken) {
         this.authService.logout(refreshToken);
     }

@@ -7,6 +7,7 @@
     * [认证](#认证)
         * [获取短信](#获取短信)
         * [登录](#登录)
+        * [短信登录](#短信登录)
         * [登出](#登出)
         * [JWT](#jwt)
         * [用户注册](#用户注册)
@@ -21,6 +22,7 @@
         * [删除](#删除)
         * [获取全部](#获取全部)
         * [分页获取](#分页获取)
+    * [短信验证码获取](#短信验证码获取)
 * [短信服务](#短信服务)
 * [测试](#测试)
 
@@ -39,12 +41,25 @@ API的参数序列化为JSON格式包含在 *body*中.
 
 对于需要身份认证的API, HTTP 请求头需要包含`Authentication: JWT`. 需要身份认证的API, 会以:key:进行标记.
 
+**IMPORTAN**: 
+**用户名登录**, **获取短信验证码**失败超过3次(以后不确定)之后需要 **hcaptcha** 人机验证, 对应请求需要加入**captcha**字段.
+对于因未加**captcha**字段失败的请求, 返回**Http Status 403 Forbidden**, 并返回以下错误
+```json
+"error": {
+  "reason": "require captcha"
+}
+```
+即一开始**captcha**字段可以为空, 再获取到**Http Status 403 Forbidden**并且异常为上面对象时, 需要进行**hcaptcha**人机验证
+
+**对于时间相关数据的格式**
+使用*ISO-8601*格式的子集, 通用`yyyy-mm-ddThh:MM:SS.sZ`, 如`2021-04-25T09:20:11.000Z`表示 **2021年4月25日 早上9点20分11秒0毫秒, 0时区**
 
 ### 认证
 
 **IMPORTAN**: 
-+ *captcha* 暂时未实现, 使用`helloworld`
-+ *code* 短信验证码暂时没有实现, 使用`666666`
++ *captcha* 实现, 使用**hcaptcha**, 客户端需要使用hcaptcha提供的*API*, *sitekey*
++ *messageCode* 实现, `messageCode`短信验证码, `messageCodeToken`短信验证码的验证Token, 由服务器生成在短信请求返回给客户端
++ *分页获取* 分页获取中的`searchWildcard`字段使用*Mysql*数据库的通配符语法, `sortKey`为属性名, `sortDir`为`DESC`或`ASC`
 
 #### 获取短信
 
@@ -86,6 +101,25 @@ URI: `/apis/auth/refresh-token`
 }
 ```
 
+
+#### 短信登录
+
+Method: **POST**  
+URI: `/apis/auth/refresh-token/message`  
+参数:
+```json
+{
+  "phone": "string",
+  "messageCode": "string",
+  "messageCodeToken": "string"
+}
+```
+返回值:
+```json
+{
+  "token": "string"
+}
+```
 
 
 #### 登出
@@ -133,7 +167,16 @@ URI:`/apis/auth/user`
   "password": "string",
   "phone": "string",
   "messsageCode": "string",
-  "messsageCodeToken": "string"
+  "messsageCodeToken": "string",
+
+  "以下为可选属性": "",
+  "trueName": "string",
+  "school": "string",
+  "college": "string",
+  "studentTeacherId": "string",
+  "major": "string",
+  "birthday": "string",
+  "gender": "string"
 }
 ```
 
@@ -147,9 +190,10 @@ URI:`/apis/user`
 参数:
 ```json
 {
-  "userName": "string",
+  "name": "string",
   "birthday": "number",
   "gender": "string",
+  "photo": "string",
   "studentTeacherId": "string",
   "shcool": "string",
   "college": "string",
@@ -160,6 +204,8 @@ URI:`/apis/user`
 
 
 #### 修改用户信息(需要密码)
+
+`photo`字段推荐base64, 格式如下`data:image/png;base64,...`, 也可以用图片的超链接
 
 Method: **PUT** :key:  
 URI:`/apis/user/privileged`  
@@ -192,7 +238,8 @@ URI: `/apis/user`
   "major": "string",
   "phone": "string",
   "email": "string",
-  "roles": ["string"]
+  "roles": ["string"],
+  "photo": "string"
 }
 ```
 
@@ -283,7 +330,10 @@ URI: `/apis/sysparam/page`
 ```json
 {
   "pageno": "number",
-  "size": "number"
+  "size": "number",
+  "sortDir": "string",
+  "sortKey": "string",
+  "searchWildcard": "string"
 }
 ```
 返回值:
@@ -301,6 +351,27 @@ URI: `/apis/sysparam/page`
 ```
 
 
+### 短信验证码获取
+
+Method: **POST** :key:  
+URI: `/apis/message`  
+参数:
+```json
+{
+  "phone": "string",
+  "type": "string",
+  "captcha": "string"
+}
+```
+返回值:
+```json
+{
+  "codeToken": "string"
+}
+```
+以上`type`字段为`login`, `signup`, `reset`对应不同的请求
+
+
 ## 短信服务
 
 短信服务默认关闭, 所有短信验证码都为`666666`. 
@@ -311,7 +382,6 @@ export AliyunAccessKeyId=
 export AliyunAccessKeySecret=
 export AliyunSmsSignName=
 ```
-阿里云的短信模板需要有`signup`, `login`, `reset`
 
 
 ## 测试

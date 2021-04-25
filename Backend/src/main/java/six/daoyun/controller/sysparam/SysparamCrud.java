@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +23,7 @@ import six.daoyun.entity.SystemParameter;
 import six.daoyun.service.SysparamService;
 
 @RestController
+@RequestMapping("/apis/sysparam")
 class SysparamCrud {
 
     static class Req //{
@@ -76,7 +78,7 @@ class SysparamCrud {
     @Autowired
     private SysparamService sysparamService;
 
-    @PostMapping("/apis/sysparam")
+    @PostMapping()
     private void create(@RequestBody @Valid Req request) {
         SystemParameter param = new SystemParameter();
         param.setParameterName(request.key);
@@ -86,7 +88,7 @@ class SysparamCrud {
         this.sysparamService.create(param);
     }
 
-    @GetMapping("/apis/sysparam")
+    @GetMapping()
     private Req getValue(@RequestParam("key") String key) {
         final Req resp = new Req();
         final SystemParameter sp = this.sysparamService.get(key).orElseThrow(() -> new HttpNotFound());
@@ -104,12 +106,12 @@ class SysparamCrud {
         this.sysparamService.update(sysparam);
     }
 
-    @DeleteMapping("/apis/sysparam")
+    @DeleteMapping()
     private void delete(@RequestParam("key") String key) {
         this.sysparamService.delete(key);
     }
 
-    @GetMapping("/apis/sysparam/all-key")
+    @GetMapping("/all-key")
     private Iterable<Req> getKeys() {
         final Collection<Req> ans = new ArrayList<>();
         this.sysparamService.getAll().forEach(v -> {
@@ -121,12 +123,13 @@ class SysparamCrud {
         return ans;
     }
 
-    @GetMapping("/apis/sysparam/page")
+    @GetMapping("/page")
     private PageResp getPage(@RequestParam(value = "pageno", defaultValue = "1") int pageno, 
                              @RequestParam(value = "size", defaultValue = "10") int size, 
                              @RequestParam(name = "sortDir", defaultValue = "parameterName") String sortDir,
                              @RequestParam(name = "sort", defaultValue = "ASC") String sortKey,
-                             @RequestParam(name = "searchWildcard", required = false) String filter) {
+                             @RequestParam(name = "searchWildcard", required = false) String filter) //{
+    {
         final Collection<Req> ans = new ArrayList<>();
         String sortKeyM = "parameterName";
         if(sortKey.equals("value")) {
@@ -147,6 +150,6 @@ class SysparamCrud {
         resp.total = page.getTotalElements();
         resp.pairs = ans;
         return resp;
-    }
+    } //}
 }
 
