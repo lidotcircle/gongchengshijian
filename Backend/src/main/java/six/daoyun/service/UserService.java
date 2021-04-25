@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 
-import six.daoyun.entity.PermEntry;
 import six.daoyun.entity.Role;
 import six.daoyun.entity.User;
 import six.daoyun.exchange.UserInfo;
@@ -25,6 +24,6 @@ public interface UserService {
 
     void addRole(User user, Role role);
     void removeRole(User user, Role role);
-    boolean hasPermission(User user, PermEntry perm);
+    boolean hasPermission(User user, String link);
 }
 

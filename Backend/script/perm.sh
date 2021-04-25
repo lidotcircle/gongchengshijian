@@ -127,7 +127,7 @@ perm_role() {
 
     $GET $NOPROXY \
         "${BYPASS_AUTHORIZATION[@]}" \
-        $DESTINATION/apis/perm/role?$params
+        $DESTINATION/apis/role/perm?$params
 }
 
 perm_enable() {

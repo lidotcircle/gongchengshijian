@@ -1,6 +1,5 @@
 package six.daoyun.service;
 
-import six.daoyun.entity.PermEntry;
 import six.daoyun.entity.Role;
 import java.util.Collection;
 import java.util.Optional;
@@ -14,7 +13,8 @@ public interface RoleService {
 
     void updateRoleName(String oldRoleName, String newRoleName);
 
-    boolean hasPermission(Role role, PermEntry perm);
+    boolean hasPermission(String roleName, String descriptor);
+    boolean hasPermissionInLink(String roleName, String link);
     void enablePermEntry(String roleName, String descriptor);
     void disablePermEntry(String roleName, String descriptor);
     void enablePermEntryRecursively(String roleName, String descriptor);
@@ -73,5 +73,7 @@ public interface RoleService {
     } //}
     Collection<PermEntryTree> getPermEntryTree();
     Collection<PermEntryItem> getPermEntries(String roleName);
+
+    Collection<Role> getRolesByPermEntry(String descriptor);
 }
 

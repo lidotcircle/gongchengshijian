@@ -10,6 +10,7 @@ role_usage() {
         get        roleName
         getall
         create     roleName
+        perm       roleName
 EOF
 }
 
@@ -23,6 +24,7 @@ role() {
         "get"    ) getRoleByName $@ ;;
         "getall" ) getRoles $@ ;;
         "create" ) addRole $@ ;;
+        "perm"   ) getRolePerms $@ ;;
         * )
             error "unknow subcommand role '$1'"
             exit 1
@@ -58,4 +60,15 @@ getRoles() {
         $DESTINATION/apis/role/list
 }
 
+getRolePerms() {
+    assert "[ $# -eq 1 ]" "require rolename"
+    local -A request=(
+        ["roleName"]=$1
+    )
+    local params
+    paramsStringify  request params
+
+    $GET $NOPROXY "${BYPASS_AUTHORIZATION[@]}" \
+        $DESTINATION/apis/role/perm/list?$params
+}
 

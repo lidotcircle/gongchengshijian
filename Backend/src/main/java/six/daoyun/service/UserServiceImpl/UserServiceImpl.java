@@ -14,7 +14,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
-import six.daoyun.entity.PermEntry;
 import six.daoyun.entity.Role;
 import six.daoyun.entity.User;
 import six.daoyun.exception.Forbidden;
@@ -153,10 +152,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean hasPermission(User user, PermEntry perm) //{
+	public boolean hasPermission(User user, String link) //{
     {
         for(final Role role: user.getRoles()) {
-            if(this.roleService.hasPermission(role, perm)) {
+            if(this.roleService.hasPermissionInLink(role.getRoleName(), link)) {
                 return true;
             }
         }

@@ -74,12 +74,6 @@ public class RoleServiceImpl implements RoleService {
         this.roleRepository.delete(role);
 	} //}
 
-	@Override
-	public boolean hasPermission(Role role, PermEntry perm) //{
-    {
-        return this.permEntryRepository.findByLinkAndRoles(perm.getLink(), role).isPresent();
-	} //}
-
     private Role getRole(String roleName) //{
     {
         return this.getRoleByRoleName(roleName)
@@ -278,5 +272,24 @@ public class RoleServiceImpl implements RoleService {
         ObjUitl.assignFields(item, this.getPermEntry(descriptor));
         return item;
 	} //}
+
+	@Override
+	public boolean hasPermission(String roleName, String descriptor) //{
+    {
+        return this.permEntryRepository.findByDescriptorAndRoles_roleName(descriptor, roleName).isPresent();
+	} //}
+
+	@Override
+	public boolean hasPermissionInLink(String roleName, String link) //{
+    {
+        PermEntry entry = this.permEntryRepository.findByLink(link)
+            .orElseThrow(() -> new NotFound());
+        return this.hasPermission(roleName, entry.getDescriptor());
+	} //}
+
+	@Override
+	public Collection<Role> getRolesByPermEntry(String descriptor) {
+        return this.getPermEntry(descriptor).getRoles();
+	}
 }
 

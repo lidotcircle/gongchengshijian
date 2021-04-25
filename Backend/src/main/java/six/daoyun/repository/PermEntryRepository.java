@@ -11,7 +11,7 @@ public interface PermEntryRepository extends CrudRepository<PermEntry, Long> {
     Optional<PermEntry> findByDescriptor(String descriptor);
     Optional<PermEntry> findByLink(String link);
 
-    Optional<PermEntry> findByLinkAndRoles(String link, Role role);
+    Optional<PermEntry> findByDescriptorAndRoles_roleName(String descriptor, String roleName);
     Collection<PermEntry> findByRoles(Role role);
 
     Collection<PermEntry> findByParentIsNull();

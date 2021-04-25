@@ -1,5 +1,6 @@
 package six.daoyun.controller.role;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.validation.Valid;
@@ -149,9 +150,11 @@ public class PermEntry {
     } //}
 
     @GetMapping("/role")
-    public Collection<RoleService.PermEntryItem> getPermEntryRole(@RequestParam("roleName") String roleName) //{
+    public Collection<String> getPermEntryRoles(@RequestParam("descriptor") String descriptor) //{
     {
-        return this.roleService.getPermEntries(roleName);
+        Collection<String> ans = new ArrayList<>();
+        this.roleService.getRolesByPermEntry(descriptor).forEach(role -> ans.add(role.getRoleName()));
+        return ans;
     } //}
 }
 
