@@ -3,6 +3,7 @@ package six.daoyun.entity;
 import java.io.Serializable;
 import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -83,7 +84,7 @@ public class PermEntry implements Serializable {
         this.children = children;
     }
 
-    @ManyToMany(mappedBy = "permEntries")
+    @ManyToMany(mappedBy = "permEntries", cascade = { CascadeType.ALL })
     private Collection<Role> roles;
     public Collection<Role> getRoles() {
         return this.roles;
