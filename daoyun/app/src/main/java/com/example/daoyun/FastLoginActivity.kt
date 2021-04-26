@@ -2,24 +2,24 @@ package com.example.daoyun
 
 import android.content.DialogInterface
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Looper
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.example.daoyun.databinding.ActivityFastLoginActivityBinding
-import com.example.daoyun.databinding.ActivityRegisterBinding
-import okhttp3.FormBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import java.lang.Exception
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import java.util.regex.Pattern
 import kotlin.concurrent.thread
 
+
 class FastLoginActivity : AppCompatActivity() {
+
     private lateinit var binding:ActivityFastLoginActivityBinding
     private var codeToken:String ?= "no receive"
-    private var testt:String?="no"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding= ActivityFastLoginActivityBinding.inflate(layoutInflater)
@@ -38,7 +38,7 @@ class FastLoginActivity : AppCompatActivity() {
                 sendRequestWithOkHttp()
                 AlertDialog.Builder(this)
                         .setTitle("验证码")
-                        .setMessage("验证码为：$codeToken$testt")
+                        .setMessage("验证码为：$codeToken")
                         .setPositiveButton("确定", null)
                         .show()
                 binding.btVeriSubmit.text = "已发送"
@@ -106,22 +106,30 @@ class FastLoginActivity : AppCompatActivity() {
     private fun sendRequestWithOkHttp(){
         thread {
             try {
+                val json = JSONObject()
+                    .put("phone", "13075841366")
+                    .put("type", "login")
+                    .put("captcha", " ")
+                val stringBody =json.toString().toRequestBody("application/json;charset=utf-8".toMediaType())
                 val client=OkHttpClient()
-                val requestBody=FormBody.Builder()
-                        .add("phone",binding.etLoginUsername.text.toString())
-                        .add("type","login")
-                        .add("captcha","")
-                        .build()
                 val request=Request.Builder()
                         .url("https://gcsj.lidotcircle.ltd/apis/message")
-                        .post(requestBody)
+                        .post(stringBody)
                         .build()
                 val response=client.newCall(request).execute()
-                codeToken= response.body?.string()
-                testt="yes"
-            }catch (e:Exception){
+                val responseData=response.body?.string()
+
+                showResponse(codeToken.toString())
+            }catch (e: Exception){
                 Log.e("TAG", Log.getStackTraceString(e));
             }
+        }
+    }
+
+    private fun showResponse(response: String) {
+        runOnUiThread {
+            // 在这里进行UI操作，将结果显示到界面上
+            binding.responseText.text = response
         }
     }
 }
