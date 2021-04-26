@@ -36,6 +36,10 @@ class LoginActivity : AppCompatActivity() {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
 
+        binding.fastRegister.setOnClickListener{
+            startActivity(Intent(this,FastLoginActivity::class.java))
+        }
+
         //登录
         binding.btLoginSubmit.setOnClickListener {
 
