@@ -32,7 +32,7 @@ Usage: $0 <command> <comand-arguments>
 commands:
   role              [ get | getall | create | update ]
   message           [ get ]
-  auth              [ login | logout | jwt | signup ]
+  auth              [ login | quick | logout | jwt | signup ]
   user              [ get | set | setP | create ]
   sysparam          [ get | put | post | delete | getall | getpage ]
   course            [ create | update | get | delete | getpage | getpage_t | getpage_s ]

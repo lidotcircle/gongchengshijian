@@ -17,11 +17,17 @@ message() {
 }
 
 message_get() {
-    assert "[ $# -ge 3 ]" "message get phone captcha type"
+    assert "[ $# -ge 2 ]" "message get phone type [captcha]"
     local phone=$1
     local captcha=$2
     local type=$3
-    local json='{"phone": "'$phone'", "captcha": "'$captcha'", "type": "'$type'"}'
+    local -A request=(
+        ["phone"]=$1
+        ["type"]=$2
+    )
+    [ $# -eq 3 ] && ["captcha"]=$3
+    local json=
+    jsonStringify request json
     debug JSON $json
 
     $POST $NOPROXY "${BYPASS_AUTHORIZATION[@]}" \

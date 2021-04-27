@@ -86,7 +86,6 @@ public class MessageCode {
 
         MessageCodeService.MessageCodeType type = type2type.get(req.getType());
         switch(type) {
-            case login:
             case reset:
                 if(this.userService.getUserByPhone(req.getPhone()).isEmpty()) {
                     throw new HttpForbidden("手机号未注册");
@@ -98,6 +97,7 @@ public class MessageCode {
                 }
                 break;
 
+            case login:
             default: break;
         }
 

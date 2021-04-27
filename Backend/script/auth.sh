@@ -8,6 +8,7 @@ auth() {
 
     case $command in
         "login"  ) loginByUsername $@ ;;
+        "quick"  ) quickLogin $@ ;;
         "logout" ) logout $@ ;;
         "jwt"    ) getJwt $@ ;;
         "signup" ) signup $@ ;;
@@ -28,7 +29,24 @@ loginByUsername() {
     $POST $NOPROXY \
         "${APPLICATION_JSON[@]}" \
         --data "$json" \
-        $DESTINATION/apis/auth/login
+        $DESTINATION/apis/auth/refresh-token
+}
+
+quickLogin() {
+    assert "[ $# -eq 3 ]"
+    local -A request=(
+        ["phone"]=$1
+        ["messageCode"]=$2
+        ["messageCodeToken"]=$3
+    )
+    local json=
+    jsonStringify request json
+    debug JSON $json
+
+    $POST $NOPROXY \
+        "${APPLICATION_JSON[@]}" \
+        --data "$json" \
+        $DESTINATION/apis/auth/refresh-token/quick
 }
 
 logout() {
