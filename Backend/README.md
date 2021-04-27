@@ -184,6 +184,8 @@ URI:`/apis/auth/user`
 
 #### 快速注册
 
+最为注册以及短信登录的接口, 如果手机号码未注册, 则注册, 否则登录.
+
 Method: **POST**  
 URI: `/apis/auth/refresh-token/quick`  
 参数:

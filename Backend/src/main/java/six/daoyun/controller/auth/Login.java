@@ -174,13 +174,19 @@ class Login {
             throw new HttpUnauthorized();
         }
 
-        final User user = new User();
-        user.setPhone(req.getPhone());
-        user.setUserName("DAOYUN_" + UUID.randomUUID().toString());
-        user.setPassword("uv");
-        this.userService.createUser(user);
-        LoginResponse resp = new LoginResponse();
+
+        User user;
+        if(!this.userService.getUserByPhone(req.getPhone()).isPresent()) {
+            user = new User();
+            user.setPhone(req.getPhone());
+            user.setUserName("DAOYUN_" + UUID.randomUUID().toString());
+            user.setPassword("uv");
+            this.userService.createUser(user);
+        } else {
+            user = this.userService.getUserByPhone(req.getPhone()).get();
+        }
         RefreshToken token = this.authService.login(user);
+        LoginResponse resp = new LoginResponse();
         resp.setToken(token.getToken());
         return resp;
     }
