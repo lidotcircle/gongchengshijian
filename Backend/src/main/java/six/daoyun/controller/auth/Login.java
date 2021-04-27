@@ -59,7 +59,6 @@ class Login {
             this.password = password;
         }
 
-        @Pattern(regexp = ".{1,}")
         private String captcha;
         public String getCaptcha() {
             return this.captcha;

@@ -25,7 +25,7 @@ import six.daoyun.controller.exception.HttpNotFound;
 import six.daoyun.entity.User;
 import six.daoyun.exchange.UserInfo;
 import six.daoyun.service.UserService;
-import six.daoyun.utils.ObjUitl;
+import six.daoyun.utils.ObjUtil;
 
 
 @RestController
@@ -112,7 +112,7 @@ public class AdminUser {
     private UserDTO userTodUserDto(User user) //{
     {
         UserDTO ans = new UserDTO();
-        ObjUitl.assignFields(ans, user);
+        ObjUtil.assignFields(ans, user);
 
         if(user.getBirthday() != null) {
             ans.setBirthday(user.getBirthday().getTime());
@@ -134,7 +134,7 @@ public class AdminUser {
     {
         final Set<String> ignores = new HashSet<>();
         ignores.add("password");
-        ObjUitl.assignFields(user, dto, ignores, true);
+        ObjUtil.assignFields(user, dto, ignores, true);
 
         if(dto.getBirthday() >= 0) {
             Date birthday = new Date(dto.getBirthday());

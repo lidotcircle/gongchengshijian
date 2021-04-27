@@ -26,7 +26,7 @@ import six.daoyun.entity.CourseTask;
 import six.daoyun.entity.User;
 import six.daoyun.service.CourseService;
 import six.daoyun.service.CourseTaskService;
-import six.daoyun.utils.ObjUitl;
+import six.daoyun.utils.ObjUtil;
 
 @RestController
 @RequestMapping("/apis/course/task")
@@ -128,7 +128,7 @@ public class TaskCrud {
         }
 
         final CourseTask ctask = new CourseTask();
-        ObjUitl.assignFields(ctask, newtask);
+        ObjUtil.assignFields(ctask, newtask);
         ctask.setCourse(course);
         final long taskId = this.courseTaskService.createCourseTask(ctask);
         final TaskIdResp ans = new TaskIdResp();
@@ -203,7 +203,7 @@ public class TaskCrud {
             .orElseThrow(() -> new HttpNotFound("课程不存在"));
 
         final TaskGetDTO ans = new TaskGetDTO();
-        ObjUitl.assignFields(ans, task);
+        ObjUtil.assignFields(ans, task);
 
         return ans;
     } //}
@@ -228,7 +228,7 @@ public class TaskCrud {
         final CourseTask task = this.courseTaskService.getCourseTask(utask.getTaskId())
             .orElseThrow(() -> new HttpNotFound("找不到该课程"));
 
-        ObjUitl.assignFields(task, utask);
+        ObjUtil.assignFields(task, utask);
         this.courseTaskService.updateCourseTask(task);
     } //}
 }

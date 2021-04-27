@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import six.daoyun.service.RoleService;
-import six.daoyun.utils.ObjUitl;
+import six.daoyun.utils.ObjUtil;
 
 
 @RestController
@@ -96,7 +96,7 @@ public class PermEntry {
     public void createPermEntry(@RequestBody @Valid PermEntryCreationDTO entry) //{
     {
         RoleService.PermEntryItem pentry = new RoleService.PermEntryItem();
-        ObjUitl.assignFields(pentry, entry);
+        ObjUtil.assignFields(pentry, entry);
         this.roleService.addPermEntry(entry.getParentDescriptor(), pentry);
     } //}
 
@@ -139,7 +139,7 @@ public class PermEntry {
     public void updatePermEntry(@RequestBody PermEntryUpdateDTO entry) //{
     {
         RoleService.PermEntryItem item = new RoleService.PermEntryItem();
-        ObjUitl.assignFields(item, entry);
+        ObjUtil.assignFields(item, entry);
         this.roleService.updatePermEntry(entry.descriptor, item);
     } //}
 

@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class ObjUitl {
+public class ObjUtil {
 
     private static Optional<Field> getClassDeclaredFieldRecur(Class<?> cls, final String fieldName) //{
     {

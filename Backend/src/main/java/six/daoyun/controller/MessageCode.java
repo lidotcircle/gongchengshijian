@@ -54,7 +54,6 @@ public class MessageCode {
             this.type = type;
         }
 
-        @Pattern(regexp = ".{1,}")
         private String captcha;
         public String getCaptcha() {
             return this.captcha;

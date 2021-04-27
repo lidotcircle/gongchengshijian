@@ -21,7 +21,7 @@ import six.daoyun.exchange.UserInfo;
 import six.daoyun.repository.UserRepository;
 import six.daoyun.service.RoleService;
 import six.daoyun.service.UserService;
-import six.daoyun.utils.ObjUitl;
+import six.daoyun.utils.ObjUtil;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
             final UserInfo userinfo = new UserInfo();
             try {
                 final User user = this.getUser(username).get();
-                ObjUitl.assignFields(userinfo, user);
+                ObjUtil.assignFields(userinfo, user);
 
                 if(user.getBirthday() != null) {
                     userinfo.setBirthday(user.getBirthday().getTime());

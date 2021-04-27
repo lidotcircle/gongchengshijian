@@ -29,7 +29,7 @@ import six.daoyun.entity.Course;
 import six.daoyun.entity.User;
 import six.daoyun.service.CourseService;
 import six.daoyun.service.UserService;
-import six.daoyun.utils.ObjUitl;
+import six.daoyun.utils.ObjUtil;
 
 
 @RestController
@@ -289,7 +289,7 @@ public class CourseCrud {
 
     private void course2courseDTO(final CourseDTO target, final Course course) //{
     {
-        ObjUitl.assignFields(target, course);
+        ObjUtil.assignFields(target, course);
 
         final Teacher teacher = new Teacher();
         teacher.setUserName(course.getTeacher().getUserName());
@@ -299,7 +299,7 @@ public class CourseCrud {
         final Collection<Student> students = new ArrayList<>();
         course.getStudents().forEach((student) -> {
             Student s = new Student();
-            ObjUitl.assignFields(s, student.getStudent());
+            ObjUtil.assignFields(s, student.getStudent());
             s.setScore(student.getGrade());
             students.add(s);
         });
@@ -308,7 +308,7 @@ public class CourseCrud {
         final Collection<CourseTaskDTO> tasks = new ArrayList<>();
         course.getTasks().forEach(task -> {
             CourseTaskDTO dtask = new CourseTaskDTO();
-            ObjUitl.assignFields(dtask, task);
+            ObjUtil.assignFields(dtask, task);
             dtask.setReleaseDate(task.getCreatedDate());
             tasks.add(dtask);
         });
@@ -348,7 +348,7 @@ public class CourseCrud {
     private CourseExIdDTO createCourse(PostCourseDTOX coursex, User teacher) //{
     {
         final Course course = new Course();
-        ObjUitl.assignFields(course, coursex);
+        ObjUtil.assignFields(course, coursex);
         course.setTeacher(teacher);
 
         this.courseService.createCourse(course);
@@ -379,7 +379,7 @@ public class CourseCrud {
     {
         final Course course = this.courseService.getCourse(coursex.getCourseExId())
             .orElseThrow(() -> new HttpNotFound("课程不存在"));
-        ObjUitl.assignFields(course, coursex);
+        ObjUtil.assignFields(course, coursex);
         this.courseService.updateCourse(course);
     } //}
     @PutMapping()
@@ -392,7 +392,7 @@ public class CourseCrud {
         if(!course.getTeacher().equals(user)) {
             throw new HttpForbidden("不是课程的老师");
         }
-        ObjUitl.assignFields(course, coursex);
+        ObjUtil.assignFields(course, coursex);
         this.courseService.updateCourse(course);
     } //}
 

@@ -17,7 +17,7 @@ import six.daoyun.exception.NotFound;
 import six.daoyun.repository.PermEntryRepository;
 import six.daoyun.repository.RoleRepository;
 import six.daoyun.service.RoleService;
-import six.daoyun.utils.ObjUitl;
+import six.daoyun.utils.ObjUtil;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -177,7 +177,7 @@ public class RoleServiceImpl implements RoleService {
         }
 
         PermEntry perm = new PermEntry();
-        ObjUitl.assignFields(perm, permx);
+        ObjUtil.assignFields(perm, permx);
         if(!this.isChildDescriptor(parentDescriptor, permx.getDescriptor())) {
             throw new Forbidden("bad descriptor");
         }
@@ -219,7 +219,7 @@ public class RoleServiceImpl implements RoleService {
     {
         perm.setDescriptor(descriptor);
         final PermEntry entry = this.getPermEntry(descriptor);
-        ObjUitl.assignFields(entry, perm);
+        ObjUtil.assignFields(entry, perm);
         this.permEntryRepository.save(entry);
 	} //}
 
@@ -227,7 +227,7 @@ public class RoleServiceImpl implements RoleService {
     {
         PermEntryTree ans = new PermEntryTree();
         Collection<PermEntryTree> children = new ArrayList<>();
-        ObjUitl.assignFields(ans, entry);
+        ObjUtil.assignFields(ans, entry);
 
         final Collection<PermEntry> childrenx = entry.getChildren();
         if(childrenx != null) {
@@ -259,7 +259,7 @@ public class RoleServiceImpl implements RoleService {
         Collection<PermEntry> entries = this.permEntryRepository.findByRoles(this.getRole(roleName));
         entries.forEach(entry -> {
             PermEntryItem item = new PermEntryItem();
-            ObjUitl.assignFields(item, entry);
+            ObjUtil.assignFields(item, entry);
             ans.add(item);
         });
         return ans;
@@ -269,7 +269,7 @@ public class RoleServiceImpl implements RoleService {
 	public PermEntryItem getPermEntryItemByDescriptor(String descriptor) //{
     {
         PermEntryItem item = new PermEntryItem();
-        ObjUitl.assignFields(item, this.getPermEntry(descriptor));
+        ObjUtil.assignFields(item, this.getPermEntry(descriptor));
         return item;
 	} //}
 

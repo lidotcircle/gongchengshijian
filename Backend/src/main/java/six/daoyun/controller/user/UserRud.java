@@ -22,7 +22,7 @@ import six.daoyun.controller.user.proto.UserUpdatingPriv;
 import six.daoyun.entity.User;
 import six.daoyun.exchange.UserInfo;
 import six.daoyun.service.UserService;
-import six.daoyun.utils.ObjUitl;
+import six.daoyun.utils.ObjUtil;
 
 
 @RestController
@@ -45,7 +45,7 @@ public class UserRud {
     public Collection<String> modifyUserInfo(HttpServletRequest httpreq, @RequestBody UserUpdating request) //{
     {
         final User user = DYUtil.getHttpRequestUser(httpreq);
-        Collection<String> ans = ObjUitl.assignFields(user, request);
+        Collection<String> ans = ObjUtil.assignFields(user, request);
 
         if(request.getBirthday() >= 0) {
             Date birthday = new Date(request.getBirthday());
@@ -78,7 +78,7 @@ public class UserRud {
         if(!this.passwordEncoder.matches(request.getRequiredPassword(), user.getPassword())) {
             throw new HttpUnauthorized("密码错误");
         }
-        Collection<String> ans = ObjUitl.assignFields(user, request);
+        Collection<String> ans = ObjUtil.assignFields(user, request);
 
         if(request.getPassword() != null) {
             user.setPassword(this.passwordEncoder.encode(request.getPassword()));
