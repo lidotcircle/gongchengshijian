@@ -11,6 +11,8 @@
         * [登出](#登出)
         * [JWT](#jwt)
         * [用户注册](#用户注册)
+        * [重置密码请求](#重置密码请求)
+        * [重置密码](#重置密码)
         * [快速注册](#快速注册)
     * [用户信息](#用户信息)
         * [修改用户信息](#修改用户信息)
@@ -24,6 +26,7 @@
         * [获取全部](#获取全部)
         * [分页获取](#分页获取)
     * [短信验证码获取](#短信验证码获取)
+    * [菜单管理](#菜单管理)
 * [短信服务](#短信服务)
 * [测试](#测试)
 
@@ -178,6 +181,39 @@ URI:`/apis/auth/user`
   "major": "string",
   "birthday": "string",
   "gender": "string"
+}
+```
+
+
+#### 重置密码请求
+
+Method: **POST**  
+URI: `/apis/auth/password/reset-token`  
+参数:
+```typescript
+{
+  phone: string;
+  messageCode: string;
+  messageCodeToken: string;
+}
+```
+返回:
+```typescript
+{
+  resetToken: string;
+}
+```
+
+
+#### 重置密码
+
+Method: **PUT**  
+URI: `/apis/auth/password`  
+参数:
+```typescript
+{
+  resetToken: string;
+  password: string;
 }
 ```
 
@@ -394,6 +430,27 @@ URI: `/apis/message`
 }
 ```
 以上`type`字段为`login`, `signup`, `reset`对应不同的请求
+
+
+### 菜单管理
+
+
+菜单的有三种类型`menu`, `page`, `button`, 唯一标识符为描述符`descriptor`.
+`descriptor`的格式为`[a-zA-Z][a-zA-Z0-9_]+(\.[a-zA-Z][a-zA-Z0-9_]+)`, 如`user.login`.
+每一个菜单对应有一个`link`, `link`用于表示`API`以及`HTTP Method`, 格式为`(POST|DELETE|POST|GET)[:](\/[a-zA-Z][a-zA-Z0-9@_-]+)+`.
+菜单对象如下
+```typescript
+class PermMenu {
+  descriptor: string;
+  link: string;
+  type: enum {"menu", "page", "button"};
+  permEntryName: string;
+
+  // 非创建字段
+  children: PermMenu[];
+  parent: PermMenu | null;    // 根节点此字段为空
+}
+```
 
 
 ## 短信服务

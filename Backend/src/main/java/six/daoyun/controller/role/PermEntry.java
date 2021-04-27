@@ -66,6 +66,7 @@ public class PermEntry {
         }
 
         @NotNull
+        @Pattern(regexp = "(POST|DELETE|POST|GET)[:](\\/[a-zA-Z][a-zA-Z0-9@_-]+)+\\/?")
         private String link;
         public String getLink() {
             return this.link;
@@ -75,6 +76,7 @@ public class PermEntry {
         }
 
         @NotNull
+        @Pattern(regexp = "(menu|page|button)")
         private String entryType;
         public String getEntryType() {
             return this.entryType;
@@ -111,6 +113,7 @@ public class PermEntry {
             this.descriptor = descriptor;
         }
 
+        @Pattern(regexp = "(POST|DELETE|POST|GET)[:](\\/[a-zA-Z][a-zA-Z0-9@_-]+)+\\/?")
         private String link;
         public String getLink() {
             return this.link;
@@ -119,6 +122,7 @@ public class PermEntry {
             this.link = link;
         }
 
+        @Pattern(regexp = "(menu|page|button)")
         private String entryType;
         public String getEntryType() {
             return this.entryType;

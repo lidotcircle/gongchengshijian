@@ -181,6 +181,7 @@ class Login {
             user.setPhone(req.getPhone());
             user.setUserName("DAOYUN_" + UUID.randomUUID().toString());
             user.setPassword("uv");
+            user.setThirdPartyAccountType("none");
             this.userService.createUser(user);
         } else {
             user = this.userService.getUserByPhone(req.getPhone()).get();
