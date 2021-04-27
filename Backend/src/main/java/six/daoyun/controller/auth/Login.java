@@ -1,5 +1,7 @@
 package six.daoyun.controller.auth;
 
+import java.util.UUID;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -24,12 +26,13 @@ import six.daoyun.service.AuthService;
 import six.daoyun.service.CaptchaService;
 import six.daoyun.service.MessageCodeService;
 import six.daoyun.service.UserService;
+import six.daoyun.service.MessageCodeService.MessageCodeType;
 
 @RestController()
 @RequestMapping("/apis/auth")
 class Login {
     @Autowired
-    private UserService UserService;
+    private UserService userService;
     @Autowired
     private MessageCodeService mcodeService;
     @Autowired
@@ -99,6 +102,8 @@ class Login {
         }
     } //}
 
+    static public class QuickLoginDTO extends LoginByMessage {}
+
     static public class LoginResponse //{
     {
         @NotNull(message = "require token")
@@ -125,10 +130,10 @@ class Login {
         User user;
 
         if(java.util.regex.Pattern.matches("\\d{11}", request.getUserName())) {
-            user = this.UserService.getUserByPhone(request.getUserName())
+            user = this.userService.getUserByPhone(request.getUserName())
                                    .orElseThrow(() -> new HttpBadRequest("手机号未注册"));
         } else {
-            user = this.UserService.getUser(request.getUserName())
+            user = this.userService.getUser(request.getUserName())
                                    .orElseThrow(() -> new HttpBadRequest("用户不存在"));
         }
         LoginResponse resp = new LoginResponse();
@@ -154,11 +159,31 @@ class Login {
         }
 
         LoginResponse resp = new LoginResponse();
-        User user = this.UserService.getUserByPhone(req.getPhone()).orElseThrow(() -> new HttpNotFound());
+        User user = this.userService.getUserByPhone(req.getPhone()).orElseThrow(() -> new HttpNotFound());
         RefreshToken token = this.authService.login(user);
         resp.setToken(token.getToken());
         return resp;
     } //}
+
+    @PostMapping("/refresh-token/quick")
+    private LoginResponse quickLogin(@RequestBody @Valid QuickLoginDTO req) {
+        if(!this.mcodeService.validate(req.getMessageCodeToken(), 
+                    req.getPhone(), 
+                    req.getMessageCode(), 
+                    MessageCodeType.login)) {
+            throw new HttpUnauthorized();
+        }
+
+        final User user = new User();
+        user.setPhone(req.getPhone());
+        user.setUserName("DAOYUN_" + UUID.randomUUID().toString());
+        user.setPassword("uv");
+        this.userService.createUser(user);
+        LoginResponse resp = new LoginResponse();
+        RefreshToken token = this.authService.login(user);
+        resp.setToken(token.getToken());
+        return resp;
+    }
 
     @DeleteMapping("/refresh-token")
     private void logout(@RequestParam("refreshToken") String refreshToken) {

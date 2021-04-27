@@ -11,6 +11,7 @@
         * [登出](#登出)
         * [JWT](#jwt)
         * [用户注册](#用户注册)
+        * [快速注册](#快速注册)
     * [用户信息](#用户信息)
         * [修改用户信息](#修改用户信息)
         * [修改用户信息(需要密码)](#修改用户信息需要密码)
@@ -179,6 +180,27 @@ URI:`/apis/auth/user`
   "gender": "string"
 }
 ```
+
+
+#### 快速注册
+
+Method: **POST**  
+URI: `/apis/auth/refresh-token/quick`  
+参数:
+```json
+{
+  "phone": "string",
+  "messageCode": "string",
+  "messageCodeToken": "string"
+}
+```
+返回值:
+``` json
+{
+  "refresh-token": "string"
+}
+```
+快速注册所用的Message type为`login`
 
 
 ### 用户信息
