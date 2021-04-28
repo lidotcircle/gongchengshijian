@@ -60,7 +60,7 @@ public class SysparamServiceImpl implements SysparamService {
 	public void update(SystemParameter sysparam) {
         SystemParameter param = this.repository.findByParameterName(sysparam.getParameterName());
         if(param == null) {
-            throw new HttpNotFound(sysparam.getParameterName() + " doesn't exist");
+            throw new HttpNotFound(sysparam.getParameterName() + " 不存在");
         } else {
             param.setParameterValue(sysparam.getParameterValue());
             param.setRemark(sysparam.getRemark());

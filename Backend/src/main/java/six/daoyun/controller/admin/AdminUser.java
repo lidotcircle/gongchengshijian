@@ -90,7 +90,7 @@ public class AdminUser {
             throw new HttpBadRequest("require userName field");
         }
         final User user = this.userService.getUser(req.getUserName())
-            .orElseThrow(() -> new HttpNotFound("User '" + req.getUserName() + "' Not Found"));
+            .orElseThrow(() -> new HttpNotFound("用户 '" + req.getUserName() + "' 不存在"));
         this.UserDtoToUser(req, user);
         this.userService.updateUser(user);
     } //}
@@ -99,7 +99,7 @@ public class AdminUser {
     private UserDTO getUser(@RequestParam("userName") String username) //{
     {
         final User user = this.userService.getUser(username)
-            .orElseThrow(() -> new HttpNotFound("User '" + username + "' Not Found"));
+            .orElseThrow(() -> new HttpNotFound("用户 '" + username + "' 不存在"));
         return this.userTodUserDto(user);
     } //}
 

@@ -61,7 +61,8 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public void updateRoleName(String oldRoleName, String newRoleName) //{
     {
-        Role role = this.getRoleByRoleName(oldRoleName).orElseThrow(() -> new HttpNotFound());
+        Role role = this.getRoleByRoleName(oldRoleName)
+            .orElseThrow(() -> new HttpNotFound("角色不存在"));
         role.setRoleName(newRoleName);
         this.roleRepository.save(role);
 	} //}

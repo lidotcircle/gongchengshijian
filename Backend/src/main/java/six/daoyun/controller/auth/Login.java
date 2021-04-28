@@ -74,7 +74,7 @@ class Login {
     static public class LoginByMessage //{
     {
         @NotNull
-        @Pattern(regexp = ".{11}", message = "请输入11位手机号")
+        @Pattern(regexp = "1{3456789}\\d{9}", message = "请输入11位手机号")
         private String phone;
         public String getPhone() {
             return this.phone;
@@ -155,11 +155,12 @@ class Login {
                                        req.getPhone(), 
                                        req.getMessageCode(), 
                                        MessageCodeService.MessageCodeType.login)) {
-            throw new HttpUnauthorized();
+            throw new HttpUnauthorized("验证码错误");
         }
 
         LoginResponse resp = new LoginResponse();
-        User user = this.userService.getUserByPhone(req.getPhone()).orElseThrow(() -> new HttpNotFound());
+        User user = this.userService.getUserByPhone(req.getPhone())
+            .orElseThrow(() -> new HttpNotFound("手机号未注册"));
         RefreshToken token = this.authService.login(user);
         resp.setToken(token.getToken());
         return resp;
@@ -171,7 +172,7 @@ class Login {
                     req.getPhone(), 
                     req.getMessageCode(), 
                     MessageCodeType.login)) {
-            throw new HttpUnauthorized();
+            throw new HttpUnauthorized("验证码错误");
         }
 
 

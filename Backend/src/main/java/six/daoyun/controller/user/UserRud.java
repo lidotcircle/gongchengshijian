@@ -60,7 +60,7 @@ public class UserRud {
         }
 
         if(ans.isEmpty()) {
-            throw new HttpBadRequest("nothing changed, but expect something");
+            throw new HttpBadRequest("无效的请求");
         } else {
             this.userService.updateUser(user);
         }
@@ -85,7 +85,7 @@ public class UserRud {
         }
 
         if(ans.isEmpty()) {
-            throw new HttpBadRequest("nothing changed, but expect something");
+            throw new HttpBadRequest("无效的请求");
         } else {
             this.userService.updateUser(user);
         }

@@ -23,7 +23,7 @@ public class DYUtil {
         final String userName = (String)request.getAttribute("username");
         log.info("{} access", userName);
         return userService.getUser(userName)
-            .orElseThrow(() -> new HttpNotFound());
+            .orElseThrow(() -> new HttpNotFound("用户不存在"));
     }
 }
 

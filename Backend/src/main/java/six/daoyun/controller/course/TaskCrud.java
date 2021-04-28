@@ -166,7 +166,7 @@ public class TaskCrud {
     {
         final User user = DYUtil.getHttpRequestUser(httpreq);
         final CourseTask task = this.courseTaskService.getCourseTask(taskId)
-            .orElseThrow(() -> new HttpNotFound());
+            .orElseThrow(() -> new HttpNotFound("课程任务不存在"));
 
         if(!task.getCourse().getTeacher().equals(user)) {
             throw new HttpForbidden("不是该课程教师");

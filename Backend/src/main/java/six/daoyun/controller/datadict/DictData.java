@@ -121,7 +121,7 @@ class DictData {
         DictionaryType type = this.dataService.getDictionaryType(req.getTypeCode())
             .orElseThrow(() -> new HttpNotFound("数据字典类型'" + req.getTypeCode() + "'不存在"));
         DictionaryData data = this.dataService.getDictionaryData(type, req.getKeyword())
-            .orElseThrow(() -> new HttpNotFound());
+            .orElseThrow(() -> new HttpNotFound("数据不存在"));
 
         data.setOrder(req.getOrder());
         data.setValue(req.getValue());
@@ -146,7 +146,7 @@ class DictData {
         DictionaryType type = this.dataService.getDictionaryType(typeCode)
             .orElseThrow(() -> new HttpNotFound("数据字典类型'" + typeCode + "'不存在"));
         DictionaryData data = this.dataService.getDictionaryData(type, keyword)
-            .orElseThrow(() -> new HttpNotFound());
+            .orElseThrow(() -> new HttpNotFound("数据字典数据不存在"));
 
         Req ans = new Req();
         ans.setTypeCode(type.getTypeCode());

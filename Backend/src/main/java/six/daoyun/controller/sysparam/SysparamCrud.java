@@ -91,7 +91,8 @@ class SysparamCrud {
     @GetMapping()
     private Req getValue(@RequestParam("key") String key) {
         final Req resp = new Req();
-        final SystemParameter sp = this.sysparamService.get(key).orElseThrow(() -> new HttpNotFound());
+        final SystemParameter sp = this.sysparamService.get(key)
+            .orElseThrow(() -> new HttpNotFound("系统参数不存在"));
         resp.value = sp.getParameterValue();
         resp.remark = sp.getRemark();
         return resp;

@@ -78,7 +78,7 @@ public class RolePermEntry {
                          @RequestParam("roleName") String roleName) //{
     {
         if(!this.roleService.hasPermission(roleName, descriptor)) {
-            throw new HttpNotFound();
+            throw new HttpNotFound("角色无权限");
         }
     } //}
 
