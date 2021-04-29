@@ -11,14 +11,17 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import java.lang.Thread.sleep
 import java.util.regex.Pattern
 import kotlin.concurrent.thread
+import kotlinx.coroutines.*
+
 
 
 class FastLoginActivity : AppCompatActivity() {
 
     private lateinit var binding:ActivityFastLoginActivityBinding
-    private lateinit var messageCode:String
+    private var userMsg: String=""
     private var returnMessage:String=""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +36,7 @@ class FastLoginActivity : AppCompatActivity() {
                 Toast.makeText(this, "请输入正确的手机号码！", Toast.LENGTH_SHORT).show();
             }
             else{
-                //sendMsg()
+                sendMsg()
                 button1.start()
                 Toast.makeText(this, "验证码已发送", Toast.LENGTH_SHORT).show();
                 binding.btVeriSubmit.text = "已发送"
@@ -48,24 +51,18 @@ class FastLoginActivity : AppCompatActivity() {
             else if(binding.etRegVericode.text.toString()==""){
                 Toast.makeText(this,"请输入验证码！", Toast.LENGTH_SHORT).show();
             }
-            else if(binding.etRegVericode.text.toString().length<6){
+            else if(binding.etRegVericode.text.toString().length!=6){
                 Toast.makeText(this,"请输入正确的验证码！", Toast.LENGTH_SHORT).show();
             }
             else{
-                quickLogin(
-                    binding.etLoginUsername.text.toString(),
-                    binding.etRegVericode.text.toString(),
-                    messageCode
-                )
-//                if(returnMessage==""){
-//                    Toast.makeText(this, "登陆成功！", Toast.LENGTH_SHORT).show();
-//                    //startActivity(Intent(this, MainActivity::class.java))
-//                }
-//                else{
-//                    Toast.makeText(this, "验证码错误", Toast.LENGTH_SHORT).show();
-//                }
-
-
+                quickLogin(binding.etLoginUsername.text.toString(), binding.etRegVericode.text.toString(), userMsg)
+                if(returnMessage==""){
+                    Toast.makeText(this, "登陆成功！", Toast.LENGTH_SHORT).show();
+                    startActivity(Intent(this, MainActivity::class.java))
+                }
+                else{
+                    Toast.makeText(this, "验证码错误,请重新发送验证码", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
@@ -100,17 +97,18 @@ class FastLoginActivity : AppCompatActivity() {
                         .build()
                 val response=client.newCall(request).execute()
                 val responseData=response.body?.string()
-                messageCode=JSONObject(responseData).getString("codeToken")
-                showResponse(responseData.toString())
+                userMsg=JSONObject(responseData).getString("codeToken")
+                //showResponse(responseData.toString())
             }catch (e: Exception){
                 Log.e("TAG", Log.getStackTraceString(e));
             }
         }
     }
 
-    private fun quickLogin(phone: String, userMsg: String, msgToken: String){
+    private fun quickLogin(phone: String, userMsg: String, msgToken: String) {
         thread {
             try {
+                returnMessage =""
                 val json = JSONObject()
                     .put("phone", phone)
                     .put("messageCode", userMsg)
@@ -123,18 +121,18 @@ class FastLoginActivity : AppCompatActivity() {
                     .build()
                 val response=client.newCall(request).execute()
                 val responseData=response.body?.string()
-                returnMessage=JSONObject(responseData).getString("reason")
+                returnMessage = JSONObject(responseData).getString("reason")
                 showResponse(responseData.toString())
             }catch (e: Exception){
                 Log.e("TAG", Log.getStackTraceString(e));
             }
-        }
+        }.join()
     }
 
     private fun showResponse(response: String) {
         runOnUiThread {
             // 在这里进行UI操作，将结果显示到界面上
-            binding.responseText.text = response
+            binding.responseText.text = "$response"
         }
     }
 

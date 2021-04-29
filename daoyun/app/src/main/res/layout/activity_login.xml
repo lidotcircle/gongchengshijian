@@ -70,7 +70,7 @@
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
                 android:textColor="@color/black"
-                android:textColorHint="@color/black"
+                android:textColorHint="@color/gray"
                 android:textCursorDrawable="@null"
                 android:textSize="@dimen/font_16" />
 
@@ -127,7 +127,7 @@
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
                 android:textColor="@color/black"
-                android:textColorHint="@color/black"
+                android:textColorHint="@color/gray"
                 android:textCursorDrawable="@null"
                 android:textSize="@dimen/font_16" />
 
