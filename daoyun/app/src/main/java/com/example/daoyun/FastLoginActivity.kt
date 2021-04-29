@@ -1,15 +1,14 @@
 package com.example.daoyun
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AlertDialog
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.daoyun.databinding.ActivityFastLoginActivityBinding
-import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.util.regex.Pattern
@@ -19,50 +18,54 @@ import kotlin.concurrent.thread
 class FastLoginActivity : AppCompatActivity() {
 
     private lateinit var binding:ActivityFastLoginActivityBinding
-    private var codeToken:String ?= "no receive"
+    private lateinit var messageCode:String
+    private var returnMessage:String=""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding= ActivityFastLoginActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         ActivityCollector.addActivity(this)
-
+        val button1=MyCountDownTimer(60000,1000,binding.btVeriSubmit)
         //验证码
         binding.btVeriSubmit.setOnClickListener {
             if(!isChinaPhoneLegal(binding.etLoginUsername.text.toString())){
-                AlertDialog.Builder(this)
-                        .setMessage("请输入正确的手机号码！")
-                        .setPositiveButton("确定", null)
-                        .show()
+                Toast.makeText(this, "请输入正确的手机号码！", Toast.LENGTH_SHORT).show();
             }
             else{
-                sendRequestWithOkHttp()
-                AlertDialog.Builder(this)
-                        .setTitle("验证码")
-                        .setMessage("验证码为：$codeToken")
-                        .setPositiveButton("确定", null)
-                        .show()
+                //sendMsg()
+                button1.start()
+                Toast.makeText(this, "验证码已发送", Toast.LENGTH_SHORT).show();
                 binding.btVeriSubmit.text = "已发送"
                 binding.btVeriSubmit.isEnabled=false
             }
         }
         //FastLogin
         binding.btLoginSubmit.setOnClickListener {
-            if (binding.etRegVericode.text.toString() != "$codeToken") {
-                AlertDialog.Builder(this)
-                    .setMessage("验证码错误！")
-                    .setPositiveButton("确定", null)
-                    .show()
-                binding.btVeriSubmit.text = "发送验证码"
-                binding.btVeriSubmit.isEnabled = true
+            if(!isChinaPhoneLegal(binding.etLoginUsername.text.toString())){
+                Toast.makeText(this, "请输入正确的手机号码！", Toast.LENGTH_SHORT).show();
             }
-            else if(!isChinaPhoneLegal(binding.etLoginUsername.text.toString())){
-                AlertDialog.Builder(this)
-                    .setMessage("请输入正确的手机号码！")
-                    .setPositiveButton("确定", null)
-                    .show()
+            else if(binding.etRegVericode.text.toString()==""){
+                Toast.makeText(this,"请输入验证码！", Toast.LENGTH_SHORT).show();
+            }
+            else if(binding.etRegVericode.text.toString().length<6){
+                Toast.makeText(this,"请输入正确的验证码！", Toast.LENGTH_SHORT).show();
             }
             else{
-                showAlertDialog("登录成功！")
+                quickLogin(
+                    binding.etLoginUsername.text.toString(),
+                    binding.etRegVericode.text.toString(),
+                    messageCode
+                )
+//                if(returnMessage==""){
+//                    Toast.makeText(this, "登陆成功！", Toast.LENGTH_SHORT).show();
+//                    //startActivity(Intent(this, MainActivity::class.java))
+//                }
+//                else{
+//                    Toast.makeText(this, "验证码错误", Toast.LENGTH_SHORT).show();
+//                }
+
+
             }
         }
     }
@@ -77,37 +80,16 @@ class FastLoginActivity : AppCompatActivity() {
         return m.matches()
     }
 
-    private fun showAlertDialog(msg: String){
-
-        val builder = AlertDialog.Builder(this)
-            .setMessage(msg)
-        if (msg == "登录成功！") {
-            builder.setPositiveButton("确定",
-                DialogInterface.OnClickListener { _, _ ->
-                    startActivity(
-                        Intent(
-                            this,
-                            MainActivity::class.java
-                        )
-                    )
-                })
-        }
-        else {
-            builder.setPositiveButton("确定", null)
-        }
-        builder.show()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         ActivityCollector.removeActivity(this)
     }
 
-    private fun sendRequestWithOkHttp(){
+    private fun sendMsg(){
         thread {
             try {
                 val json = JSONObject()
-                    .put("phone", "13075841366")
+                    .put("phone", binding.etLoginUsername.text.toString())
                     .put("type", "login")
                     .put("captcha", " ")
                 val stringBody =json.toString().toRequestBody("application/json;charset=utf-8".toMediaType())
@@ -118,8 +100,31 @@ class FastLoginActivity : AppCompatActivity() {
                         .build()
                 val response=client.newCall(request).execute()
                 val responseData=response.body?.string()
+                messageCode=JSONObject(responseData).getString("codeToken")
+                showResponse(responseData.toString())
+            }catch (e: Exception){
+                Log.e("TAG", Log.getStackTraceString(e));
+            }
+        }
+    }
 
-                showResponse(codeToken.toString())
+    private fun quickLogin(phone: String, userMsg: String, msgToken: String){
+        thread {
+            try {
+                val json = JSONObject()
+                    .put("phone", phone)
+                    .put("messageCode", userMsg)
+                    .put("messageCodeToken", msgToken)
+                val stringBody =json.toString().toRequestBody("application/json;charset=utf-8".toMediaType())
+                val client=OkHttpClient()
+                val request=Request.Builder()
+                    .url("https://gcsj.lidotcircle.ltd/apis/auth/refresh-token/quick")
+                    .post(stringBody)
+                    .build()
+                val response=client.newCall(request).execute()
+                val responseData=response.body?.string()
+                returnMessage=JSONObject(responseData).getString("reason")
+                showResponse(responseData.toString())
             }catch (e: Exception){
                 Log.e("TAG", Log.getStackTraceString(e));
             }
@@ -132,4 +137,5 @@ class FastLoginActivity : AppCompatActivity() {
             binding.responseText.text = response
         }
     }
+
 }

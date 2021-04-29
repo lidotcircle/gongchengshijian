@@ -69,8 +69,8 @@
                 android:minLines="1"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/login_line_color"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
                 android:textCursorDrawable="@null"
                 android:textSize="@dimen/font_16" />
 
@@ -126,8 +126,8 @@
                 android:minLines="1"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/login_line_color"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
                 android:textCursorDrawable="@null"
                 android:textSize="@dimen/font_16" />
 
@@ -191,6 +191,7 @@
             android:translationZ="0dp"
             tools:targetApi="lollipop" />
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -234,6 +235,16 @@
                 android:textSize="16sp"
                 tools:ignore="RtlSymmetry" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/responseText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="24dp"
+            android:textColor="@color/black"
+            />
 
         <Space
             android:layout_width="match_parent"

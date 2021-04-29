@@ -3,15 +3,22 @@ package com.example.daoyun
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.daoyun.databinding.ActivityRegisterBinding
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import java.util.regex.Pattern
+import kotlin.concurrent.thread
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
-    private var randoms:Int = 0
+    private lateinit var messageCode:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,25 +28,33 @@ class RegisterActivity : AppCompatActivity() {
 
         //验证码
         binding.btVeriSubmit.setOnClickListener {
-            randoms = (100000..999999).random()
-            val builder = AlertDialog.Builder(this)
-                .setTitle("验证码")
-                .setMessage("验证码为：$randoms")
-                .setPositiveButton("确定", null)
-                .show()
-            binding.btVeriSubmit.text = "已发送"
-            binding.btVeriSubmit.isEnabled=false
+            if(!isChinaPhoneLegal(binding.etLoginUsername.text.toString())){
+                AlertDialog.Builder(this)
+                    .setMessage("请输入正确的手机号码！")
+                    .setPositiveButton("确定", null)
+                    .show()
+            }
+            else{
+                sendMsg()
+                AlertDialog.Builder(this)
+                    .setTitle("验证码已发送")
+                    .setPositiveButton("确定", null)
+                    .show()
+                binding.btVeriSubmit.text = "已发送"
+                binding.btVeriSubmit.isEnabled=false
+            }
         }
         //注册
         binding.btLoginSubmit.setOnClickListener {
-            if (binding.etRegVericode.text.toString() != "$randoms") {
-                val builder = AlertDialog.Builder(this)
-                    .setMessage("验证码错误！")
-                    .setPositiveButton("确定", null)
-                    .show()
-                binding.btVeriSubmit.text = "发送验证码"
-                binding.btVeriSubmit.isEnabled = true
-            } else if (binding.etLoginPwd.text.toString() != binding.etRegConfPwd.text.toString()) {
+//            if (binding.etRegVericode.text.toString() != "$randoms") {
+//                val builder = AlertDialog.Builder(this)
+//                    .setMessage("验证码错误！")
+//                    .setPositiveButton("确定", null)
+//                    .show()
+//                binding.btVeriSubmit.text = "发送验证码"
+//                binding.btVeriSubmit.isEnabled = true
+//            }
+            if (binding.etLoginPwd.text.toString() != binding.etRegConfPwd.text.toString()) {
                 val builder = AlertDialog.Builder(this)
                     .setMessage("两次密码输入不一致！")
                     .setPositiveButton("确定", null)
@@ -57,8 +72,64 @@ class RegisterActivity : AppCompatActivity() {
                     .show()
             }
             else{
+                quickLogin(binding.registerUsername.text.toString(),binding.etLoginUsername.text.toString(),binding.etRegVericode.text.toString(),binding.etLoginPwd.text.toString(),messageCode)
                 showAlertDialog("注册成功！")
             }
+        }
+    }
+
+    private fun sendMsg(){
+        thread {
+            try {
+                val json = JSONObject()
+                    .put("phone", binding.etLoginUsername.text.toString())
+                    .put("type", "signup")
+                    .put("captcha", " ")
+                val stringBody =json.toString().toRequestBody("application/json;charset=utf-8".toMediaType())
+                val client=OkHttpClient()
+                val request=Request.Builder()
+                    .url("https://gcsj.lidotcircle.ltd/apis/message")
+                    .post(stringBody)
+                    .build()
+                val response=client.newCall(request).execute()
+                val responseData=response.body?.string()
+                messageCode=JSONObject(responseData).getString("codeToken")
+                showResponse(responseData.toString())
+            }catch (e: Exception){
+                Log.e("TAG", Log.getStackTraceString(e));
+            }
+        }
+    }
+
+    private fun quickLogin(user:String,phone: String, umessage: String,password:String, msgToken: String){
+        thread {
+            try {
+                val json = JSONObject()
+                    .put("userName", user)
+                    .put("password", password)
+                    .put("phone", phone)
+                    .put("messageCode",umessage)
+                    .put("messageCodeToken",msgToken)
+                val stringBody =json.toString().toRequestBody("application/json;charset=utf-8".toMediaType())
+                val client=OkHttpClient()
+                val request=Request.Builder()
+                    .url("https://gcsj.lidotcircle.ltd/apis/auth/user")
+                    .post(stringBody)
+                    .build()
+                val response=client.newCall(request).execute()
+                val responseData=response.body?.string()
+
+                showResponse(responseData.toString())
+            }catch (e: Exception){
+                Log.e("TAG", Log.getStackTraceString(e));
+            }
+        }
+    }
+
+    private fun showResponse(response: String) {
+        runOnUiThread {
+            // 在这里进行UI操作，将结果显示到界面上
+            binding.responseText.text = response
         }
     }
 
