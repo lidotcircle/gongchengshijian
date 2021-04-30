@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.daoyun.databinding.ActivityRegisterBinding
@@ -25,54 +26,40 @@ class RegisterActivity : AppCompatActivity() {
         binding= ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
         ActivityCollector.addActivity(this)
+        val button1=MyCountDownTimer(60000,1000,binding.btVeriSubmit)
 
         //验证码
         binding.btVeriSubmit.setOnClickListener {
             if(!isChinaPhoneLegal(binding.etLoginUsername.text.toString())){
-                AlertDialog.Builder(this)
-                    .setMessage("请输入正确的手机号码！")
-                    .setPositiveButton("确定", null)
-                    .show()
+                Toast.makeText(this, "请输入正确的手机号码！", Toast.LENGTH_SHORT).show();
             }
             else{
                 sendMsg()
-                AlertDialog.Builder(this)
-                    .setTitle("验证码已发送")
-                    .setPositiveButton("确定", null)
-                    .show()
+                button1.start()
+                Toast.makeText(this, "验证码已发送", Toast.LENGTH_SHORT).show();
                 binding.btVeriSubmit.text = "已发送"
                 binding.btVeriSubmit.isEnabled=false
             }
         }
         //注册
         binding.btLoginSubmit.setOnClickListener {
-//            if (binding.etRegVericode.text.toString() != "$randoms") {
-//                val builder = AlertDialog.Builder(this)
-//                    .setMessage("验证码错误！")
-//                    .setPositiveButton("确定", null)
-//                    .show()
-//                binding.btVeriSubmit.text = "发送验证码"
-//                binding.btVeriSubmit.isEnabled = true
-//            }
             if (binding.etLoginPwd.text.toString() != binding.etRegConfPwd.text.toString()) {
-                val builder = AlertDialog.Builder(this)
-                    .setMessage("两次密码输入不一致！")
-                    .setPositiveButton("确定", null)
-                    .show()
+                Toast.makeText(this, "两次密码输入不一致！", Toast.LENGTH_SHORT).show();
             } else if (binding.etLoginPwd.text.toString().length < 6) {
-                val builder = AlertDialog.Builder(this)
-                    .setMessage("密码最低为6位！")
-                    .setPositiveButton("确定", null)
-                    .show()
+                Toast.makeText(this, "密码最低为6位！", Toast.LENGTH_SHORT).show();
             }
             else if(!isChinaPhoneLegal(binding.etLoginUsername.text.toString())){
-                val builder = AlertDialog.Builder(this)
-                    .setMessage("请输入正确的手机号码！")
-                    .setPositiveButton("确定", null)
-                    .show()
+                Toast.makeText(this, "请输入正确的手机号码！", Toast.LENGTH_SHORT).show();
+            }
+            else if(binding.etRegVericode.text.toString()==""){
+                Toast.makeText(this,"请输入验证码！", Toast.LENGTH_SHORT).show();
+            }
+            else if(binding.etRegVericode.text.toString().length!=6){
+                Toast.makeText(this,"请输入正确的验证码！", Toast.LENGTH_SHORT).show();
             }
             else{
-                quickLogin(binding.registerUsername.text.toString(),binding.etLoginUsername.text.toString(),binding.etRegVericode.text.toString(),binding.etLoginPwd.text.toString(),messageCode)
+                register(binding.registerUsername.text.toString(),binding.etLoginUsername.text.toString(),binding.etRegVericode.text.toString(),binding.etLoginPwd.text.toString(),messageCode)
+                Toast.makeText(this, "注册成功！", Toast.LENGTH_SHORT).show();
                 showAlertDialog("注册成功！")
             }
         }
@@ -101,14 +88,14 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun quickLogin(user:String,phone: String, umessage: String,password:String, msgToken: String){
+    private fun register(user:String, phone: String, userMsg: String, password:String, msgToken: String){
         thread {
             try {
                 val json = JSONObject()
                     .put("userName", user)
                     .put("password", password)
                     .put("phone", phone)
-                    .put("messageCode",umessage)
+                    .put("messageCode",userMsg)
                     .put("messageCodeToken",msgToken)
                 val stringBody =json.toString().toRequestBody("application/json;charset=utf-8".toMediaType())
                 val client=OkHttpClient()
@@ -123,7 +110,7 @@ class RegisterActivity : AppCompatActivity() {
             }catch (e: Exception){
                 Log.e("TAG", Log.getStackTraceString(e));
             }
-        }
+        }.join()
     }
 
     private fun showResponse(response: String) {

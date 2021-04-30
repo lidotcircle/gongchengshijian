@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.daoyun.databinding.ActivityForgetPasswordBinding
 import okhttp3.MediaType.Companion.toMediaType
@@ -24,21 +25,17 @@ class ForgetPasswordActivity : AppCompatActivity() {
         binding= ActivityForgetPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
         ActivityCollector.addActivity(this)
+        val button1=MyCountDownTimer(60000,1000,binding.btVeriSubmit)
 
         //验证码
         binding.btVeriSubmit.setOnClickListener {
             if(!isChinaPhoneLegal(binding.etLoginUsername.text.toString())){
-                AlertDialog.Builder(this)
-                    .setMessage("请输入正确的手机号码！")
-                    .setPositiveButton("确定", null)
-                    .show()
+                Toast.makeText(this, "请输入正确的手机号码！", Toast.LENGTH_SHORT).show();
             }
             else{
                 sendMsg()
-                AlertDialog.Builder(this)
-                    .setTitle("验证码已发送")
-                    .setPositiveButton("确定", null)
-                    .show()
+                button1.start()
+                Toast.makeText(this, "验证码已发送", Toast.LENGTH_SHORT).show();
                 binding.btVeriSubmit.text = "已发送"
                 binding.btVeriSubmit.isEnabled=false
             }

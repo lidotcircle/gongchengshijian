@@ -122,7 +122,7 @@ class FastLoginActivity : AppCompatActivity() {
                 val response=client.newCall(request).execute()
                 val responseData=response.body?.string()
                 returnMessage = JSONObject(responseData).getString("reason")
-                showResponse(responseData.toString())
+                //showResponse(responseData.toString())
             }catch (e: Exception){
                 Log.e("TAG", Log.getStackTraceString(e));
             }
