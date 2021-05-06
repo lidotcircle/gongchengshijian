@@ -3,6 +3,7 @@ package six.daoyun.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -53,7 +54,7 @@ public class RefreshToken implements Serializable {
         this.expiredDate = expiredDate;
     }
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.REMOVE)
     private User user;
     public User getUser() {
         return this.user;

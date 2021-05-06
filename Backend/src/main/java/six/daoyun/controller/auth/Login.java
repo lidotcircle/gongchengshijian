@@ -74,7 +74,7 @@ class Login {
     static public class LoginByMessage //{
     {
         @NotNull
-        @Pattern(regexp = "1{3456789}\\d{9}", message = "请输入11位手机号")
+        @Pattern(regexp = "1[3456789]\\d{9}", message = "请输入11位手机号")
         private String phone;
         public String getPhone() {
             return this.phone;

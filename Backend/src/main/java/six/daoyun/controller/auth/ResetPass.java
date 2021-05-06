@@ -24,7 +24,7 @@ public class ResetPass {
     static class RequestResetPassReq //{
     {
         @NotNull
-        @Pattern(regexp = "\\d{11}", message = "请输入11位手机号码")
+        @Pattern(regexp = "1[3456789]\\d{9}", message = "请输入11位手机号码")
         private String phone;
         public String getPhone() {
             return this.phone;

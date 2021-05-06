@@ -9,6 +9,7 @@ import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import six.daoyun.controller.exception.HttpForbidden;
@@ -18,6 +19,7 @@ import six.daoyun.service.MessageCodeService;
 import six.daoyun.service.UserService;
 
 @RestController
+@RequestMapping("/apis/message")
 public class MessageCode {
     @Autowired
     private MessageCodeService mcodeService;
@@ -74,7 +76,7 @@ public class MessageCode {
         }
     } //}
 
-    @PostMapping("/apis/message")
+    @PostMapping()
     private MessageCodeResp getMessageCodeToken(@RequestBody @Valid MessageCodeReq req) {
         if(!this.captchaService.validate(req.getPhone() + req.getType(), req.getCaptcha())) {
             if(req.getCaptcha() == null) {
