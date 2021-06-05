@@ -25,6 +25,25 @@
         * [删除](#删除)
         * [获取全部](#获取全部)
         * [分页获取](#分页获取)
+    * [数据字典](#数据字典)
+        * [新建字典](#新建字典)
+        * [删除字典](#删除字典)
+        * [获取字典](#获取字典)
+        * [分页获取字典](#分页获取字典)
+        * [修改字典](#修改字典)
+    * [数据字典项](#数据字典项)
+        * [新建字典项](#新建字典项)
+        * [删除字典项](#删除字典项)
+        * [获取字典项](#获取字典项)
+        * [分页获取字典项](#分页获取字典项)
+        * [更新字典项](#更新字典项)
+    * [班课](#班课)
+        * [新建班课](#新建班课)
+        * [获取班课](#获取班课)
+        * [分页获取班课](#分页获取班课)
+        * [删除班课](#删除班课)
+        * [更新班课](#更新班课)
+    * [班课学生相关](#班课学生相关)
     * [短信验证码获取](#短信验证码获取)
     * [菜单管理](#菜单管理)
 * [短信服务](#短信服务)
@@ -409,6 +428,306 @@ URI: `/apis/sysparam/page`
   ]
 }
 ```
+
+
+### 数据字典
+
+#### 新建字典
+
+Method: **POST** :key:  
+URI: `/apis/datadict/type`  
+参数: 
+``` typescript
+{
+    typeCode: string;
+    typeName: string;
+    remark?: string;
+}
+```
+
+#### 删除字典
+
+Method: **DELETE** :key:  
+URI: `/apis/datadict/type`  
+参数: 
+``` typescript
+{
+    typeCode: string;
+}
+```
+
+#### 获取字典
+
+Method: **GET** :key:  
+URI: `/apis/datadict/type`  
+参数: 
+``` typescript
+{
+    typeCode: string;
+}
+```
+返回值:
+``` typescript
+{
+    typeCode: string;
+    typeName: string;
+    remark: string | null;
+}
+```
+
+
+#### 分页获取字典
+
+Method: **GET** :key:  
+URI: `/apis/datadict/type/page`  
+参数: 
+``` typescript
+{
+    pageno: number;
+    size: number;
+    sortDir: "desc" | "asc";
+    sortKey: string;
+    searchWildcard： string; // Mysql 搜索语法
+}
+```
+返回值:
+``` typescript
+{
+    total: number; // 分页长度
+    pairs: DictType[];
+}
+
+interface DictType {
+    typeCode: string;
+    typeName: string;
+    remark: string;
+}
+```
+
+
+#### 修改字典
+
+Method: **PUT** :key:  
+URI: `/apis/datadict/type`  
+参数: 
+``` typescript
+{
+    typeCode: string;
+    typeName: string;
+    remark?: string;
+}
+```
+
+
+### 数据字典项
+
+#### 新建字典项
+
+Method: **POST** :key:  
+URI: `/apis/datadict/data`  
+参数: 
+``` typescript
+{
+    typeCode: string;
+    keyword: string;
+    value: string;
+    isDefault?: boolean;
+    order?: number;
+    remark?: string;
+}
+```
+
+#### 删除字典项
+
+Method: **DELETE** :key:  
+URI: `/apis/datadict/data`  
+参数: 
+``` typescript
+{
+    typeCode: string;
+    keyword: string;
+}
+```
+
+#### 获取字典项
+
+Method: **GET** :key:  
+URI: `/apis/datadict/data`  
+参数: 
+``` typescript
+{
+    typeCode: string;
+    keyword: string;
+}
+```
+返回值:
+``` typescript
+{
+    typeCode: string;
+    keyword: string;
+    value: string;
+    isDefault?: boolean;
+    order?: number;
+    remark?: string;
+}
+```
+
+#### 分页获取字典项
+
+Method: **GET** :key:  
+URI: `/apis/datadict/data/page`  
+参数: 
+``` typescript
+{
+    pageno: number;
+    size: number;
+    typeCode: stirng;
+    sortDir?: "desc" | "asc";
+    sortKey?: string;
+    searchWildcard?: string;
+}
+```
+返回值:
+``` typescript
+{
+    total: number;
+    pairs: DictData[];
+}
+interface DictData {
+    typeCode: string;
+    keyword: string;
+    value: string;
+    isDefault?: boolean;
+    order?: number;
+    remark?: string;
+}
+```
+
+#### 更新字典项
+
+Method: **PUT** :key:  
+URI: `/apis/datadict/data`  
+参数: 
+``` typescript
+{
+    typeCode: string;
+    keyword: string;
+    value: string;
+    isDefault?: boolean;
+    order?: number;
+    remark?: string;
+}
+```
+
+
+### 班课
+
+#### 新建班课
+
+Method: **POST** :key:  
+URI: `/apis/course`  
+参数: 
+``` typescript
+{
+    courseName: string;
+    breiefDescription?: string;
+}
+```
+返回值:
+``` typescript
+    courseExId: string; // 10位数字
+```
+
+#### 获取班课
+
+Method: **GET** :key:  
+URI: `/apis/course`  
+参数: 
+``` typescript
+{
+    courseExId: string;
+}
+```
+返回值:
+``` typescript
+{
+    courseExId: string;
+    courseName: string;
+    breiefDescription: string;
+    teacher: Teacher;
+    students: Student[];
+    tasks: Task[];
+}
+interface Teacher {
+    userName: string;
+    name: string;
+}
+interface Student {
+    userName: string;
+    name: string;
+    studentTeacherId: string;
+    score: number;
+}
+interface Task {
+    id: number;
+    releasedate: Date; // 日期格式为 iso8601Format
+    committable: boolean; // 该任务是否需要学生提交, 不需要提交的认为可以认为是通知
+    taskTilte: string;
+    content: string;
+}
+```
+
+#### 分页获取班课
+
+Method: **GET** :key:  
+URI: `/apis/course/page`  
+参数: 
+``` typescript
+{
+    role: "teacher" | "student" | null;
+    pageno: number;
+    size: number;
+    sortDir: "desc" | "asc";
+    searchWildcard: string;
+}
+```
+返回值:
+``` typescript
+{
+total: number;
+pairs: Course[];
+}
+interface Course {
+    // 见获取班课的返回值
+}
+```
+
+#### 删除班课
+
+Method: **DELETE** :key:  
+URI: `/apis/course`  
+参数: 
+``` typescript
+{
+    courseExId: string;
+}
+```
+
+#### 更新班课
+
+Method: **PUT** :key:  
+URI: `/apis/course`  
+参数: 
+``` typescript
+{
+    courseExId: string;
+    courseName: string;
+    breiefDescription: string;
+}
+```
+
+
+### 班课学生相关
 
 
 ### 短信验证码获取
