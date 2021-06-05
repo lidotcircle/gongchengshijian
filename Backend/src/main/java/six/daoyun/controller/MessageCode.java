@@ -110,6 +110,8 @@ public class MessageCode {
             return resp;
         } catch (MessageCodeService.MessageNeedWait ex) {
             throw new HttpForbidden("请求过于频繁");
+        } catch (MessageCodeService.SendMessageCodeError ex) {
+            throw new HttpForbidden("发送短信失败");
         }
     }
 }

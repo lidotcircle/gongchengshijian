@@ -73,7 +73,7 @@ public class MessageCodeServiceImpl implements MessageCodeService {
     } //}
 
 	@Override
-	public String sendTo(String phone, MessageCodeType type) throws MessageNeedWait {
+	public String sendTo(String phone, MessageCodeType type) throws MessageNeedWait, SendMessageCodeError {
         log.info("发送短信到: {}, {}", phone, type);
         final String key = "message_code_phone_" + phone;
         final long now = (new Date()).getTime();
@@ -93,7 +93,7 @@ public class MessageCodeServiceImpl implements MessageCodeService {
             try {
                 this.smsService.sendMessageCode(phone, code, type);
             } catch (Exception ex) {
-                throw new RuntimeException("发送验证码失败");
+                throw new SendMessageCodeError();
             }
         }
 
