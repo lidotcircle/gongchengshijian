@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.daoyun.databinding.ActivityLoginBinding
@@ -58,12 +59,13 @@ class LoginActivity : AppCompatActivity() {
             else if(binding.etLoginPwd.text.toString()=="")
                 showAlertDialog("请输入密码!")
             else{
-                login(binding.etLoginUsername.text.toString(),binding.etLoginPwd.text.toString())
-                showAlertDialog(reason)
-                when(reason){
-                    "手机号未注册"->showAlertDialog(reason)
-                        else -> showAlertDialog("登录成功！")
+                //login(binding.etLoginUsername.text.toString(),binding.etLoginPwd.text.toString())
+                if(reason==""){
+                    Toast.makeText(this, "登陆成功！", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, MainActivity::class.java))
                 }
+                else
+                    Toast.makeText(this,"密码错误或者账号不存在",Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -82,12 +84,12 @@ class LoginActivity : AppCompatActivity() {
                     .build()
                 val response=client.newCall(request).execute()
                 val responseData=response.body?.string()
-                reason=JSONObject(responseData).getString("reason")
+                reason=JSONObject(responseData)?.getString("reason")
                 showResponse(responseData.toString())
             }catch (e: Exception){
                 Log.e("TAG", Log.getStackTraceString(e));
             }
-        }
+        }.join()
     }
 
     private fun showResponse(response: String) {

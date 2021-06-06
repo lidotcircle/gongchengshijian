@@ -60,7 +60,7 @@ class RegisterActivity : AppCompatActivity() {
             else{
                 register(binding.registerUsername.text.toString(),binding.etLoginUsername.text.toString(),binding.etRegVericode.text.toString(),binding.etLoginPwd.text.toString(),messageCode)
                 Toast.makeText(this, "注册成功！", Toast.LENGTH_SHORT).show();
-                showAlertDialog("注册成功！")
+                Intent(this,LoginActivity::class.java)
             }
         }
     }
@@ -128,27 +128,6 @@ class RegisterActivity : AppCompatActivity() {
         val p = Pattern.compile(regExp)
         val m = p.matcher(str)
         return m.matches()
-    }
-
-    private fun showAlertDialog(msg: String){
-
-        val builder = AlertDialog.Builder(this)
-            .setMessage(msg)
-        if (msg == "注册成功！") {
-            builder.setPositiveButton("确定",
-                DialogInterface.OnClickListener { _, _ ->
-                    startActivity(
-                        Intent(
-                            this,
-                            LoginActivity::class.java
-                        )
-                    )
-                })
-        }
-        else {
-            builder.setPositiveButton("确定", null)
-        }
-        builder.show()
     }
 
     override fun onDestroy() {
