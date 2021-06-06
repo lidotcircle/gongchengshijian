@@ -3,6 +3,8 @@ package com.example.daoyun
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.daoyun.databinding.ActivityMainBinding
