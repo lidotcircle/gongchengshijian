@@ -3,14 +3,41 @@ package com.example.daoyun
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.daoyun.databinding.ActivityMainBinding
+import com.example.daoyun.fragment.FindFragment
+import com.example.daoyun.fragment.MainFragment
+import com.example.daoyun.fragment.MeFragment
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityMainBinding
+
+    private var mMenuMain: LinearLayout? = null
+    private var mMenuFind: LinearLayout? = null
+    private var mMenuMe: LinearLayout? = null
+    private var mainImageView: ImageView? = null
+    private var findImageView: ImageView? = null
+    private var meImageView: ImageView? = null
+    private var mainTV: TextView? = null
+    private var findTV: TextView? = null
+    private var meTV: TextView? = null
+    private var mMainFragment = MainFragment() //首页
+
+    private var mFindFragment = FindFragment() //发现
+
+    private var mMeFragment = MeFragment() //我的
+
+    var userName: String? = null
+    var icon: String? = null
+    var loginType: String? = null
+    var name: String? = null
+    var phoneNumber: String? = null
+    var BUFFER_SIZE = 8192
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding= ActivityMainBinding.inflate(layoutInflater)
@@ -20,13 +47,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         initView()
 
+
+        //获取管理类
         this.supportFragmentManager
             .beginTransaction()
-            .add(binding.containerContent.id, MainFragment())
-            .add(binding.containerContent.id, FindFragment())
-            .hide(FindFragment())
-            .add(binding.containerContent.id, MeFragment())
-            .hide(MeFragment())
+            .add(R.id.container_content, mMainFragment)
+            .add(R.id.container_content, mFindFragment)
+            .hide(mFindFragment)
+            .add(R.id.container_content, mMeFragment)
+            .hide(mMeFragment)
             .commit()
     }
     override fun onDestroy() {
@@ -35,17 +64,27 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun initView(){
-        binding.menuMain.setOnClickListener(this)
-        binding.menuFind.setOnClickListener(this)
-        binding.menuMe.setOnClickListener(this)
+        mMenuMain = findViewById(R.id.menu_main)
+        mMenuFind = findViewById(R.id.menu_find)
+        mMenuMe = findViewById(R.id.menu_me)
+        mainImageView = findViewById(R.id.Iv_main)
+        findImageView = findViewById(R.id.Iv_find)
+        meImageView = findViewById(R.id.Iv_me)
+        mainTV = findViewById(R.id.main_Tv)
+        findTV = findViewById(R.id.find_Tv)
+        meTV = findViewById(R.id.me_Tv)
 
-        binding.IvMain.setImageDrawable(
+        mMenuMain?.setOnClickListener(this)
+        mMenuFind?.setOnClickListener(this)
+        mMenuMe?.setOnClickListener(this)
+
+        mainImageView?.setImageDrawable(
             ContextCompat.getDrawable(
                 applicationContext,
                 R.mipmap.nav_main_click
             )
         )
-        binding.mainTv.setTextColor(Color.parseColor("#008CC9"))
+        mainTV?.setTextColor(Color.parseColor("#008CC9"))
     }
 
     override fun onClick(v: View?) {
