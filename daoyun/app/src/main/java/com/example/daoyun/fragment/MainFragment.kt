@@ -54,7 +54,7 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_find, null)
+        val view = inflater.inflate(R.layout.fragment_main, null)
         addTV = view.findViewById(R.id.toolbar_right_tv)
         return view
     }
@@ -70,7 +70,19 @@ class MainFragment : Fragment() {
         myJoinTV?.setTextColor(Color.parseColor("#ff00bfff"))
         myCreateView?.visibility = View.INVISIBLE
 
+        activity.supportFragmentManager
+            .beginTransaction()
+            .add(R.id.container_content_layout, myCreateFragment)
+            .add(R.id.container_content_layout, myJoinFragment)
+            .hide(myCreateFragment)
+            .commit()
 
+/*        addTV!!.isEnabled = true
+        addTV!!.setOnClickListener {
+            Log.i("MainFragmentInfo", "add textview")
+            //                Toast.makeText(getContext(), "添加被按下", Toast.LENGTH_SHORT).show();
+            showPopupMenu(addTV!!)
+        }*/
 
         myJoinTV?.setOnClickListener(View.OnClickListener {
             myJoinTV?.setTextColor(Color.parseColor("#ff00bfff"))

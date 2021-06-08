@@ -47,7 +47,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         initView()
 
-
         //获取管理类
         this.supportFragmentManager
             .beginTransaction()
@@ -57,6 +56,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .add(R.id.container_content, mMeFragment)
             .hide(mMeFragment)
             .commit()
+
     }
     override fun onDestroy() {
         super.onDestroy()
@@ -92,9 +92,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             R.id.menu_main->{
                 this.supportFragmentManager
                     .beginTransaction()
-                    .show(MainFragment())
-                    .hide(FindFragment())
-                    .hide(MeFragment())
+                    .show(mMainFragment)
+                    .hide(mFindFragment)
+                    .hide(mMeFragment)
                     .commit()
                 binding.IvMain.setImageDrawable(
                     ContextCompat.getDrawable(
@@ -121,9 +121,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             R.id.menu_find->{
                 this.supportFragmentManager
                     .beginTransaction()
-                    .hide(MainFragment())
-                    .show(FindFragment())
-                    .hide(MeFragment())
+                    .hide(mMainFragment)
+                    .show(mFindFragment)
+                    .hide(mMeFragment)
                     .commit()
                 binding.IvMain.setImageDrawable(
                     ContextCompat.getDrawable(
@@ -150,9 +150,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             R.id.menu_me->{
                 this.supportFragmentManager
                     .beginTransaction()
-                    .hide(MainFragment())
-                    .hide(FindFragment())
-                    .show(MeFragment())
+                    .hide(mMainFragment)
+                    .hide(mFindFragment)
+                    .show(mMeFragment)
                     .commit()
                 binding.IvMain.setImageDrawable(
                     ContextCompat.getDrawable(
