@@ -1,3 +1,5 @@
+export * from './utils/ugly-hint';
+
 
 export function assert(expr: boolean, msg?: string) {
     if(!expr) {
@@ -51,8 +53,12 @@ export module Pattern {
     export module Regex {
         export const uname = /^([a-zA-Z]|\p{Unified_Ideograph})(\w|\p{Unified_Ideograph}){1,7}$/u;
         uname[HintSym] = '长度为2~8的中文 字母 数字 下划线组合, 首字符为中文或字母';
+        export const uname1 = /^([a-zA-Z]|\p{Unified_Ideograph})(\w|\p{Unified_Ideograph}){0,7}$/u;
+        uname1[HintSym] = '长度为1~8的中文 字母 数字 下划线组合, 首字符为中文或字母';
         export const aname = /^[a-zA-Z]\w{1,9}$/;
         aname[HintSym] = '长度为2~10的字母 数字 下划线组合, 首字符为中文或字母';
+        export const dvalue = /[0-9]{1,}/;
+        dvalue[HintSym] = '从0开始的整数';
     }
 }
 

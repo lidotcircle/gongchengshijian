@@ -13,7 +13,7 @@ import { Pattern } from 'src/app/shared/utils';
                    [(ngModel)]='menu.permEntryName' nbInput placeholder="名称"
                    name='name'>
             <div class="key">链接</div>
-            <input type="text" required pattern='(\/[a-zA-Z0-9@\-]{2,}){1,}\/?' 
+            <input type="text" required pattern='(POST|DELETE|PUT|GET)[:](\/[a-zA-Z0-9@\-]{2,}){1,}\/?' 
                    [(ngModel)]='menu.link' nbInput fullWidth placeholder="链接"
                    name='link'>
             <div class="key" *ngIf='!inEdit'>描述字段</div>

@@ -1,12 +1,17 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NbToastrService } from '@nebular/theme';
 import { Ng2SmartTableComponent, ServerDataSource } from 'ng2-smart-table';
+import { interval, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { DictionaryType } from 'src/app/entity';
 import { DataDictionaryService } from 'src/app/service/datadict/data-dictionary.service';
 import { RESTfulAPI } from 'src/app/service/restful';
-import { Pattern } from 'src/app/shared/utils';
+import { Pattern, UglyInputHint } from 'src/app/shared/utils';
 import { ClickCellComponent } from './click-cell.component';
+
+
+function isEmpty(v: string | null) {return !v || v == '';}
 
 @Component({
     selector: 'ngx-dictionary-list',
@@ -14,7 +19,7 @@ import { ClickCellComponent } from './click-cell.component';
     styleUrls: ['./dictionary-list.component.scss'],
     encapsulation: ViewEncapsulation.None,
 })
-export class DictionaryListComponent implements OnInit {
+export class DictionaryListComponent implements OnInit, OnDestroy {
 
     // settings //{
     settings = {
@@ -52,16 +57,16 @@ export class DictionaryListComponent implements OnInit {
                 type: 'custom',
                 renderComponent: ClickCellComponent,
             },
-            typeCode: {
-                title: '编码',
-                type: 'text',
-                filter: false,
-                editable: false,
-            },
             typeName: {
                 title: '名称',
                 type: 'text',
                 filter: false,
+            },
+            typeCode: {
+                title: '关键字',
+                type: 'text',
+                filter: false,
+                editable: false,
             },
             remark: {
                 title: '备注',
@@ -75,10 +80,16 @@ export class DictionaryListComponent implements OnInit {
     }; //}
 
     source: ServerDataSource;
+    destroy$: Subject<void>;
 
     constructor(private toastrService: NbToastrService,
                 private http: HttpClient,
                 private datadictService: DataDictionaryService) {
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     ngOnInit(): void {
@@ -93,27 +104,54 @@ export class DictionaryListComponent implements OnInit {
             totalKey: 'total',
         });
 
-        (this.source as any).find = function (element: DictionaryType): Promise<any> {
-            const found = (this.data as DictionaryType[]).find(elem => elem.typeCode == element.typeCode);
+        (this.source as any).find = function (element: DictionaryType | string): Promise<any> {
+            if(typeof element == 'object') {
+                element = element.typeCode;
+            }
+            const found = (this.data as DictionaryType[]).find(elem => elem.typeCode == element);
             if(found) {
                 return Promise.resolve(found);
             } else {
                 return Promise.reject("NOT FOUND");
             }
         }
+
+        this.destroy$ = new Subject();
+        interval(1000).pipe(takeUntil(this.destroy$))
+            .subscribe(() => {
+                UglyInputHint(input => input.placeholder == '关键字',
+                    async input => {
+                        if (isEmpty(input.value)) {
+                            return '此字段不为空';
+                        }
+
+                        if (!this.codeRegex.test(input.value)) {
+                            return this.codeRegex[Pattern.HintSym];;
+                        }
+
+                        try {
+                            if(await this.source.find(input.value) != null)
+                                return '系统参数已存在';
+                        } catch {}
+
+                        return null;
+                    },
+                    input => isEmpty(input.value) && '此字段不为空' || null
+                );
+            });
     }
 
-    private static nameRegex = Pattern.Regex.uname;
-    private static codeRegex = Pattern.Regex.aname;
+    private nameRegex = Pattern.Regex.uname;
+    private codeRegex = Pattern.Regex.aname;
     private async checkData(name: string, code: string, toaster: boolean = true): Promise<boolean> //{
     {
-        const nameTestFail = name == null || !DictionaryListComponent.nameRegex.test(name);
-        const codeTestFail = code == null || !DictionaryListComponent.codeRegex.test(code);
+        const nameTestFail = name == null || !this.nameRegex.test(name);
+        const codeTestFail = code == null || !this.codeRegex.test(code);
 
         if(toaster && (nameTestFail || codeTestFail)) {
             let message = (nameTestFail ? 
-                `名称字段: ${DictionaryListComponent.nameRegex[Pattern.HintSym]}` : 
-                `编码字段: ${DictionaryListComponent.codeRegex[Pattern.HintSym]}`);
+                `名称字段: ${this.nameRegex[Pattern.HintSym]}` : 
+                `编码字段: ${this.codeRegex[Pattern.HintSym]}`);
             this.toastrService.warning(message, '数据字典', );
         }
 
