@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import six.daoyun.controller.exception.HttpForbidden;
 import six.daoyun.controller.exception.HttpNotFound;
 import six.daoyun.entity.SystemParameter;
 import six.daoyun.service.SysparamService;
@@ -80,6 +81,9 @@ class SysparamCrud {
 
     @PostMapping()
     private void create(@RequestBody @Valid Req request) {
+        if(this.sysparamService.get(request.getKey()).isPresent())
+            throw new HttpForbidden("关键字已存在");
+
         SystemParameter param = new SystemParameter();
         param.setParameterName(request.key);
         param.setParameterValue(request.value);
@@ -98,7 +102,7 @@ class SysparamCrud {
         return resp;
     }
 
-    @PutMapping("/apis/sysparam")
+    @PutMapping()
     private void update(@RequestBody @Valid Req request) {
         final SystemParameter sysparam = new SystemParameter();
         sysparam.setParameterName(request.getKey());

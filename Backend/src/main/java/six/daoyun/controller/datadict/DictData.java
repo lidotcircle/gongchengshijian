@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +23,7 @@ import six.daoyun.entity.DictionaryType;
 import six.daoyun.service.DataDictionaryService;
 
 @RestController()
+@RequestMapping("/apis/datadict/data")
 class DictData {
     @Autowired
     private DataDictionaryService dataService;
@@ -98,7 +100,7 @@ class DictData {
         }
     } //}
 
-    @PostMapping("/apis/datadict/data")
+    @PostMapping()
     private void createDictData(@RequestBody @Valid Req req) //{
     {
         DictionaryData data = new DictionaryData();
@@ -115,7 +117,7 @@ class DictData {
         this.dataService.createDictionaryData(data);
     } //}
 
-    @PutMapping("/apis/datadict/data")
+    @PutMapping()
     private void updateDictData(@RequestBody @Valid Req req) //{
     {
         DictionaryType type = this.dataService.getDictionaryType(req.getTypeCode())
@@ -126,11 +128,12 @@ class DictData {
         data.setOrder(req.getOrder());
         data.setValue(req.getValue());
         data.setIsDefault(req.getIsDefault());
+        data.setRemark(req.getRemark());
 
         this.dataService.updateDictionaryData(data);
     } //}
 
-    @DeleteMapping("/apis/datadict/data")
+    @DeleteMapping()
     private void updateDictData(@RequestParam("typeCode") String typeCode, 
                                 @RequestParam("keyword") String keyword) //{
     {
@@ -139,7 +142,7 @@ class DictData {
         this.dataService.deleteDictionaryData(type, keyword);
     } //}
 
-    @GetMapping("/apis/datadict/data")
+    @GetMapping()
     private Req getDictData(@RequestParam("typeCode") String typeCode, 
                                 @RequestParam("keyword") String keyword) //{
     {
@@ -158,12 +161,12 @@ class DictData {
         return ans;
     } //}
 
-    @GetMapping("/apis/datadict/data/page")
+    @GetMapping("/page")
     private PageResp getPage(@RequestParam(value = "pageno", defaultValue = "1") int pageno, 
                              @RequestParam(value = "size", defaultValue = "10") int size, 
                              @RequestParam("typeCode") String typeCode,
                              @RequestParam(value = "sortDir", required = false) String sortDir,
-                             @RequestParam(value = "sortKey", defaultValue = "keyword") String sortKey,
+                             @RequestParam(value = "sortKey", defaultValue = "order") String sortKey,
                              @RequestParam(value = "searchWildcard", required = false) String wildcard) //{
     {
         DictionaryType type = this.dataService.getDictionaryType(typeCode)

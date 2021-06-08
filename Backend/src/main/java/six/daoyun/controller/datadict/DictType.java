@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +23,7 @@ import six.daoyun.entity.DictionaryType;
 import six.daoyun.service.DataDictionaryService;
 
 @RestController()
+@RequestMapping("/apis/datadict/type")
 class DictType {
     @Autowired
     private DataDictionaryService dictService;
@@ -74,7 +76,7 @@ class DictType {
         }
     } //}
 
-    @PostMapping("/apis/datadict/type")
+    @PostMapping()
     private void createDictType(@RequestBody @Valid Req req) //{
     {
         DictionaryType type = new DictionaryType();
@@ -85,7 +87,7 @@ class DictType {
         this.dictService.createDictionaryType(type);
     } //}
 
-    @PutMapping("/apis/datadict/type")
+    @PutMapping()
     private void updateDictType(@RequestBody @Valid Req req) //{
     {
         DictionaryType type = this.dictService.getDictionaryType(req.getTypeCode())
@@ -96,7 +98,7 @@ class DictType {
         this.dictService.updateDictionaryType(type);
     } //}
 
-    @GetMapping("/apis/datadict/type")
+    @GetMapping()
     private Req getDictType(@RequestParam("typeCode") String typeCode) //{
     {
         Req ans = new Req();
@@ -110,13 +112,13 @@ class DictType {
         return ans;
     } //}
 
-    @DeleteMapping("/apis/datadict/type")
+    @DeleteMapping()
     private void deleteDictType(@RequestParam("typeCode") String typeCode) //{
     {
         this.dictService.deleteDictionaryTypeByTypeCode(typeCode);
     } //}
 
-    @GetMapping("/apis/datadict/type/page")
+    @GetMapping("/page")
     private PageResp getPage(@RequestParam("pageno") int pageno, 
                              @RequestParam("size") int size, 
                              @RequestParam(value = "sortDir", required = false) String sortDir,
