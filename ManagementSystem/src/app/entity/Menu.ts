@@ -3,6 +3,7 @@ import { assert } from 'src/app/shared/utils';
 export class PermMenu {
     permEntryName: string;
     link: string;
+    method: string;
     descriptor: string;
     entryType: string;
 

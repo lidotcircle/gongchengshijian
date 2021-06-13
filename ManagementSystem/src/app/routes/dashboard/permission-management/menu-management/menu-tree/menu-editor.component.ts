@@ -12,8 +12,12 @@ import { Pattern } from 'src/app/shared/utils';
             <input type="text" required pattern='.{2,}'
                    [(ngModel)]='menu.permEntryName' nbInput placeholder="名称"
                    name='name'>
+            <div class="key">方法</div>
+            <input type="text" required pattern='(ALL|POST|PUT|GET|DELETE)?' 
+                   [(ngModel)]='menu.method' nbInput fullWidth placeholder="方法 eg. ALL, POST, PUT, GET, DELETE"
+                   name='method'>
             <div class="key">链接</div>
-            <input type="text" required pattern='(POST|DELETE|PUT|GET)[:](\/[a-zA-Z0-9@\-]{2,}){1,}\/?' 
+            <input type="text" required pattern='(\/[a-zA-Z0-9@\-]{2,}){1,}\/?' 
                    [(ngModel)]='menu.link' nbInput fullWidth placeholder="链接"
                    name='link'>
             <div class="key" *ngIf='!inEdit'>描述字段</div>
@@ -44,6 +48,7 @@ import { Pattern } from 'src/app/shared/utils';
     styles: [
         `
         .kv {
+            min-width: 50vw;
             display: grid;
             grid-template-columns: 30% 70%;
             grid-row-gap: 0.8em;
