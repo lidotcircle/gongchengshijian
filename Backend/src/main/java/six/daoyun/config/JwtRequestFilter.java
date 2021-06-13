@@ -70,6 +70,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     username = jwtTokenUtil.getUsernameFromToken(jwtToken);
 
                     if(username == null) {
+                        System.out.println("bad username");
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                         return;
                     } else {
@@ -86,6 +87,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 }
             } else {
                 response.setHeader("X-REASON", "REQUIRE JWT");
+                System.out.println("JWT Token is null");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "require JWT");
                 return;
             }

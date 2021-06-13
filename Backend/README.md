@@ -44,6 +44,24 @@
         * [删除班课](#删除班课)
         * [更新班课](#更新班课)
     * [班课学生相关](#班课学生相关)
+        * [邀请学生](#邀请学生)
+        * [删除学生](#删除学生)
+        * [加入班课](#加入班课)
+        * [退出班课](#退出班课)
+    * [班课任务与通知](#班课任务与通知)
+        * [创建](#创建-1)
+        * [删除](#删除-1)
+        * [获取](#获取)
+        * [修改](#修改-1)
+        * [获取任务提交列表](#获取任务提交列表)
+        * [学生获取提交的任务](#学生获取提交的任务)
+    * [班课签到](#班课签到)
+        * [创建](#创建-2)
+        * [删除](#删除-2)
+        * [获取](#获取-1)
+        * [修改](#修改-2)
+        * [获取已签到列表](#获取已签到列表)
+        * [学生获取签到记录](#学生获取签到记录)
     * [短信验证码获取](#短信验证码获取)
     * [菜单管理](#菜单管理)
 * [短信服务](#短信服务)
@@ -62,7 +80,7 @@ API的参数序列化为JSON格式包含在 *body*中.
 后者则用前者通过对应 API 获得一般用与API调用的身份认证.
 **JWT Token**有效期比较短, 可以在会话结束丢弃.
 
-对于需要身份认证的API, HTTP 请求头需要包含`Authentication: JWT`. 需要身份认证的API, 会以:key:进行标记.
+对于需要身份认证的API, HTTP 请求头需要包含`Authorization: JWT`. 需要身份认证的API, 会以:key:进行标记.
 
 **IMPORTAN**: 
 **用户名登录**, **获取短信验证码**失败超过3次(以后不确定)之后需要 **hcaptcha** 人机验证, 对应请求需要加入**captcha**字段.
@@ -630,7 +648,7 @@ URI: `/apis/course`
 ``` typescript
 {
     courseName: string;
-    breiefDescription?: string;
+    briefDescription?: string;
 }
 ```
 返回值:
@@ -653,7 +671,7 @@ URI: `/apis/course`
 {
     courseExId: string;
     courseName: string;
-    breiefDescription: string;
+    briefDescription: string;
     teacher: Teacher;
     students: Student[];
     tasks: Task[];
@@ -722,12 +740,285 @@ URI: `/apis/course`
 {
     courseExId: string;
     courseName: string;
-    breiefDescription: string;
+    briefDescription?: string;
 }
 ```
 
 
 ### 班课学生相关
+
+#### 邀请学生
+
+Method: **POST** :key:  
+URI: `/apis/course/student`  
+前置条件: 请求的用户是该课程的老师  
+参数:
+```typescript
+{
+    courseExId: string;
+    studentName: string; // 学生用户名
+}
+```
+
+#### 删除学生
+
+Method: **DELETE** :key:  
+URI: `/apis/course/student`  
+前置条件: 请求的用户是该课程的老师  
+参数:
+```typescript
+{
+    courseExId: string;
+    studentName: string;
+}
+```
+
+#### 加入班课
+
+Method: **POST** :key:  
+URI: `/apis/course/student/me`  
+前置条件: 课程的老师不可以加入自己的班课  
+参数:
+```typescript
+{
+    courseExId: string;
+}
+```
+
+
+#### 退出班课
+
+Method: **DELETE** :key:  
+URI: `/apis/course/student/me`  
+参数:
+```typescript
+{
+    courseExId: string;
+}
+```
+
+
+### 班课任务与通知
+
+任务与通知以同样的API创建、修改、删除, 区别在于通知不可提交
+
+#### 创建
+
+Method: **POST** :key:  
+URI: `/apis/course/task`  
+参数:
+```typescript
+{
+    courseExId: string;
+    taskTitle: string;
+    deadline: string; // "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", see ISO 8601
+    committable?: boolean;
+    content?: string;
+}
+```
+返回值:
+```typescript
+{
+    taskId: number;
+}
+```
+
+#### 删除
+
+Method: **DELETE** :key:  
+URI: `/apis/course/task`  
+参数:
+```typescript
+{
+    taskId: number;
+}
+```
+
+#### 获取
+
+Method: **GET** :key:  
+URI: `/apis/course/task`  
+参数:
+```typescript
+{
+    taskId: number;
+}
+```
+返回值:
+```typescript
+{
+    taskId: number;
+    taskTilte: string;
+    committable: boolean;
+    ddeadline: string;
+    content: string;
+}
+```
+
+#### 修改
+
+Method: **PUT** :key:  
+URI: `/apis/course/task`  
+参数:
+```typescript
+{
+    taskId: number;
+    taskTilte?: string;
+    ddeadline?: string;
+    content?: string;
+}
+```
+
+#### 获取任务提交列表
+
+Method: **GET** :key:  
+URI: `/apis/course/task/anwser-list`  
+参数:
+```typescript
+{
+    taskId: number;
+}
+```
+返回值:
+```typescript
+interface TaskAnwser{
+    taskAnwserId: number;
+    commitContent: string;
+    teacherDoThis: string;
+    grade: number;
+    studentInfo: StudentInfo;
+}
+
+interface StudentInfo {
+    name: string;
+    userName: string;
+    studentNo: string; // 学工号
+}
+
+type ReturnType = TaskAnwser[];
+```
+
+#### 学生获取提交的任务
+
+Method: **GET** :key:  
+URI: `/apis/course/task/anwser`  
+参数:
+```typescript
+{
+taskId: number;
+}
+```
+返回值:
+```typescript
+type ReturnType = TaskAnwser; // 见上面一个接口中的定义
+```
+
+
+### 班课签到
+
+#### 创建
+
+Method: **POST** :key:  
+URI: `/apis/course/check-in`  
+参数:
+```typescript
+{
+    courseExId: string;
+    jsonData: string;
+    deadline: string; // "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", see ISO 8601
+}
+```
+返回值:
+```typescript
+{
+    checkInId: number;
+}
+```
+
+#### 删除
+
+Method: **DELETE** :key:  
+URI: `/apis/course/check-in`  
+参数:
+```typescript
+{
+    checkInId: number;
+}
+```
+
+#### 获取
+
+Method: **GET** :key:  
+URI: `/apis/course/check-in`  
+参数:
+```typescript
+{
+    checkId: number;
+}
+```
+返回值:
+```typescript
+{
+    checkInId: number;
+    jsonData: string;
+    deadline: string;
+}
+```
+
+#### 修改
+
+Method: **PUT** :key:  
+URI: `/apis/course/check-in`  
+参数:
+```typescript
+{
+    checkInId: number;
+    ddeadline?: string;
+    jsonData?: string;
+}
+```
+
+#### 获取已签到列表
+
+Method: **GET** :key:  
+URI: `/apis/course/check-in/anwser-list`  
+参数:
+```typescript
+{
+    checkInId: number;
+}
+```
+返回值:
+```typescript
+interface CheckInAnwser{
+    checkInAnwserId: number;
+    studentInfo: StudentInfo;
+    checkInJsonData: string;
+}
+
+interface StudentInfo {
+    name: string;
+    userName: string;
+    studentNo: string; // 学工号
+}
+
+type ReturnType = CheckInAnwser[];
+```
+
+#### 学生获取签到记录
+
+Method: **GET** :key:  
+URI: `/apis/course/check-in/anwser`  
+参数:
+```typescript
+{
+    checkInId: number;
+}
+```
+返回值:
+```typescript
+type ReturnType = CheckInAnwser; // 见上面一个接口中的定义
+```
 
 
 ### 短信验证码获取

@@ -11,12 +11,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
+import javax.persistence.UniqueConstraint;
 import javax.persistence.GeneratedValue;
 
 
 @Entity
-@Table(name="tbl_perm_entry")
+@Table(name="tbl_perm_entry",
+       uniqueConstraints = @UniqueConstraint(columnNames = {"link", "method"}))
 public class PermEntry implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -47,14 +48,21 @@ public class PermEntry implements Serializable {
         this.permEntryName = permEntryName;
     }
 
-    // format Method:Path eg. GET:/apis/user
-    @Column(name = "uk_link", unique = true)
     private String link;
     public String getLink() {
         return this.link;
     }
     public void setLink(String link) {
         this.link = link;
+    }
+
+    @Column(name = "method", columnDefinition = "ENUM('ALL', 'POST', 'PUT', 'GET', 'DELETE') DEFAULT 'ALL'")
+    private String method;
+    public String getMethod() {
+        return this.method;
+    }
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     @Column(name = "entry_type", columnDefinition = "ENUM('menu', 'page', 'button') DEFAULT 'menu'")

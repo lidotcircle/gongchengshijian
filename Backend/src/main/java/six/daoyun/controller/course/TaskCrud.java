@@ -1,5 +1,7 @@
 package six.daoyun.controller.course;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import six.daoyun.controller.DYUtil;
 import six.daoyun.controller.exception.HttpForbidden;
 import six.daoyun.controller.exception.HttpNotFound;
+import six.daoyun.entity.CommitTask;
 import six.daoyun.entity.Course;
 import six.daoyun.entity.CourseTask;
 import six.daoyun.entity.User;
@@ -64,6 +67,7 @@ public class TaskCrud {
             this.committable = committable;
         }
 
+        @NotNull
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", shape = JsonFormat.Shape.STRING)
         private Date deadline;
         public Date getDeadline() {
@@ -116,7 +120,16 @@ public class TaskCrud {
             this.content = content;
         }
     } //}
-    static class TaskGetDTO extends TaskPutDTO {}
+    static class TaskGetDTO extends TaskPutDTO //{
+    {
+        private boolean committable;
+        public boolean getCommittable() {
+            return this.committable;
+        }
+        public void setCommittable(boolean committable) {
+            this.committable = committable;
+        }
+    } //}
 
     private TaskIdResp createTask(TaskPostDTO newtask, User teacher, boolean bypassTeacher) //{
     {
@@ -214,10 +227,10 @@ public class TaskCrud {
     {
         final User user = DYUtil.getHttpRequestUser(httpreq);
         final CourseTask task = this.courseTaskService.getCourseTask(utask.getTaskId())
-            .orElseThrow(() -> new HttpNotFound("找不到该课程"));
+            .orElseThrow(() -> new HttpNotFound("找不到该课程任务"));
 
         if(!task.getCourse().getTeacher().equals(user)) {
-            throw new HttpForbidden("不是该课程的学生");
+            throw new HttpForbidden("不是该课程的教师");
         }
 
         this.updateTask(utask);
@@ -230,6 +243,135 @@ public class TaskCrud {
 
         ObjUtil.assignFields(task, utask);
         this.courseTaskService.updateCourseTask(task);
+    } //}
+
+    static class StudentInfo //{
+    {
+        private String name;
+        public String getName() {
+            return this.name;
+        }
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        private String userName;
+        public String getUserName() {
+            return this.userName;
+        }
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+
+        private String studentNo;
+        public String getStudentNo() {
+            return this.studentNo;
+        }
+        public void setStudentNo(String studentNo) {
+            this.studentNo = studentNo;
+        }
+
+        public StudentInfo(User student) {
+            this.name = student.getName();
+            this.userName = student.getUserName();
+            this.studentNo = student.getStudentTeacherId();
+        }
+    } //}
+    static class TaskAnwser //{
+    {
+        private long taskAnwserId;
+        public long getTaskAnwserId() {
+            return this.taskAnwserId;
+        }
+        public void setTaskAnwserId(long taskAnwserId) {
+            this.taskAnwserId = taskAnwserId;
+        }
+
+        private String commitContent;
+        public String getCommitContent() {
+            return this.commitContent;
+        }
+        public void setCommitContent(String commitContent) {
+            this.commitContent = commitContent;
+        }
+
+        private String teacherDoThis;
+        public String getTeacherDoThis() {
+            return this.teacherDoThis;
+        }
+        public void setTeacherDoThis(String teacherDoThis) {
+            this.teacherDoThis = teacherDoThis;
+        }
+
+        private long grade;
+        public long getGrade() {
+            return this.grade;
+        }
+        public void setGrade(long grade) {
+            this.grade = grade;
+        }
+
+        private StudentInfo studentInfo;
+        public StudentInfo getStudentInfo() {
+            return this.studentInfo;
+        }
+        public void setStudentInfo(StudentInfo studentInfo) {
+            this.studentInfo = studentInfo;
+        }
+    } //}
+    @GetMapping("/anwser-list")
+    private Collection<TaskAnwser> getAnwserList(HttpServletRequest httpreq, @RequestParam() long taskId) //{
+    {
+        final User user = DYUtil.getHttpRequestUser(httpreq);
+
+        final CourseTask task = this.courseTaskService.getCourseTask(taskId)
+            .orElseThrow(() -> new HttpNotFound("找不到该课程任务"));
+
+        if(!this.courseService.isMemberOfCourse(task.getCourse(), user)) {
+            throw new HttpForbidden("不是该课程的成员");
+        }
+
+        return this.getAnwserListSuper(taskId);
+    } //}
+
+    @GetMapping("/anwser-list/super")
+    private Collection<TaskAnwser> getAnwserListSuper(@RequestParam() long taskId) //{
+    {
+        final CourseTask task = this.courseTaskService.getCourseTask(taskId)
+            .orElseThrow(() -> new HttpNotFound("找不到该课程任务"));
+
+        final Collection<TaskAnwser> ans = new ArrayList<>();
+        task.getCommitTasks().forEach((anwser) -> {
+            StudentInfo s = new StudentInfo(anwser.getStudent());
+            TaskAnwser a = new TaskAnwser();
+            ObjUtil.assignFields(a, anwser);
+            a.setTaskAnwserId(anwser.getId());
+            a.setStudentInfo(s);
+            ans.add(a);
+        });
+
+        return ans;
+    } //}
+
+    @GetMapping("/anwser")
+    private TaskAnwser getAnwser(HttpServletRequest httpreq, @RequestParam() long taskId) //{
+    {
+        final User user = DYUtil.getHttpRequestUser(httpreq);
+
+        final CourseTask task = this.courseTaskService.getCourseTask(taskId)
+            .orElseThrow(() -> new HttpNotFound("找不到该课程任务"));
+
+        if(!this.courseService.courseHasStudent(task.getCourse(), user)) {
+            throw new HttpForbidden("不是该课程的学生");
+        }
+
+        final CommitTask anwser = this.courseTaskService.getCommitTaskByTaskAndStudent(taskId, user)
+            .orElseThrow(() -> new HttpNotFound("该任务暂时还没有提交记录"));
+
+        final TaskAnwser ans = new TaskAnwser();
+        ObjUtil.assignFields(ans, anwser);
+        ans.setTaskAnwserId(anwser.getId());
+        return ans;
     } //}
 }
 

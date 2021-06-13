@@ -14,7 +14,7 @@ public interface RoleService {
     void updateRoleName(String oldRoleName, String newRoleName);
 
     boolean hasPermission(String roleName, String descriptor);
-    boolean hasPermissionInLink(String roleName, String link);
+    boolean hasPermissionInLink(String roleName, String link, String method);
     void enablePermEntry(String roleName, String descriptor);
     void disablePermEntry(String roleName, String descriptor);
     void enablePermEntryRecursively(String roleName, String descriptor);
@@ -35,6 +35,14 @@ public interface RoleService {
         }
         public void setLink(String link) {
             this.link = link;
+        }
+
+        private String method;
+        public String getMethod() {
+            return this.method;
+        }
+        public void setMethod(String method) {
+            this.method = method;
         }
 
         private String descriptor;

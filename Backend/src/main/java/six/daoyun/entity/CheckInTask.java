@@ -1,12 +1,11 @@
 package six.daoyun.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -27,22 +26,41 @@ public class CheckInTask implements Serializable {
         this.id = id;
     }
 
-    private Course course;
-    @ManyToOne
-    public Course getCourse() {
-        return this.course;
+    @Column(name = "gmt_created", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)
+    private Date createdDate;
+    public Date getCreatedDate() {
+        return this.createdDate;
     }
-    public void setCourse(Course course) {
-        this.course = course;
+    @Column(name = "gmt_modified", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", insertable = false, updatable = false)
+    private Date modifiedDate;
+    public Date getModifiedDate() {
+        return this.modifiedDate;
     }
 
-    @ManyToMany
-    private Collection<User> checkedStudents;
-    public Collection<User> getCheckedStudents() {
-        return this.checkedStudents;
+    private String checkInJsonData;
+    public String getCheckInJsonData() {
+        return this.checkInJsonData;
     }
-    public void setCheckedStudents(Collection<User> checkedStudents) {
-        this.checkedStudents = checkedStudents;
+    public void setCheckInJsonData(String checkInJsonData) {
+        this.checkInJsonData = checkInJsonData;
+    }
+
+    @ManyToOne()
+    private User student;
+    public User getStudent() {
+        return this.student;
+    }
+    public void setStudent(User student) {
+        this.student = student;
+    }
+
+    @ManyToOne()
+    private CourseCheckIn courseCheckIn;
+    public CourseCheckIn getCourseCheckIn() {
+        return this.courseCheckIn;
+    }
+    public void setCourseCheckIn(CourseCheckIn courseCheckIn) {
+        this.courseCheckIn = courseCheckIn;
     }
 }
 

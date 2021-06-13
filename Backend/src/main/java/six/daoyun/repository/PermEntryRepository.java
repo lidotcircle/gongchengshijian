@@ -9,7 +9,7 @@ import six.daoyun.entity.PermEntry;
 
 public interface PermEntryRepository extends CrudRepository<PermEntry, Long> {
     Optional<PermEntry> findByDescriptor(String descriptor);
-    Optional<PermEntry> findByLink(String link);
+    Optional<PermEntry> findByLinkAndMethod(String link, String method);
 
     Optional<PermEntry> findByDescriptorAndRoles_roleName(String descriptor, String roleName);
     Collection<PermEntry> findByRoles(Role role);

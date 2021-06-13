@@ -152,10 +152,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean hasPermission(User user, String link) //{
+	public boolean hasPermission(User user, String link, String method) //{
     {
         for(final Role role: user.getRoles()) {
-            if(this.roleService.hasPermissionInLink(role.getRoleName(), link)) {
+            if(this.roleService.hasPermissionInLink(role.getRoleName(), link, method)) {
                 return true;
             }
         }

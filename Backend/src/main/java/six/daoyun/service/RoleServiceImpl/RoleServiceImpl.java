@@ -280,12 +280,22 @@ public class RoleServiceImpl implements RoleService {
         return this.permEntryRepository.findByDescriptorAndRoles_roleName(descriptor, roleName).isPresent();
 	} //}
 
-	@Override
-	public boolean hasPermissionInLink(String roleName, String link) //{
-    {
-        PermEntry entry = this.permEntryRepository.findByLink(link)
+    private boolean __hasPermissionInLink(String roleName, String link, String method) {
+        PermEntry entry = this.permEntryRepository.findByLinkAndMethod(link, method)
             .orElseThrow(() -> new NotFound());
         return this.hasPermission(roleName, entry.getDescriptor());
+    }
+
+	@Override
+	public boolean hasPermissionInLink(String roleName, String link, String method) //{
+    {
+        try {
+            if(this.__hasPermissionInLink(roleName, link, "ALL")) {
+                return true;
+            }
+        } catch (NotFound e) {}
+
+        return this.__hasPermissionInLink(roleName, link, method);
 	} //}
 
 	@Override
