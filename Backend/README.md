@@ -55,13 +55,21 @@
         * [修改](#修改-1)
         * [获取任务提交列表](#获取任务提交列表)
         * [学生获取提交的任务](#学生获取提交的任务)
-    * [班课签到](#班课签到)
-        * [创建](#创建-2)
+    * [任务提交、修改相关](#任务提交修改相关)
+        * [提交任务](#提交任务)
         * [删除](#删除-2)
         * [获取](#获取-1)
         * [修改](#修改-2)
+    * [班课签到创建、修改相关](#班课签到创建修改相关)
+        * [创建](#创建-2)
+        * [删除](#删除-3)
+        * [获取](#获取-2)
+        * [修改](#修改-3)
         * [获取已签到列表](#获取已签到列表)
         * [学生获取签到记录](#学生获取签到记录)
+    * [学生签到相关](#学生签到相关)
+        * [学生签到](#学生签到)
+        * [获取](#获取-3)
     * [短信验证码获取](#短信验证码获取)
     * [菜单管理](#菜单管理)
 * [短信服务](#短信服务)
@@ -901,11 +909,11 @@ type ReturnType = TaskAnwser[];
 #### 学生获取提交的任务
 
 Method: **GET** :key:  
-URI: `/apis/course/task/anwser`  
+URI: `/apis/course/task/anwser/me`  
 参数:
 ```typescript
 {
-taskId: number;
+    taskId: number;
 }
 ```
 返回值:
@@ -914,7 +922,70 @@ type ReturnType = TaskAnwser; // 见上面一个接口中的定义
 ```
 
 
-### 班课签到
+### 任务提交、修改相关
+
+#### 提交任务
+
+Method: **POST** :key:  
+URI: `/apis/course/task/anwser`  
+参数:
+```typescript
+{
+    taskId: number;
+    commitContent: string;
+}
+```
+返回值:
+```typescript
+{
+    taskAnwserId: number;
+}
+```
+
+#### 删除
+
+Method: **DELETE** :key:  
+URI: `/apis/course/task/anwser`  
+参数:
+```typescript
+{
+    taskAnwserId: number;
+}
+```
+
+#### 获取
+
+Method: **GET** :key:  
+URI: `/apis/course/task/anwser`  
+参数:
+```typescript
+{
+    taskAnwserId: number;
+}
+```
+返回值:
+```typescript
+{
+    taskAnwserId: number;
+    commitContent: string;
+    grade: number;
+    teacherDoThis: string;
+}
+```
+
+#### 修改
+
+Method: **PUT** :key:  
+URI: `/apis/course/task/anwser`  
+参数:
+```typescript
+{
+    taskAnwserId: number;
+    commitContent: string;
+}
+```
+
+### 班课签到创建、修改相关
 
 #### 创建
 
@@ -931,7 +1002,7 @@ URI: `/apis/course/check-in`
 返回值:
 ```typescript
 {
-    checkInId: number;
+    checkinId: number;
 }
 ```
 
@@ -942,7 +1013,7 @@ URI: `/apis/course/check-in`
 参数:
 ```typescript
 {
-    checkInId: number;
+    checkinId: number;
 }
 ```
 
@@ -959,7 +1030,7 @@ URI: `/apis/course/check-in`
 返回值:
 ```typescript
 {
-    checkInId: number;
+    checkinId: number;
     jsonData: string;
     deadline: string;
 }
@@ -972,7 +1043,7 @@ URI: `/apis/course/check-in`
 参数:
 ```typescript
 {
-    checkInId: number;
+    checkinId: number;
     ddeadline?: string;
     jsonData?: string;
 }
@@ -985,15 +1056,15 @@ URI: `/apis/course/check-in/anwser-list`
 参数:
 ```typescript
 {
-    checkInId: number;
+    checkinId: number;
 }
 ```
 返回值:
 ```typescript
-interface CheckInAnwser{
-    checkInAnwserId: number;
+interface CheckinAnwser{
+    checkinAnwserId: number;
     studentInfo: StudentInfo;
-    checkInJsonData: string;
+    checkinJsonData: string;
 }
 
 interface StudentInfo {
@@ -1002,22 +1073,61 @@ interface StudentInfo {
     studentNo: string; // 学工号
 }
 
-type ReturnType = CheckInAnwser[];
+type ReturnType = CheckinAnwser[];
 ```
 
 #### 学生获取签到记录
+
+Method: **GET** :key:  
+URI: `/apis/course/check-in/anwser/me`  
+参数:
+```typescript
+{
+    checkinId: number;
+}
+```
+返回值:
+```typescript
+type ReturnType = CheckinAnwser; // 见上面一个接口中的定义
+```
+
+
+### 学生签到相关
+
+#### 学生签到
+
+Method: **POST** :key:  
+URI: `/apis/course/check-in/anwser`  
+参数:
+```typescript
+{
+    taskId: number;
+    checkinJsonData: string;
+}
+```
+返回值:
+```typescript
+{
+    checkinAnwserId: number;
+}
+```
+
+#### 获取
 
 Method: **GET** :key:  
 URI: `/apis/course/check-in/anwser`  
 参数:
 ```typescript
 {
-    checkInId: number;
+    checkinAnwserId: number;
 }
 ```
 返回值:
 ```typescript
-type ReturnType = CheckInAnwser; // 见上面一个接口中的定义
+{
+    checkinAnwserId: number;
+    checkinJsonData: string;
+}
 ```
 
 

@@ -16,7 +16,7 @@ import javax.persistence.GeneratedValue;
 
 @Entity
 @Table(name="tbl_course_check_in")
-public class CourseCheckIn implements Serializable {
+public class CourseCheckin implements Serializable {
 	private static final long serialVersionUID = 1L;
 
     @Id @GeneratedValue @Column(name = "pk_course_check_in_id")
@@ -65,12 +65,12 @@ public class CourseCheckIn implements Serializable {
         this.course = course;
     }
 
-    @OneToMany(mappedBy = "courseCheckIn")
-    private Collection<CheckInTask> chekcInTasks;
-    public Collection<CheckInTask> getChekcInTasks() {
+    @OneToMany(mappedBy = "courseCheckin")
+    private Collection<CheckinTask> chekcInTasks;
+    public Collection<CheckinTask> getChekcInTasks() {
         return this.chekcInTasks;
     }
-    public void setChekcInTasks(Collection<CheckInTask> chekcInTasks) {
+    public void setChekcInTasks(Collection<CheckinTask> chekcInTasks) {
         this.chekcInTasks = chekcInTasks;
     }
 }

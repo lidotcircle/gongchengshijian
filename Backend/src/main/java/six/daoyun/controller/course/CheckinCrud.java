@@ -23,23 +23,23 @@ import org.springframework.web.bind.annotation.RestController;
 import six.daoyun.controller.DYUtil;
 import six.daoyun.controller.exception.HttpForbidden;
 import six.daoyun.controller.exception.HttpNotFound;
-import six.daoyun.entity.CheckInTask;
+import six.daoyun.entity.CheckinTask;
 import six.daoyun.entity.Course;
-import six.daoyun.entity.CourseCheckIn;
+import six.daoyun.entity.CourseCheckin;
 import six.daoyun.entity.User;
 import six.daoyun.service.CourseService;
-import six.daoyun.service.CourseCheckInService;
+import six.daoyun.service.CourseCheckinService;
 import six.daoyun.utils.ObjUtil;
 
 @RestController
 @RequestMapping("/apis/course/check-in")
-public class CheckInCrud {
+public class CheckinCrud {
     @Autowired
-    private CourseCheckInService courseCheckInService;
+    private CourseCheckinService courseCheckinService;
     @Autowired
     private CourseService courseService;
 
-    static class CheckInPostDTO //{
+    static class CheckinPostDTO //{
     {
         @NotNull
         private String courseExId;
@@ -69,15 +69,15 @@ public class CheckInCrud {
             this.deadline = deadline;
         }
     } //}
-    static class CheckInPutDTO //{
+    static class CheckinPutDTO //{
     {
         @NotNull
-        private long checkInId;
-        public long getCheckInId() {
-            return this.checkInId;
+        private long checkinId;
+        public long getCheckinId() {
+            return this.checkinId;
         }
-        public void setCheckInId(long checkInId) {
-            this.checkInId = checkInId;
+        public void setCheckinId(long checkinId) {
+            this.checkinId = checkinId;
         }
 
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", shape = JsonFormat.Shape.STRING)
@@ -97,120 +97,120 @@ public class CheckInCrud {
             this.jsonData = jsonData;
         }
     } //}
-    static class CheckInGetDTO extends CheckInPutDTO {}
+    static class CheckinGetDTO extends CheckinPutDTO {}
 
-    static class CheckInIdResp //{
+    static class CheckinIdResp //{
     {
-        private long checkInId;
-        public long getCheckInId() {
-            return this.checkInId;
+        private long checkinId;
+        public long getCheckinId() {
+            return this.checkinId;
         }
-        public void setCheckInId(long checkInId) {
-            this.checkInId = checkInId;
+        public void setCheckinId(long checkinId) {
+            this.checkinId = checkinId;
         }
     } //}
-    private CheckInIdResp createCheckIn(CheckInPostDTO newcheckIn, User teacher, boolean bypassTeacher) //{
+    private CheckinIdResp createCheckin(CheckinPostDTO newcheckin, User teacher, boolean bypassTeacher) //{
     {
-        final Course course = this.courseService.getCourse(newcheckIn.getCourseExId())
+        final Course course = this.courseService.getCourse(newcheckin.getCourseExId())
             .orElseThrow(() -> new HttpNotFound("课程不存在"));
 
         if(!bypassTeacher && !course.getTeacher().equals(teacher)) {
             throw new HttpForbidden("不是改课程的教师");
         }
 
-        final CourseCheckIn ccheckIn = new CourseCheckIn();
-        ObjUtil.assignFields(ccheckIn, newcheckIn);
-        ccheckIn.setCourse(course);
-        final long checkInId = this.courseCheckInService.createCourseCheckIn(ccheckIn);
-        final CheckInIdResp ans = new CheckInIdResp();
-        ans.setCheckInId(checkInId);
+        final CourseCheckin ccheckin = new CourseCheckin();
+        ObjUtil.assignFields(ccheckin, newcheckin);
+        ccheckin.setCourse(course);
+        final long checkinId = this.courseCheckinService.createCourseCheckin(ccheckin);
+        final CheckinIdResp ans = new CheckinIdResp();
+        ans.setCheckinId(checkinId);
         return ans;
     } //}
     @PostMapping()
-    private CheckInIdResp createCheckIn(HttpServletRequest httpreq, @RequestBody @Valid CheckInPostDTO newcheckIn) //{
+    private CheckinIdResp createCheckin(HttpServletRequest httpreq, @RequestBody @Valid CheckinPostDTO newcheckin) //{
     {
         final User user = DYUtil.getHttpRequestUser(httpreq);
-        return this.createCheckIn(newcheckIn, user, false);
+        return this.createCheckin(newcheckin, user, false);
     } //}
 
     @PostMapping("/super")
-    private CheckInIdResp createCheckInSuper(@RequestBody @Valid CheckInPostDTO newcheckIn,
+    private CheckinIdResp createCheckinSuper(@RequestBody @Valid CheckinPostDTO newcheckin,
             @RequestParam("userName") String userName) //{
     {
-        return this.createCheckIn(newcheckIn, null, true);
+        return this.createCheckin(newcheckin, null, true);
     } //}
 
 
     @DeleteMapping()
-    private void deleteCheckIn(HttpServletRequest httpreq,
-            @RequestParam() long checkInId) //{
+    private void deleteCheckin(HttpServletRequest httpreq,
+            @RequestParam() long checkinId) //{
     {
         final User user = DYUtil.getHttpRequestUser(httpreq);
-        final CourseCheckIn checkIn = this.courseCheckInService.getCourseCheckIn(checkInId)
+        final CourseCheckin checkin = this.courseCheckinService.getCourseCheckin(checkinId)
             .orElseThrow(() -> new HttpNotFound("课程签到任务不存在"));
 
-        if(!checkIn.getCourse().getTeacher().equals(user)) {
+        if(!checkin.getCourse().getTeacher().equals(user)) {
             throw new HttpForbidden("不是该课程教师");
         }
 
-        this.courseCheckInService.deleteCourseCheckIn(checkInId);
+        this.courseCheckinService.deleteCourseCheckin(checkinId);
     } //}
 
     @DeleteMapping("/super")
-    private void deleteCheckIn(@RequestParam() long checkInId) //{
+    private void deleteCheckin(@RequestParam() long checkinId) //{
     {
-        this.courseCheckInService.deleteCourseCheckIn(checkInId);
+        this.courseCheckinService.deleteCourseCheckin(checkinId);
     } //}
 
 
     @GetMapping()
-    private CheckInGetDTO getCheckIn(HttpServletRequest httpreq,
-            @RequestParam() long checkInId) //{
+    private CheckinGetDTO getCheckin(HttpServletRequest httpreq,
+            @RequestParam() long checkinId) //{
     {
         final User user = DYUtil.getHttpRequestUser(httpreq);
-        final CourseCheckIn checkIn = this.courseCheckInService.getCourseCheckIn(checkInId)
+        final CourseCheckin checkin = this.courseCheckinService.getCourseCheckin(checkinId)
             .orElseThrow(() -> new HttpNotFound("课程不存在"));
 
-        if(!this.courseService.isMemberOfCourse(checkIn.getCourse(), user)) {
+        if(!this.courseService.isMemberOfCourse(checkin.getCourse(), user)) {
             throw new HttpForbidden("不是该课程的成员");
         }
 
-        return this.getCheckIn(checkInId);
+        return this.getCheckin(checkinId);
     } //}
     @GetMapping("/super")
-    private CheckInGetDTO getCheckIn(@RequestParam() long checkInId) //{
+    private CheckinGetDTO getCheckin(@RequestParam() long checkinId) //{
     {
-        final CourseCheckIn checkIn = this.courseCheckInService.getCourseCheckIn(checkInId)
+        final CourseCheckin checkin = this.courseCheckinService.getCourseCheckin(checkinId)
             .orElseThrow(() -> new HttpNotFound("课程不存在"));
 
-        final CheckInGetDTO ans = new CheckInGetDTO();
-        ObjUtil.assignFields(ans, checkIn);
+        final CheckinGetDTO ans = new CheckinGetDTO();
+        ObjUtil.assignFields(ans, checkin);
 
         return ans;
     } //}
 
 
     @PutMapping()
-    private void updateCheckIn(HttpServletRequest httpreq, @RequestBody @Valid CheckInPutDTO ucheckIn) //{
+    private void updateCheckin(HttpServletRequest httpreq, @RequestBody @Valid CheckinPutDTO ucheckin) //{
     {
         final User user = DYUtil.getHttpRequestUser(httpreq);
-        final CourseCheckIn checkIn = this.courseCheckInService.getCourseCheckIn(ucheckIn.getCheckInId())
+        final CourseCheckin checkin = this.courseCheckinService.getCourseCheckin(ucheckin.getCheckinId())
             .orElseThrow(() -> new HttpNotFound("找不到该课程"));
 
-        if(!checkIn.getCourse().getTeacher().equals(user)) {
+        if(!checkin.getCourse().getTeacher().equals(user)) {
             throw new HttpForbidden("不是该课程的教师");
         }
 
-        this.updateCheckIn(ucheckIn);
+        this.updateCheckin(ucheckin);
     } //}
     @PutMapping("/super")
-    private void updateCheckIn(@RequestBody @Valid CheckInPutDTO ucheckIn) //{
+    private void updateCheckin(@RequestBody @Valid CheckinPutDTO ucheckin) //{
     {
-        final CourseCheckIn checkIn = this.courseCheckInService.getCourseCheckIn(ucheckIn.getCheckInId())
+        final CourseCheckin checkin = this.courseCheckinService.getCourseCheckin(ucheckin.getCheckinId())
             .orElseThrow(() -> new HttpNotFound("找不到该课程"));
 
-        ObjUtil.assignFields(checkIn, ucheckIn);
-        this.courseCheckInService.updateCourseCheckIn(checkIn);
+        ObjUtil.assignFields(checkin, ucheckin);
+        this.courseCheckinService.updateCourseCheckin(checkin);
     } //}
 
 
@@ -246,22 +246,22 @@ public class CheckInCrud {
             this.studentNo = student.getStudentTeacherId();
         }
     } //}
-    static class CheckInAnwser //{
+    static class CheckinAnwser //{
     {
-        private long checkInAnwserId;
-        public long getCheckInAnwserId() {
-            return this.checkInAnwserId;
+        private long checkinAnwserId;
+        public long getCheckinAnwserId() {
+            return this.checkinAnwserId;
         }
-        public void setCheckInAnwserId(long checkInAnwserId) {
-            this.checkInAnwserId = checkInAnwserId;
+        public void setCheckinAnwserId(long checkinAnwserId) {
+            this.checkinAnwserId = checkinAnwserId;
         }
 
-        private String checkInJsonData;
-        public String getCheckInJsonData() {
-            return this.checkInJsonData;
+        private String checkinJsonData;
+        public String getCheckinJsonData() {
+            return this.checkinJsonData;
         }
-        public void setCheckInJsonData(String checkInJsonData) {
-            this.checkInJsonData = checkInJsonData;
+        public void setCheckinJsonData(String checkinJsonData) {
+            this.checkinJsonData = checkinJsonData;
         }
 
         private StudentInfo studentInfo;
@@ -273,32 +273,32 @@ public class CheckInCrud {
         }
     } //}
     @GetMapping("/anwser-list")
-    private Collection<CheckInAnwser> getAnwserList(HttpServletRequest httpreq, @RequestParam() long checkInId) //{
+    private Collection<CheckinAnwser> getAnwserList(HttpServletRequest httpreq, @RequestParam() long checkinId) //{
     {
         final User user = DYUtil.getHttpRequestUser(httpreq);
 
-        final CourseCheckIn checkIn = this.courseCheckInService.getCourseCheckIn(checkInId)
+        final CourseCheckin checkin = this.courseCheckinService.getCourseCheckin(checkinId)
             .orElseThrow(() -> new HttpNotFound("找不到该签到任务"));
 
-        if(!this.courseService.isMemberOfCourse(checkIn.getCourse(), user)) {
+        if(!this.courseService.isMemberOfCourse(checkin.getCourse(), user)) {
             throw new HttpForbidden("不是该课程的成员");
         }
 
-        return this.getAnwserListSuper(checkInId);
+        return this.getAnwserListSuper(checkinId);
     } //}
 
     @GetMapping("/anwser-list/super")
-    private Collection<CheckInAnwser> getAnwserListSuper(@RequestParam() long checkInId) //{
+    private Collection<CheckinAnwser> getAnwserListSuper(@RequestParam() long checkinId) //{
     {
-        final CourseCheckIn checkIn = this.courseCheckInService.getCourseCheckIn(checkInId)
+        final CourseCheckin checkin = this.courseCheckinService.getCourseCheckin(checkinId)
             .orElseThrow(() -> new HttpNotFound("找不到该签到任务"));
 
-        final Collection<CheckInAnwser> ans = new ArrayList<>();
-        checkIn.getChekcInTasks().forEach((anwser) -> {
+        final Collection<CheckinAnwser> ans = new ArrayList<>();
+        checkin.getChekcInTasks().forEach((anwser) -> {
             StudentInfo s = new StudentInfo(anwser.getStudent());
-            CheckInAnwser a = new CheckInAnwser();
+            CheckinAnwser a = new CheckinAnwser();
             ObjUtil.assignFields(a, anwser);
-            a.setCheckInAnwserId(anwser.getId());
+            a.setCheckinAnwserId(anwser.getId());
             a.setStudentInfo(s);
             ans.add(a);
         });
@@ -306,24 +306,24 @@ public class CheckInCrud {
         return ans;
     } //}
 
-    @GetMapping("/anwser")
-    private CheckInAnwser getAnwser(HttpServletRequest httpreq, @RequestParam() long checkInId) //{
+    @GetMapping("/anwser/me")
+    private CheckinAnwser getAnwser(HttpServletRequest httpreq, @RequestParam() long checkinId) //{
     {
         final User user = DYUtil.getHttpRequestUser(httpreq);
 
-        final CourseCheckIn checkIn = this.courseCheckInService.getCourseCheckIn(checkInId)
+        final CourseCheckin checkin = this.courseCheckinService.getCourseCheckin(checkinId)
             .orElseThrow(() -> new HttpNotFound("找不到该课程任务"));
 
-        if(!this.courseService.courseHasStudent(checkIn.getCourse(), user)) {
+        if(!this.courseService.courseHasStudent(checkin.getCourse(), user)) {
             throw new HttpForbidden("不是该课程的学生");
         }
 
-        final CheckInTask anwser = this.courseCheckInService.getCheckInTaskByCheckInAndStudent(checkInId, user)
+        final CheckinTask anwser = this.courseCheckinService.getCheckinTaskByCheckinAndStudent(checkinId, user)
             .orElseThrow(() -> new HttpNotFound("该签到任务暂时还没有提交记录"));
 
-        final CheckInAnwser ans = new CheckInAnwser();
+        final CheckinAnwser ans = new CheckinAnwser();
         ObjUtil.assignFields(ans, anwser);
-        ans.setCheckInAnwserId(anwser.getId());
+        ans.setCheckinAnwserId(anwser.getId());
         return ans;
     } //}
 }

@@ -14,7 +14,7 @@ import javax.persistence.GeneratedValue;
 
 @Entity
 @Table(name="tbl_check_in_task")
-public class CheckInTask implements Serializable {
+public class CheckinTask implements Serializable {
 	private static final long serialVersionUID = 1L;
 
     @Id @GeneratedValue @Column(name = "pk_checkin_task_id")
@@ -37,12 +37,12 @@ public class CheckInTask implements Serializable {
         return this.modifiedDate;
     }
 
-    private String checkInJsonData;
-    public String getCheckInJsonData() {
-        return this.checkInJsonData;
+    private String checkinJsonData;
+    public String getCheckinJsonData() {
+        return this.checkinJsonData;
     }
-    public void setCheckInJsonData(String checkInJsonData) {
-        this.checkInJsonData = checkInJsonData;
+    public void setCheckinJsonData(String checkinJsonData) {
+        this.checkinJsonData = checkinJsonData;
     }
 
     @ManyToOne()
@@ -55,12 +55,12 @@ public class CheckInTask implements Serializable {
     }
 
     @ManyToOne()
-    private CourseCheckIn courseCheckIn;
-    public CourseCheckIn getCourseCheckIn() {
-        return this.courseCheckIn;
+    private CourseCheckin courseCheckin;
+    public CourseCheckin getCourseCheckin() {
+        return this.courseCheckin;
     }
-    public void setCourseCheckIn(CourseCheckIn courseCheckIn) {
-        this.courseCheckIn = courseCheckIn;
+    public void setCourseCheckin(CourseCheckin courseCheckin) {
+        this.courseCheckin = courseCheckin;
     }
 }
 

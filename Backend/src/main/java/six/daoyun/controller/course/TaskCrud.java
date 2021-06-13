@@ -353,7 +353,7 @@ public class TaskCrud {
         return ans;
     } //}
 
-    @GetMapping("/anwser")
+    @GetMapping("/anwser/me")
     private TaskAnwser getAnwser(HttpServletRequest httpreq, @RequestParam() long taskId) //{
     {
         final User user = DYUtil.getHttpRequestUser(httpreq);

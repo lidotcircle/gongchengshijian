@@ -80,12 +80,12 @@ public class Course implements Serializable {
     }
 
     @OneToMany(mappedBy = "course")
-    private Collection<CheckInTask> checkInTask;
-    public Collection<CheckInTask> getCheckInTask() {
-        return this.checkInTask;
+    private Collection<CourseCheckin> checkins;
+    public Collection<CourseCheckin> getCheckins() {
+        return this.checkins;
     }
-    public void setCheckInTask(Collection<CheckInTask> checkInTask) {
-        this.checkInTask = checkInTask;
+    public void setCheckins(Collection<CourseCheckin> checkins) {
+        this.checkins = checkins;
     }
 
     @OneToMany(mappedBy = "course")
