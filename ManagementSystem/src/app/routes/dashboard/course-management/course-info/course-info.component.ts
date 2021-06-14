@@ -1,15 +1,18 @@
+import { ViewportScroller } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NbToastrService, NbWindowService } from '@nebular/theme';
 import { Observable, Subject, from, of } from 'rxjs';
 import { concatMap, map, takeUntil, tap } from 'rxjs/operators';
 import { Course } from 'src/app/entity';
-import { CourseCheckIn, CourseInfo, CourseTask, Student } from 'src/app/entity/Course';
+import { CourseCheckin, CourseInfo, CourseTask, Student } from 'src/app/entity/Course';
+import { CourseCheckinService } from 'src/app/service/course/course-check-in.service';
 import { CourseTaskService } from 'src/app/service/course/course-task.service';
 import { CourseService } from 'src/app/service/course/course.service';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window.component';
 import { sortObject } from 'src/app/shared/utils';
 import { BasicInfoEditorComponent } from './basic-info-editor.component';
+import { CourseCheckinEditorComponent } from './course-checkin-editor.component';
 import { CourseInfoViewComponent } from './course-info-viewer.component';
 import { CourseTaskEditorComponent } from './course-task-editor.component';
 import { JustInputComponent } from './just-input.component';
@@ -25,11 +28,11 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
     students: Student[] = [];
     tasks: CourseTask[] = [];
     infos: CourseInfo[] = [];
-    checkIns: CourseCheckIn[] = [];
+    checkins: CourseCheckin[] = [];
     private studentsFilter: string = '';
     private tasksFilter: string = '';
     private infosFilter: string = '';
-    private checkInsFilter: string = '';
+    private checkinsFilter: string = '';
     private runStudentsFilter() {
         this.students = this.course.Students
             .sort(sortObject([{prop: 'studentTeacherId'}, {prop: 'name'}, {prop: 'userName'}]))
@@ -52,10 +55,11 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
                 info.taskTitle.match(this.infosFilter);
         });
     }
-    private runCheckInsFilter() {
-        this.checkIns = this.course.CheckInList.filter(checkIns => {
-            return this.checkInsFilter.trim().length == 0 ||
-                checkIns.match(this.checkInsFilter);
+    private runCheckinsFilter() {
+        console.log(this.course.CheckinList);
+        this.checkins = this.course.CheckinList.filter(checkins => {
+            return this.checkinsFilter.trim().length == 0 ||
+                checkins.deadline.toISOString().match(this.checkinsFilter);
         });
     }
     onStudentsEnter(input: string) {
@@ -70,9 +74,9 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
         this.infosFilter = input;
         this.runInfosFilter();
     }
-    onCheckInsEnter(input: string) {
-        this.checkInsFilter = input;
-        this.runCheckInsFilter();
+    onCheckinsEnter(input: string) {
+        this.checkinsFilter = input;
+        this.runCheckinsFilter();
     }
 
     private async refreshCourseFrom(courseExId: string) //{
@@ -84,14 +88,16 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
                 this.runInfosFilter();
                 this.runTasksFilter();
                 this.runStudentsFilter();
-                this.runCheckInsFilter();
+                this.runCheckinsFilter();
             })).toPromise();
     } //}
 
     constructor(private courseService: CourseService,
                 private courseTaskService: CourseTaskService,
+                private courseCheckinService: CourseCheckinService,
                 private windowService: NbWindowService,
                 private toastrService: NbToastrService,
+                private viewportScroller: ViewportScroller,
                 private activatedRoute: ActivatedRoute) {
         this.course = new Course();
 
@@ -203,8 +209,27 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
         }
     } //}
 
-    async startCheckIn() {
-    }
+    async startCheckin() //{
+    {
+        const win = this.windowService.open(CourseCheckinEditorComponent, {
+            title: '新建签到',
+            context: {
+                committable: false,
+            }
+        });
+        await win.onClose.toPromise();
+
+        if(win.config.context['isConfirmed']) {
+            const checkin: CourseCheckin = win.config.context['checkin'];
+            checkin.courseExId = this.course.courseExId;
+            try {
+                await this.courseCheckinService.postCheckin(checkin);
+                await this.refreshCourseFrom(this.course.courseExId);
+            } catch {
+                this.toastrService.danger("新建签到失败", "课程管理");
+            }
+        }
+    } //}
 
     async startInfo() //{
     {
@@ -253,5 +278,14 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
             }
         }
     } //}
+
+    async viewCheckin(n: number) {
+        // TODO
+    }
+
+    gotoStudentList() { this.viewportScroller.scrollToAnchor('student-list'); }
+    gotoTaskList()    { this.viewportScroller.scrollToAnchor('task-list'); }
+    gotoInfoList()    { this.viewportScroller.scrollToAnchor('info-list'); }
+    gotoCheckinList() { this.viewportScroller.scrollToAnchor('check-in-list'); }
 }
 

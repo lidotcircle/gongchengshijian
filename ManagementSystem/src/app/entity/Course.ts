@@ -27,7 +27,13 @@ export interface CourseTask extends CourseInfo {
     committable: boolean;
 }
 
-export type CourseCheckIn = string;
+export interface CourseCheckin {
+    courseExId?: string;
+    checkinId: number;
+    jsonData: string;
+    deadline: Date;
+    releaseDate: Date;
+}
 
 function briefy(text: string): string {
     if(!text) return '';
@@ -39,6 +45,14 @@ function briefy(text: string): string {
     }
 }
 
+const typeMap = {
+    "simple":  "一键签到",
+    "location": "位置签到",
+    "gesture": "手势签到",
+    "key":     "密码签到",
+    "unknown": "未定义",
+};
+
 export class Course {
     courseExId: string;
     courseName: string;
@@ -47,11 +61,11 @@ export class Course {
     teacher: Teacher;
     students: Student[] = [];
 
-    checkInList: CourseCheckIn[];
+    checkins: CourseCheckin[];
     tasks: CourseTask[] = [];
 
     get Students(): Student[]          {return this.students;}
-    get CheckInList(): CourseCheckIn[] {return this.checkInList || [];}
+    get CheckinList(): CourseCheckin[] {return this.checkins || [];}
     get Tasks(): CourseTask[] {
         return this.tasks.filter(task => task.committable);
     }
@@ -77,12 +91,26 @@ export class Course {
         return task;
     }
 
+    static obj2Checkin(obj: object) {
+        const checkin = obj as CourseCheckin;
+        checkin.checkinId = (obj as any).id;
+        checkin.deadline = checkin.deadline && new Date(checkin.deadline);
+        checkin.releaseDate = checkin.releaseDate && new Date(checkin.releaseDate);
+        try {
+            const oo = JSON.parse(checkin.jsonData);
+            const t = oo['type'] || 'unknown';
+            checkin['getType'] = () => typeMap[t] || typeMap['unknown'];
+        } catch {}
+        return checkin;
+    }
+
     static fromObject(obj: object) {
         const ans = Object.create(Course.prototype, Object.getOwnPropertyDescriptors(obj)) as Course;
         ans.tasks = ans.tasks || [];
         ans.students = ans.students || [];
 
-        ans.tasks.forEach(task => Course.obj2Task(task));
+        ans.tasks.forEach   (task => Course.obj2Task(task));
+        ans.checkins.forEach(checkin => Course.obj2Checkin(checkin));
 
         return ans;
     }

@@ -21,17 +21,17 @@
 
   <nb-card-footer class='footer-buttons'>
     <div class='nav-section'>
-      <a nbButton outline status='info'>学生</a>
-      <a nbButton outline status='info'>任务</a>
-      <a nbButton outline status='info'>通知</a>
-      <a nbButton outline status='info'>签到</a>
+      <a nbButton outline status='info' (click)='gotoStudentList()'>学生</a>
+      <a nbButton outline status='info' (click)='gotoTaskList()'>任务</a>
+      <a nbButton outline status='info' (click)='gotoInfoList()'>通知</a>
+      <a nbButton outline status='info' (click)='gotoCheckinList()'>签到</a>
     </div>
     <div></div>
     <button nbButton hero status='primary' (click)='editBasic()'>编辑</button>
   </nb-card-footer>
 </nb-card>
 
-<nb-card status='info'>
+<nb-card status='info' id='student-list'>
   <nb-card-header class='header-a'>
     <div id='students'>学生列表</div>
     <app-search-bar (searchenter)='onStudentsEnter($event)'></app-search-bar>
@@ -64,7 +64,7 @@
   </nb-card-footer>
 </nb-card>
 
-<nb-card status='info'>
+<nb-card status='info' id='task-list'>
   <nb-card-header class='header-a'>
     <div>任务列表</div>
     <app-search-bar (searchenter)='onTasksEnter($event)'></app-search-bar>
@@ -101,7 +101,7 @@
   </nb-card-footer>
 </nb-card>
 
-<nb-card status='info'>
+<nb-card status='info' id='info-list'>
   <nb-card-header class='header-a'>
     <div>通知列表</div>
     <app-search-bar (searchenter)='onInfosEnter($event)'></app-search-bar>
@@ -136,16 +136,26 @@
   </nb-card-footer>
 </nb-card>
 
-<nb-card status='info'>
+<nb-card status='info' id='check-in-list'>
   <nb-card-header class='header-a'>
     <div>签到列表</div>
-    <app-search-bar (searchenter)='onCheckInsEnter($event)'></app-search-bar>
+    <app-search-bar (searchenter)='onCheckinsEnter($event)'></app-search-bar>
   </nb-card-header>
 
-  <nb-card-body [class]='checkIns.length > 0 ? "" : "record-length-equal-zero"'>
-    <nb-list>
-      <nb-list-item *ngFor='let checkIn of checkIns || []'>
-        {{ checkIn }}
+  <nb-card-body [class]='checkins.length > 0 ? "" : "record-length-equal-zero"'>
+    <nb-list class='checkins'>
+      <nb-list-item>
+        <div class="view"></div>
+        <div class="checkin-type">签到类别</div>
+        <div class="release-date">发布时间</div>
+        <div class="release-date">截至时间</div>
+      </nb-list-item>
+
+      <nb-list-item *ngFor='let checkin of checkins || []; let i=index'>
+        <div class="view"><button nbButton status='primary' outline size='medium' (click)='viewCheckin(i)'>查看</button></div>
+        <div class="checkin-type">{{ checkin.getType() }}</div>
+        <div class="release-date">{{ checkin.releaseDate && checkin.releaseDate.toLocaleString() }}</div>
+        <div class="deadline-date">{{ checkin.deadline && checkin.deadline.toLocaleString() }}</div>
       </nb-list-item>
     </nb-list>
     <div class="empty-state">
@@ -156,7 +166,7 @@
 
   <nb-card-footer class="footer-buttons">
     <div></div>
-    <button nbButton hero status='primary' (click)='startCheckIn()'>发起签到</button>
+    <button nbButton hero status='primary' (click)='startCheckin()'>发起签到</button>
   </nb-card-footer>
 </nb-card>
 

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { NbActionsModule, NbAlertModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbDatepickerModule, NbIconModule, NbInputModule, NbLayoutModule, NbListModule, NbRadioModule, NbSelectModule, NbSpinnerModule, NbUserModule } from '@nebular/theme';
+import { NbActionsModule, NbAlertModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbDatepickerModule, NbIconModule, NbInputModule, NbLayoutModule, NbListModule, NbRadioModule, NbSelectModule, NbSpinnerModule, NbTimepickerModule, NbUserModule } from '@nebular/theme';
 import { ThemeModule } from '../@theme/theme.module';
 import { DashboardHeaderComponent } from './components/dashboard-header/dashboard-header.component';
 import { ComponentsModule } from './components/components.module';
@@ -22,6 +22,7 @@ import { InterceptorProviders } from '../core/http';
         Ng2SmartTableModule,
         ThemeModule,
         NbDatepickerModule,
+        NbTimepickerModule,
         NbActionsModule,
         NbSpinnerModule,
         NbSelectModule,

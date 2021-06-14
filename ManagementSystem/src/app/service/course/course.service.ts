@@ -47,9 +47,10 @@ export class CourseService {
         courseName: string;
         briefDescription?: string;
     }): Promise<string> {
-        const req = Object.assign({teacherName: this.userService.getUser});
-
-        const ans = await this.http.post(RESTfulAPI.Course.post, req).toPromise();
+        const ans = await this.http.post(RESTfulAPI.Course.post, {
+            courseName: course.courseName, 
+            briefDescription: course.briefDescription
+        }).toPromise();
         return ans['courseExId'];
     }
 

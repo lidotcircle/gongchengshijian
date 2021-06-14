@@ -16,9 +16,19 @@ import { Pattern } from 'src/app/shared/utils';
                 </div>
 
                 <div *ngIf='committable' class="kv">
-                    <div class="key">提交日期</div>
-                    <input [nbDatepicker]='submitdate' type="text" nbInput [(ngModel)]='courseTask.deadline' name='title'>
-                    <nb-datepicker #submitdate></nb-datepicker>
+                    <div class='key'>截至时间</div>
+                    <div class='value'>
+                        <input nbInput fullWidth shape="rectangle" [(ngModel)]="date" name='deadlineDate'
+                               placeholder="日期"
+                               [nbDatepicker]="datepickerxdeadline">
+                        <nb-datepicker #datepickerxdeadline></nb-datepicker>
+                    </div>
+                    <div class='value'>
+                        <input nbInput fullWidth shape="rectangle" [(ngModel)]="time" name='deadlineTime'
+                               placeholder="时间"
+                               [nbTimepicker]="timepickerxdeadline">
+                        <nb-timepicker #timepickerxdeadline></nb-timepicker>
+                    </div>
                 </div>
             </nb-card-header>
             <nb-card-body>
@@ -33,23 +43,23 @@ import { Pattern } from 'src/app/shared/utils';
     </form>`,
     styles: [
         `
-            nb-card-header .kv {
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-            }
-            .kv .key {
-                min-width: 6em;
-                padding: 0em 0.8em;
-            }
-            .kv input {
-                flex-grow: 1;
-            }
-            .buttons {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-            }
+        .kv {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        .kv .key {
+            min-width: 6em;
+            padding: 0em 0.8em;
+        }
+        .kv input {
+            flex-grow: 1;
+        }
+        .buttons {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
         `,
     ],
 })
@@ -58,6 +68,8 @@ export class CourseTaskEditorComponent implements OnInit {
     courseTask: CourseTask;
     @Input()
     committable: boolean;
+    date: Date;
+    time: Date;
 
     constructor(private windowRef: NbWindowRef,
                 private courserTaskService: CourseTaskService) {}
@@ -65,12 +77,21 @@ export class CourseTaskEditorComponent implements OnInit {
     ngOnInit() {
         this.courseTask = this.courseTask || {} as any;
         this.courseTask.committable = this.committable;
+        if(this.courseTask.deadline == null) {
+            this.courseTask.deadline = new Date();
+        }
+
+        this.date = new Date(this.courseTask.deadline);
+        this.time = new Date(this.courseTask.deadline);
     }
 
     isConfirmed: boolean = false;
     confirm() {
         this.isConfirmed = true;
         this.windowRef.config.context['isConfirmed'] = true;
+        this.courseTask.deadline = new Date(
+            this.date.toDateString() + ' ' +
+            this.time.toTimeString());
         this.windowRef.config.context['courseTask'] = this.courseTask;
         this.windowRef.close();
     }

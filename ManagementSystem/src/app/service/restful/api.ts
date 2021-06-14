@@ -68,6 +68,13 @@ export module API {
             export const put = API_ADDRESS + '/apis/course/task';
             export const deleteTask = API_ADDRESS + '/apis/course/task'
         }
+
+        export module Checkin {
+            export const get = API_ADDRESS + '/apis/course/check-in';
+            export const post = API_ADDRESS + '/apis/course/check-in';
+            export const put = API_ADDRESS + '/apis/course/check-in';
+            export const deleteCheckin = API_ADDRESS + '/apis/course/check-in'
+        }
     }
 
     export module Role {

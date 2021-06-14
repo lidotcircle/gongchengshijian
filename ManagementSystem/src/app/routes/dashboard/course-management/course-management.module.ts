@@ -11,6 +11,7 @@ import { BasicInfoEditorComponent } from './course-info/basic-info-editor.compon
 import { JustInputComponent } from './course-info/just-input.component';
 import { CourseInfoViewComponent } from './course-info/course-info-viewer.component';
 import { CourseTaskEditorComponent } from './course-info/course-task-editor.component';
+import { CourseCheckinEditorComponent } from './course-info/course-checkin-editor.component';
 
 
 @NgModule({
@@ -18,6 +19,7 @@ import { CourseTaskEditorComponent } from './course-info/course-task-editor.comp
         CourseListComponent, CourseInfoComponent, CourseCreateComponent, 
         BasicInfoEditorComponent, JustInputComponent,
         CourseInfoViewComponent, CourseTaskEditorComponent,
+        CourseCheckinEditorComponent,
     ],
     imports: [
         CommonModule,

@@ -39,7 +39,7 @@
     }
 }
 
-.students, .tasks {
+.students, .tasks, .checkins {
     nb-list-item {
         display: flex;
         flex-direction: row;
@@ -90,6 +90,12 @@
             .task-content {
                 width: 35%;
                 min-width: 8em;
+            }
+        }
+
+        & {
+            .checkin-type {
+                width: 12%;
             }
         }
 

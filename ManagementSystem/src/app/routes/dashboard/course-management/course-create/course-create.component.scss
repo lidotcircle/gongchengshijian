@@ -2,14 +2,25 @@
 
 
 nb-card-body {
-    @include GridKVTable2('.user-info-list', '.user-info-field', '.user-info-value');
-
-    .user-info-list .user-info-value.textarea {
+    .textarea {
         height: 8em;
 
         textarea {
             height: 100%;
         }
+    }
+
+    .block {
+        border-bottom: solid 1.5pt #555;
+        padding: 0.7em 0em;
+
+        .key {
+            padding: 0.5em 0em;
+        }
+    }
+
+    .block:last-child {
+        border-bottom: none;
     }
 }
 
