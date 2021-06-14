@@ -67,7 +67,6 @@ public class TaskCrud {
             this.committable = committable;
         }
 
-        @NotNull
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", shape = JsonFormat.Shape.STRING)
         private Date deadline;
         public Date getDeadline() {

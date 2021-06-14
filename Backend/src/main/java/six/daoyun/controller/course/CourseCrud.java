@@ -61,7 +61,6 @@ public class CourseCrud {
             this.courseName = courseName;
         }
 
-        @NotNull
         private String teacherName;
         public String getTeacherName() {
             return this.teacherName;
@@ -186,6 +185,7 @@ public class CourseCrud {
             this.releaseDate = releaseDate;
         }
 
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", shape = JsonFormat.Shape.STRING)
         private Date deadline;
         public Date getDeadline() {
             return this.deadline;
@@ -216,6 +216,42 @@ public class CourseCrud {
         }
         public void setContent(String content) {
             this.content = content;
+        }
+    } //}
+    static class CourseCheckinDTO //{
+    {
+        private long id;
+        public long getId() {
+            return this.id;
+        }
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        private String jsonData;
+        public String getJsonData() {
+            return this.jsonData;
+        }
+        public void setJsonData(String jsonData) {
+            this.jsonData = jsonData;
+        }
+
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", shape = JsonFormat.Shape.STRING)
+        private Date releaseDate;
+        public Date getReleaseDate() {
+            return this.releaseDate;
+        }
+        public void setReleaseDate(Date releaseDate) {
+            this.releaseDate = releaseDate;
+        }
+
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", shape = JsonFormat.Shape.STRING)
+        private Date deadline;
+        public Date getDeadline() {
+            return this.deadline;
+        }
+        public void setDeadline(Date deadline) {
+            this.deadline = deadline;
         }
     } //}
     static class CourseDTO //{
@@ -267,6 +303,14 @@ public class CourseCrud {
         public void setTasks(Collection<CourseTaskDTO> tasks) {
             this.tasks = tasks;
         }
+
+        private Collection<CourseCheckinDTO> checkins;
+        public Collection<CourseCheckinDTO> getCheckins() {
+            return this.checkins;
+        }
+        public void setCheckins(Collection<CourseCheckinDTO> checkins) {
+            this.checkins = checkins;
+        }
     } //}
     static class CoursePageDTO //{
     {
@@ -313,6 +357,15 @@ public class CourseCrud {
             tasks.add(dtask);
         });
         target.setTasks(tasks);
+
+        final Collection<CourseCheckinDTO> checkins = new ArrayList<>();
+        course.getCheckins().forEach(checkin -> {
+            CourseCheckinDTO dcheckin = new CourseCheckinDTO();
+            ObjUtil.assignFields(dcheckin, checkin);
+            dcheckin.setReleaseDate(checkin.getModifiedDate());
+            checkins.add(dcheckin);
+        });
+        target.setCheckins(checkins);
     } //}
 
     @GetMapping("/super")
@@ -360,6 +413,10 @@ public class CourseCrud {
     @PostMapping("/super")
     public CourseExIdDTO createCourse(@RequestBody @Valid PostCourseDTOX coursex) //{
     {
+        if(coursex.getTeacherName() == null) {
+            throw new HttpForbidden("require teacher name");
+        }
+
         final User teacher = this.userService.getUser(coursex.getTeacherName())
             .orElseThrow(() -> new HttpNotFound("教师不存在"));
 
