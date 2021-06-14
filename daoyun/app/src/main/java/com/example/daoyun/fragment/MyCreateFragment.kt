@@ -1,11 +1,26 @@
 package com.example.daoyun.fragment
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView.OnItemClickListener
+import android.widget.ListView
+import android.widget.ProgressBar
+import androidx.fragment.app.Fragment
+import com.example.daoyun.ClassTabActivity
+import com.example.daoyun.Course
 import com.example.daoyun.R
+import com.example.daoyun.adapter.CourseAdapter
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
+import java.util.*
+import kotlin.concurrent.thread
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -18,7 +33,12 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class MyCreateFragment : Fragment() {
-    // TODO: Rename and change types of parameters
+    var courseList: List<Course> = ArrayList<Course>()
+    private val myJoinNum = 0
+    var adapter: CourseAdapter? = null
+    var listView: ListView? = null
+    var progressDialog: ProgressBar? = null
+    private lateinit var jwtToken:String
     private var param1: String? = null
     private var param2: String? = null
 
@@ -36,6 +56,48 @@ class MyCreateFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_my_create, container, false)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        progressDialog = ProgressBar(context)
+
+
+
+        adapter = CourseAdapter(context!!, R.layout.course_item, courseList, 2)
+        listView = activity!!.findViewById(R.id.list_view1)
+        listView?.adapter = adapter
+        listView?.onItemClickListener = OnItemClickListener { parent, view, position, id ->
+            val course: Course = courseList[position]
+            val intent = Intent(context, ClassTabActivity::class.java)
+            intent.putExtra("courseName", course.getCourseName())
+            intent.putExtra("classId", course.getClassId())
+            intent.putExtra("enterType", "create")
+            startActivity(intent)
+        }
+    }
+
+    private fun getCourses(){
+        thread {
+            try {
+                val json = JSONObject()
+                    .put("role", "student")
+                val stringBody =json.toString().toRequestBody("application/json;charset=utf-8".toMediaType())
+                val client=OkHttpClient()
+                val request=Request.Builder()
+                    .url("https://gcsj.lidotcircle.ltd/apis/course/page")
+                    .get ()
+                    .build()
+                val response=client.newCall(request).execute()
+                val responseData=response.body?.string()
+            }catch (e: Exception){
+                Log.e("TAG", Log.getStackTraceString(e));
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     companion object {

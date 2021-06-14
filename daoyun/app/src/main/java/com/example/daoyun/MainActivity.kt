@@ -1,11 +1,13 @@
 package com.example.daoyun
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.daoyun.databinding.ActivityMainBinding
@@ -56,6 +58,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .add(R.id.container_content, mMeFragment)
             .hide(mMeFragment)
             .commit()
+        val userData=getSharedPreferences("userData",Context.MODE_PRIVATE)
+        val toke=userData.getString("token","error")
+        Toast.makeText(this,toke,Toast.LENGTH_LONG).show()
 
     }
     override fun onDestroy() {

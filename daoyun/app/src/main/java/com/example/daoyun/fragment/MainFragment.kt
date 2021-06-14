@@ -28,7 +28,6 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class MainFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private var addTV: TextView? = null
@@ -77,12 +76,10 @@ class MainFragment : Fragment() {
             .hide(myCreateFragment)
             .commit()
 
-/*        addTV!!.isEnabled = true
+        addTV!!.isEnabled = true
         addTV!!.setOnClickListener {
-            Log.i("MainFragmentInfo", "add textview")
-            //                Toast.makeText(getContext(), "添加被按下", Toast.LENGTH_SHORT).show();
             showPopupMenu(addTV!!)
-        }*/
+        }
 
         myJoinTV?.setOnClickListener(View.OnClickListener {
             myJoinTV?.setTextColor(Color.parseColor("#ff00bfff"))

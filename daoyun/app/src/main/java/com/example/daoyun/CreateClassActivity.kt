@@ -1,9 +1,9 @@
 package com.example.daoyun
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -14,15 +14,18 @@ import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import okhttp3.*
-import org.json.JSONArray
-import org.json.JSONException
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
-import java.io.*
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.concurrent.thread
 
 class CreateClassActivity : AppCompatActivity() {
+
     private var classIconIV: ImageView? = null
     private var termLayout: LinearLayout? = null
     private var termTV: TextView? = null
@@ -36,6 +39,10 @@ class CreateClassActivity : AppCompatActivity() {
     private val IMAGE_CUT = 2
     private var cropFile: File? = null
     private var selectedTerm: String? = null
+    private var courseExId:String?=null
+    private lateinit var jwtToken:String
+    private var debugmsg:String?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_class)
@@ -49,11 +56,15 @@ class CreateClassActivity : AppCompatActivity() {
         backBtn = findViewById(R.id.toolbar_left_btn)
         backBtn?.setOnClickListener(View.OnClickListener { finish() })
         classIconIV = findViewById(R.id.class_icon_Iv)
+        val userData=getSharedPreferences("userData", Context.MODE_PRIVATE)
+        jwtToken= userData.getString("jwtToken","error").toString()
+
         classIconIV?.setOnClickListener(View.OnClickListener {
             val intent = Intent(Intent.ACTION_PICK, null)
             intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
             startActivityForResult(intent, IMAGE_SELECT)
         })
+
         val term = arrayOf(
             "2016-2017-1",
             "2016-2017-2",
@@ -88,10 +99,11 @@ class CreateClassActivity : AppCompatActivity() {
                     ) { dialog, which -> selectedTerm = term[which] }
             builder.setPositiveButton(
                 "确定"
-            ) { dialog, which -> termTV?.setText(selectedTerm) }
+            ) { dialog, which -> termTV?.text = selectedTerm }
             builder.setNegativeButton("取消", null)
             builder.show()
         })
+
         createClassBtn?.setOnClickListener(View.OnClickListener {
             if (classNameET?.text.toString() == "") {
                 showAlertDialog("请输入班课名！")
@@ -104,38 +116,34 @@ class CreateClassActivity : AppCompatActivity() {
             } else if (classIntroductionET?.text.toString() == "") {
                 showAlertDialog("请输入班课简介！")
             }
-            Thread(Runnable {
-                val okHttpClient = OkHttpClient()
-                val requestBody: RequestBody
-
-
-            }).start()
+            else{
+                addClass(classNameET.toString(),schoolET.toString())
+                Toast.makeText(this,"$jwtToken\n创建成功\n$debugmsg",Toast.LENGTH_LONG).show()
+                finish()
+            }
         })
     }
 
-    override fun onActivityResult(
-        requestCode: Int,
-        resultCode: Int,
-        data: Intent?
-    ) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (resultCode) {
-            Activity.RESULT_OK -> if (requestCode == IMAGE_CUT) {
-                Log.i(
-                    "UserInfoInfo",
-                    Environment.getExternalStorageDirectory().toString()
-                )
-                //                    userIconIV.setImageURI(cropImageUri);
-                val bitmap = BitmapFactory.decodeFile(cropFile!!.absolutePath)
-                classIconIV!!.setImageBitmap(bitmap)
-                Log.i("UserInfoInfo", "cropFile.toString()")
-            } else if (requestCode == IMAGE_SELECT) {
-                val iconUri = data!!.data
-                startCropImage(iconUri)
+    private fun addClass(courseName:String, briefDescription:String){
+        thread {
+            try {
+                val json = JSONObject()
+                    .put("courseName", courseName)
+                val stringBody =json.toString().toRequestBody("application/json;charset=utf-8".toMediaType())
+                val client=OkHttpClient()
+                val request=Request.Builder()
+                    .url("https://gcsj.lidotcircle.ltd/apis/course")
+                    .header("Authorization",jwtToken)
+                    .post(stringBody)
+                    .build()
+                val response=client.newCall(request).execute()
+                val responseData=response.body?.string()
+                debugmsg=responseData.toString()
+                courseExId = JSONObject(responseData).getString("courseExId")
+            }catch (e: Exception){
+                Log.e("TAG", Log.getStackTraceString(e));
             }
-            else -> {
-            }
-        }
+        }.join()
     }
 
     private fun startCropImage(uri: Uri?) {
@@ -181,13 +189,9 @@ class CreateClassActivity : AppCompatActivity() {
         }
     }
 
-    fun showAlertDialog(msg: String?) {
+    private fun showAlertDialog(msg: String?) {
         runOnUiThread {
-            val builder =
-                AlertDialog.Builder(this@CreateClassActivity)
-                    .setMessage(msg)
-                    .setPositiveButton("确定", null)
-            builder.show()
+            Toast.makeText(this,msg,Toast.LENGTH_SHORT).show()
         }
     }
 }

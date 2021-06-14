@@ -57,6 +57,7 @@
                     android:layout_marginRight="15dp"
                     android:background="@null"
                     android:gravity="right|center_vertical"
+                    android:text="工程实践"
                     android:hint="未设置" />
 
             </LinearLayout>
@@ -88,6 +89,7 @@
                     android:layout_marginRight="15dp"
                     android:background="@null"
                     android:gravity="right|center_vertical"
+                    android:text="1"
                     android:hint="未设置" />
 
             </LinearLayout>
@@ -119,6 +121,7 @@
                     android:layout_marginRight="15dp"
                     android:background="@null"
                     android:gravity="right|center_vertical"
+                    android:text="1"
                     android:hint="未设置" />
 
             </LinearLayout>
@@ -197,6 +200,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="130dp"
                 android:hint="请输入班课简介"
+                android:text="1"
                 android:gravity="start"
                 android:layout_marginBottom="10dp"
                 android:lineSpacingExtra="5dp"
