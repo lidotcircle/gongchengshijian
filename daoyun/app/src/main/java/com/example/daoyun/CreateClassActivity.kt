@@ -155,18 +155,19 @@ class CreateClassActivity : AppCompatActivity() {
                 showAlertDialog("请输入班课简介！")
             }
             else{
-                //addClass(classNameET.toString())
-                Toast.makeText(this,"$jwtToken\n创建成功\n$debugmsg",Toast.LENGTH_LONG).show()
+                addClass(classNameET!!.text.toString())
+                //Toast.makeText(this,"$jwtToken\n$tst\n$debugmsg",Toast.LENGTH_LONG).show()
+                Toast.makeText(this,"创建成功",Toast.LENGTH_LONG).show()
                 finish()
             }
         })
     }
 
-    private fun addClass(courseName:String, briefDescription:String){
+    private fun addClass(courseName:String){
         thread {
             try {
                 val json = JSONObject()
-                    .put("courseName", courseName)
+                    .put("courseName", "courseName")
                 val stringBody =json.toString().toRequestBody("application/json;charset=utf-8".toMediaType())
                 val client=OkHttpClient()
                 val request=Request.Builder()
