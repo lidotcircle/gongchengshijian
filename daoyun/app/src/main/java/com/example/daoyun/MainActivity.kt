@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .commit()
         val userData=getSharedPreferences("userData",Context.MODE_PRIVATE)
         val toke=userData.getString("token","error")
-        Toast.makeText(this,toke,Toast.LENGTH_LONG).show()
+        //Toast.makeText(this,toke,Toast.LENGTH_LONG).show()
 
     }
     override fun onDestroy() {

@@ -28,9 +28,12 @@ class CreateClassActivity : AppCompatActivity() {
 
     private var classIconIV: ImageView? = null
     private var termLayout: LinearLayout? = null
+    private var schoolLayout:LinearLayout?=null
+    private var facultyLayout:LinearLayout?=null
     private var termTV: TextView? = null
+    private var schoolTV:TextView?=null
+    private var facultyTV:TextView?=null
     private var classNameET: EditText? = null
-    private var schoolET: EditText? = null
     private var gradeClassET: EditText? = null
     private var classIntroductionET: EditText? = null
     private var createClassBtn: Button? = null
@@ -39,6 +42,8 @@ class CreateClassActivity : AppCompatActivity() {
     private val IMAGE_CUT = 2
     private var cropFile: File? = null
     private var selectedTerm: String? = null
+    private var selectedSchool: String? = null
+    private var selectedFaculty: String? = null
     private var courseExId:String?=null
     private lateinit var jwtToken:String
     private var debugmsg:String?=null
@@ -48,8 +53,9 @@ class CreateClassActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create_class)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         termTV = findViewById(R.id.term_Tv)
+        schoolTV=findViewById(R.id.school_Tv)
+        facultyTV=findViewById(R.id.faculty_Tv)
         classNameET = findViewById(R.id.class_name_Et)
-        schoolET = findViewById(R.id.school_Et)
         gradeClassET = findViewById(R.id.grade_class_Et)
         classIntroductionET = findViewById(R.id.class_introduction_Et)
         createClassBtn = findViewById(R.id.create_class_btn)
@@ -95,11 +101,43 @@ class CreateClassActivity : AppCompatActivity() {
                 AlertDialog.Builder(this@CreateClassActivity)
                     .setTitle("选择班课学期")
                     .setSingleChoiceItems(
-                        term, 0
-                    ) { dialog, which -> selectedTerm = term[which] }
+                        term, -1
+                    ) { _, which -> selectedTerm = term[which] }
             builder.setPositiveButton(
                 "确定"
-            ) { dialog, which -> termTV?.text = selectedTerm }
+            ) { _, _ -> termTV?.text = selectedTerm }
+            builder.setNegativeButton("取消", null)
+            builder.show()
+        })
+
+        val school= arrayOf("福州大学","其他")
+        schoolLayout=findViewById(R.id.school_layout)
+        schoolLayout?.setOnClickListener(View.OnClickListener {
+            val builder =
+                AlertDialog.Builder(this@CreateClassActivity)
+                    .setTitle("选择学校")
+                    .setSingleChoiceItems(
+                        school, -1
+                    ) { _, which -> selectedSchool = school[which] }
+            builder.setPositiveButton(
+                "确定"
+            ) { _, _ -> schoolTV?.text = selectedSchool }
+            builder.setNegativeButton("取消", null)
+            builder.show()
+        })
+
+        val faculty= arrayOf("数学与计算机科学学院","其他")
+        facultyLayout=findViewById(R.id.faculty_layout)
+        facultyLayout?.setOnClickListener(View.OnClickListener {
+            val builder =
+                AlertDialog.Builder(this@CreateClassActivity)
+                    .setTitle("选择学院")
+                    .setSingleChoiceItems(
+                        faculty, -1
+                    ) { _, which -> selectedFaculty = faculty[which] }
+            builder.setPositiveButton(
+                "确定"
+            ) { _, _ -> facultyTV?.text = selectedFaculty }
             builder.setNegativeButton("取消", null)
             builder.show()
         })
@@ -107,8 +145,8 @@ class CreateClassActivity : AppCompatActivity() {
         createClassBtn?.setOnClickListener(View.OnClickListener {
             if (classNameET?.text.toString() == "") {
                 showAlertDialog("请输入班课名！")
-            } else if (schoolET?.text.toString() == "") {
-                showAlertDialog("请输入学校院系！")
+            } else if (schoolTV?.text.toString() == "学校") {
+                showAlertDialog("请输入学校！")
             } else if (gradeClassET?.text.toString() == "") {
                 showAlertDialog("请输入班级！")
             } else if (termTV?.text.toString() == "班课学期未选择") {
@@ -117,7 +155,7 @@ class CreateClassActivity : AppCompatActivity() {
                 showAlertDialog("请输入班课简介！")
             }
             else{
-                addClass(classNameET.toString(),schoolET.toString())
+                //addClass(classNameET.toString())
                 Toast.makeText(this,"$jwtToken\n创建成功\n$debugmsg",Toast.LENGTH_LONG).show()
                 finish()
             }

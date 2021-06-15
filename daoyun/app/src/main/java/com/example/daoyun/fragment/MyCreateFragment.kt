@@ -67,7 +67,7 @@ class MyCreateFragment : Fragment() {
         adapter = CourseAdapter(context!!, R.layout.course_item, courseList, 2)
         listView = activity!!.findViewById(R.id.list_view1)
         listView?.adapter = adapter
-        listView?.onItemClickListener = OnItemClickListener { parent, view, position, id ->
+        listView?.onItemClickListener = OnItemClickListener { _, _, position, _ ->
             val course: Course = courseList[position]
             val intent = Intent(context, ClassTabActivity::class.java)
             intent.putExtra("courseName", course.getCourseName())
