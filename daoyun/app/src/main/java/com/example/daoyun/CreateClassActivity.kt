@@ -158,6 +158,7 @@ class CreateClassActivity : AppCompatActivity() {
                 addClass(classNameET!!.text.toString())
                 //Toast.makeText(this,"$jwtToken\n$tst\n$debugmsg",Toast.LENGTH_LONG).show()
                 Toast.makeText(this,"创建成功",Toast.LENGTH_LONG).show()
+                startActivity(Intent(this, GenerateClass::class.java))
                 finish()
             }
         })
@@ -167,7 +168,7 @@ class CreateClassActivity : AppCompatActivity() {
         thread {
             try {
                 val json = JSONObject()
-                    .put("courseName", "courseName")
+                    .put("courseName", courseName)
                 val stringBody =json.toString().toRequestBody("application/json;charset=utf-8".toMediaType())
                 val client=OkHttpClient()
                 val request=Request.Builder()
@@ -179,8 +180,13 @@ class CreateClassActivity : AppCompatActivity() {
                 val responseData=response.body?.string()
                 debugmsg=responseData.toString()
                 courseExId = JSONObject(responseData).getString("courseExId")
+                //save
+                val userData =getSharedPreferences("userData", Context.MODE_PRIVATE)
+                val editor = userData.edit()
+                editor.putString("courseExId",courseExId)
+                editor.commit()
             }catch (e: Exception){
-                Log.e("TAG", Log.getStackTraceString(e));
+                Log.e("TAG", Log.getStackTraceString(e))
             }
         }.join()
     }

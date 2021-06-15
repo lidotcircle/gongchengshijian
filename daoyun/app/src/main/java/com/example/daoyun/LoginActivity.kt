@@ -93,6 +93,7 @@ class LoginActivity : AppCompatActivity() {
                 val responseData=response.body?.string()
                 //showResponse(responseData.toString())
                 jwtToken = JSONObject(responseData).getString("jwtToken")
+                //save
                 val userData =getSharedPreferences("userData", Context.MODE_PRIVATE)
                 val editor = userData.edit()
                 editor.putString("jwtToken",jwtToken)

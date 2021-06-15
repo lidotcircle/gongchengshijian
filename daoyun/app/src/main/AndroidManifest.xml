@@ -11,18 +11,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Daoyun">
-        <activity android:name=".CreateClassActivity"></activity>
+        <activity android:name=".GenerateClass"></activity>
+        <activity android:name=".CreateClassActivity" />
         <activity android:name=".FastLoginActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".ForgetPasswordActivity" />
-        <activity android:name=".MainActivity">
-        </activity>
+        <activity android:name=".MainActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.king.zxing.CaptureActivity"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/CaptureTheme" />
     </application>
 
 </manifest>
