@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { User } from 'src/app/entity';
 import { AdminUserService } from 'src/app/service/admin-user/admin-user.service';
+import { RoleService } from 'src/app/service/role/role.service';
 
 @Component({
     selector: 'ngx-user-add',
@@ -16,11 +17,17 @@ export class UserAddComponent implements OnInit {
     user: User;
     birthday: Date;
     password: string;
+    roleList: string[];
+    selectedRoleIndex: string;
 
     constructor(private adminUserService: AdminUserService,
+                private roleService: RoleService,
                 private toastrService: NbToastrService) {
         this.user = new User();
+        this.user.roles = this.user.roles || [];
         this.birthday = new Date(0);
+        this.roleList = [];
+        this.selectedRoleIndex = "0";
     }
 
     ngOnDestroy(): void {
@@ -29,6 +36,36 @@ export class UserAddComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.roleService.getList()
+            .then(roleList => this.roleList = (roleList || []).map(r => r.roleName))
+            .catch(e => this.toastrService.danger("获取角色列表失败"));
+    }
+    
+    get canAdd(): boolean {
+        const r = this.roleList[this.selectedRoleIndex];
+        if(r == null) return false;
+        const n = this.user?.roles || [];
+
+        return n.indexOf(r) < 0;
+    }
+
+    get canDel(): boolean {
+        const r = this.roleList[this.selectedRoleIndex];
+        if(r == null) return false;
+        const n = this.user?.roles || [];
+
+        return n.indexOf(r) >= 0;
+    }
+
+    addRole() {
+        const r = this.roleList[this.selectedRoleIndex];
+        this.user.roles.push(r);
+    }
+
+    delRole() {
+        const r = this.roleList[this.selectedRoleIndex];
+        const n = this.user.roles.indexOf(r);
+        this.user.roles.splice(n, 1);
     }
 
     async addUser() {

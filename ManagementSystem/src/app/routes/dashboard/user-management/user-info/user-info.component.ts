@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { User } from 'src/app/entity';
 import { AdminUserService } from 'src/app/service/admin-user/admin-user.service';
+import { RoleService } from 'src/app/service/role/role.service';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window.component';
 import { computeDifference } from 'src/app/shared/utils';
 
@@ -19,13 +20,18 @@ export class UserInfoComponent implements OnInit {
     updatedUser: User;
     password: string;
     title: string;
+    roleList: string[];
+    selectedRoleIndex: string;
 
     constructor(private adminUserService: AdminUserService,
+                private roleService: RoleService,
                 private activatedRoute: ActivatedRoute,
                 private windowService: NbWindowService,
                 private toastrService: NbToastrService) {
         this.user = {} as any;
         this.updatedUser = {} as any;
+        this.roleList = [];
+        this.selectedRoleIndex = "0";
     }
 
     ngOnDestroy(): void {
@@ -34,6 +40,10 @@ export class UserInfoComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.roleService.getList()
+            .then(roleList => this.roleList = (roleList || []).map(r => r.roleName))
+            .catch(e => this.toastrService.danger("获取角色列表失败"));
+
         this.gotoInfoView();
 
         this.activatedRoute.queryParamMap.subscribe(async (params) => {
@@ -50,10 +60,31 @@ export class UserInfoComponent implements OnInit {
         });
     }
     
-    // TODO
-    availableRoles(): string[] {
-        const ans = [];
-        return ans;
+    get canAdd(): boolean {
+        const r = this.roleList[this.selectedRoleIndex];
+        if(r == null) return false;
+        const n = this.updatedUser?.roles || [];
+
+        return n.indexOf(r) < 0;
+    }
+
+    get canDel(): boolean {
+        const r = this.roleList[this.selectedRoleIndex];
+        if(r == null) return false;
+        const n = this.updatedUser?.roles || [];
+
+        return n.indexOf(r) >= 0;
+    }
+
+    addRole() {
+        const r = this.roleList[this.selectedRoleIndex];
+        this.updatedUser.roles.push(r);
+    }
+
+    delRole() {
+        const r = this.roleList[this.selectedRoleIndex];
+        const n = this.updatedUser.roles.indexOf(r);
+        this.updatedUser.roles.splice(n, 1);
     }
 
     inEdit: boolean = false;
@@ -100,6 +131,7 @@ export class UserInfoComponent implements OnInit {
 
     async cancelAndGotoInfoView() {
         this.updatedUser = Object.create(User.prototype, Object.getOwnPropertyDescriptors(this.user));
+        this.updatedUser.roles = this.user.roles.slice();
         this.title = '用户个人信息 - 管理员';
         this.inEdit = false;
     }

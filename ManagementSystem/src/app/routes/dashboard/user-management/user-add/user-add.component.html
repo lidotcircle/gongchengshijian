@@ -16,13 +16,14 @@
 
       <div class="user-info-field required">角色</div>
       <div class="user-info-value" style='display: flex; flex-direction: row; align-items: center; justify-content: space-around;'>
-        <div class="roles"><div class="role">{{ user?.Roles }}</div></div>
-        <nb-select selected="1">
-          <nb-option value="1">管理员</nb-option>
-          <nb-option value="2">教师</nb-option>
+        <div class="roles"><div class="role" style='white-space: nowrap; font-size: 0.6em;'>{{ user?.Roles }}</div></div>
+        <nb-select [(ngModel)]="selectedRoleIndex">
+          <nb-option *ngFor="let role of (roleList || []); let i=index" value="{{ i }}"> {{ role }}</nb-option>
         </nb-select>
-        <button nbButton shpae='semi-round' status='primary' size='small' outline>添加</button>
-        <button nbButton shpae='semi-round' status='danger' size='small' outline>移除</button>
+        <button nbButton shpae='semi-round' [disabled]='!canAdd' 
+                (click)='addRole()' status='primary' size='small' outline>添加</button>
+        <button nbButton shpae='semi-round' [disabled]='!canDel' 
+                (click)='delRole()' status='danger'  size='small' outline>移除</button>
       </div>
 
       <div class="user-info-field">性别</div>

@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { concatMap, map, takeUntil, tap } from 'rxjs/operators';
 import { PermMenu } from 'src/app/entity';
 import { PermMenuService } from 'src/app/service/role/perm-menu.service';
+import { softAssignEnum } from 'src/app/shared/utils';
 import { MenuEditorComponent } from './menu-tree/menu-editor.component';
 
 @Component({
@@ -22,6 +23,7 @@ export class MenuManagementComponent implements OnInit, OnDestroy {
                 private permMenuService: PermMenuService,
                 private windowService: NbWindowService,
                 private toastrService: NbToastrService) {
+        this.menus = [];
         this.refreshMe = new Subject<void>();
         this.refreshMe
             .pipe(concatMap(() => this.permMenuService.getTree()))
@@ -43,11 +45,10 @@ export class MenuManagementComponent implements OnInit, OnDestroy {
                 }
                 return tree;
             }))
-            .subscribe(tree => this.menus = tree, error => {
+            .subscribe(tree => softAssignEnum(this.menus, tree), error => {
                 this.toastrService.danger("获取权限信息失败", "菜单管理");
             });
 
-        this.menus = [];
         this.permMenuService.menuDuk
             .pipe(takeUntil(this.$destroy))
             .subscribe(this.refreshMe);
