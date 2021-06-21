@@ -1,6 +1,8 @@
 package six.daoyun.controller.auth;
 
 import java.util.Date;
+import java.util.Collection;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,9 +15,13 @@ import javax.validation.constraints.Pattern;
 
 import six.daoyun.controller.exception.*;
 import six.daoyun.entity.User;
+import six.daoyun.entity.Role;
 import six.daoyun.service.UserService;
+import six.daoyun.service.RoleService;
 import six.daoyun.service.AuthService;
+import six.daoyun.service.SysparamService;
 import six.daoyun.service.MessageCodeService;
+import six.daoyun.utils.SystemParameter;
 
 @RestController()
 class Signup {
@@ -24,9 +30,13 @@ class Signup {
     @Autowired
     private AuthService authService;
     @Autowired
+    private RoleService roleService;
+    @Autowired
     private MessageCodeService mcodeService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private SysparamService sysparam;
 
     static public class RegisterByPhone //{
     {
@@ -143,6 +153,19 @@ class Signup {
         }
     } //}
 
+    private Collection<Role> initRoles() {
+        var roles = this.sysparam.get(SystemParameter.InitRoles)
+            .orElseThrow(() -> new HttpForbidden()).getParameterValue().split(",");
+        Collection<Role> ans = new ArrayList<>();
+        for(var role: roles) {
+            var r = this.roleService.getRoleByRoleName(role)
+                .orElseThrow(() -> new HttpForbidden("bad configuration"));
+            ans.add(r);
+        }
+
+        return ans;
+    }
+
     @PostMapping("/apis/auth/user")
     private void createUserByPhone(@RequestBody @Valid RegisterByPhone req) {
         if(!this.mcodeService.validate(req.getMessageCodeToken(), 
@@ -168,6 +191,7 @@ class Signup {
         user.setSchool(req.getSchool());
         user.setCollege(req.getCollege());
         user.setThirdPartyAccountType("none");
+        user.setRoles(this.initRoles());
         if(req.getBirthdate() != null) {
             user.setBirthday(new java.sql.Date(req.getBirthdate().getTime()));
         }

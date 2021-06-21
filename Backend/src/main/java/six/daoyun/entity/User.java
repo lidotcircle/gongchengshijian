@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
@@ -30,7 +31,7 @@ public class User implements Serializable {
     @Column(name = "gmt_modified", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", insertable = false, updatable = false)
     private Date modifiedDate;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles;
     public Collection<Role> getRoles() {
         return this.roles;

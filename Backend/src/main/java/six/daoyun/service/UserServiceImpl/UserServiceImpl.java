@@ -161,5 +161,13 @@ public class UserServiceImpl implements UserService {
         }
         return false;
 	} //}
+
+	@Override
+	public boolean hasPermission(String user, String link, String method) {
+        var u = this.getUser(user);
+        if(u.isEmpty()) return false;
+
+        return this.hasPermission(u.get(), link, method);
+	}
 }
 

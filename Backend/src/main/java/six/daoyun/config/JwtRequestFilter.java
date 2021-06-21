@@ -14,12 +14,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import six.daoyun.service.UserService;
 
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private UserService userService;
+
     @Value("${daoyun.supersuper.enable}")
     private boolean superEnable;
     @Value("${daoyun.supersuper.name}")
@@ -90,6 +94,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 System.out.println("JWT Token is null");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "require JWT");
                 return;
+            }
+
+            var uri = request.getRequestURI();
+            if(uri.endsWith("/")) uri = uri.substring(0, uri.length() - 1);
+            final var method = request.getMethod().toUpperCase();
+            if (!this.userService.hasPermission(username, uri, method)) {
+                log.info("Deny {} to Access {} with {} method", username, uri, method);
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "No Permission");
             }
         }
 

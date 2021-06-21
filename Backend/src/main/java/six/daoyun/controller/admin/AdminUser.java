@@ -22,8 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import six.daoyun.controller.exception.HttpBadRequest;
 import six.daoyun.controller.exception.HttpNotFound;
+import six.daoyun.entity.Role;
 import six.daoyun.entity.User;
+import six.daoyun.exception.NotFound;
 import six.daoyun.exchange.UserInfo;
+import six.daoyun.service.RoleService;
 import six.daoyun.service.UserService;
 import six.daoyun.utils.ObjUtil;
 
@@ -32,6 +35,8 @@ import six.daoyun.utils.ObjUtil;
 public class AdminUser {
 	@Autowired
     private UserService userService;
+    @Autowired
+    private RoleService roleService;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -53,6 +58,14 @@ public class AdminUser {
         }
         public void setPassword(String password) {
             this.password = password;
+        }
+
+        private String role;
+        public String getRole() {
+            return this.role;
+        }
+        public void setRole(String role) {
+            this.role = role;
         }
     } //}
     static class PageRespDTO //{
@@ -128,6 +141,16 @@ public class AdminUser {
 
         ans.setPassword(null);
 
+        String rolestr = "";
+        for(var role: user.getRoles()) {
+            rolestr += role.getRoleName() + ", ";
+        }
+        if(rolestr.endsWith(", ")) {
+            rolestr = rolestr.substring(0, rolestr.length() - 2);
+        } else {
+            rolestr = "无";
+        }
+        ans.setRole(rolestr);
         return ans;
     } //}
     private void UserDtoToUser(UserDTO dto, User user) //{
@@ -150,7 +173,13 @@ public class AdminUser {
             user.setPassword(this.passwordEncoder.encode(dto.getPassword()));
         }
 
-        // TODO role
+        Collection<Role> roles = new ArrayList<>();
+        for (var rolestr: dto.getRoles()) {
+            var role = this.roleService.getRoleByRoleName(rolestr)
+                .orElseThrow(() -> new HttpNotFound(String.format("角色名%s不存在", rolestr)));
+            roles.add(role);
+        }
+        user.setRoles(roles);
     } //}
 
     @GetMapping("/apis/admin/user/page")

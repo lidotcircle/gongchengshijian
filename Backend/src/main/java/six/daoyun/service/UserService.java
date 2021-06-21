@@ -25,5 +25,6 @@ public interface UserService {
     void addRole(User user, Role role);
     void removeRole(User user, Role role);
     boolean hasPermission(User user, String link, String method);
+    boolean hasPermission(String user, String link, String method);
 }
 
