@@ -2,7 +2,6 @@ package six.daoyun.service.RoleServiceImpl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.ListIterator;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -87,12 +86,12 @@ public class RoleServiceImpl implements RoleService {
         Role role = this.getRole(roleName);
         PermEntry perm = this.permEntryRepository.findByDescriptor(descriptor)
             .orElseThrow(() -> new NotFound());
-        if(role.getPermEntries().contains(perm)) {
+        if(perm.getRoles().contains(role)) {
             throw new Forbidden("角色已拥有该菜单: " + descriptor);
         }
 
-        role.getPermEntries().add(perm);
-        this.roleRepository.save(role);
+        perm.getRoles().add(role);
+        this.permEntryRepository.save(perm);
 	} //}
 
 	@Override
@@ -101,12 +100,12 @@ public class RoleServiceImpl implements RoleService {
         Role role = this.getRole(roleName);
         PermEntry perm = this.permEntryRepository.findByDescriptor(descriptor)
             .orElseThrow(() -> new NotFound());
-        if(!role.getPermEntries().contains(perm)) {
+        if(!perm.getRoles().contains(role)) {
             throw new Forbidden();
         }
 
-        role.getPermEntries().remove(perm);
-        this.roleRepository.save(role);
+        perm.getRoles().add(role);
+        this.permEntryRepository.save(perm);
 	} //}
 
     private void getTreeDescendants(PermEntry entry, Collection<PermEntry> list) //{
@@ -129,11 +128,11 @@ public class RoleServiceImpl implements RoleService {
         this.getTreeDescendants(perm, permlist);
 
         for(final PermEntry sperm: permlist) {
-            if(!role.getPermEntries().contains(sperm)) {
-                role.getPermEntries().add(sperm);
+            if(!sperm.getRoles().contains(role)) {
+                sperm.getRoles().add(role);
             }
         }
-        this.roleRepository.save(role);
+        this.permEntryRepository.saveAll(permlist);
 	} //}
 
 	@Override
@@ -148,11 +147,11 @@ public class RoleServiceImpl implements RoleService {
         this.getTreeDescendants(perm, permlist);
 
         for(final PermEntry sperm: permlist) {
-            if(role.getPermEntries().contains(sperm)) {
-                role.getPermEntries().remove(sperm);
+            if(sperm.getRoles().contains(role)) {
+                sperm.getRoles().remove(role);
             }
         }
-        this.roleRepository.save(role);
+        this.permEntryRepository.saveAll(permlist);
     } //}
 
     private boolean isChildDescriptor(String parentDescriptor, String childDescriptor) //{
@@ -196,7 +195,7 @@ public class RoleServiceImpl implements RoleService {
     {
         final PermEntry entry = this.getPermEntry(descriptor);
         if(entry.getChildren() == null || entry.getChildren().size() > 0) {
-            throw new Forbidden("");
+            throw new Forbidden("节点存在子节点");
         }
 
         this.permEntryRepository.delete(entry);
@@ -209,10 +208,8 @@ public class RoleServiceImpl implements RoleService {
         final PermEntry entry = this.getPermEntry(descriptor);
         entries.add(entry);
         this.getTreeDescendants(entry, entries);
-        ListIterator<PermEntry> l = entries.listIterator(entries.size());
-        while(l.hasPrevious()) {
-            this.permEntryRepository.delete(l.previous());
-        }
+        log.info("n = {}", entries.size());
+        this.permEntryRepository.deleteAll(entries);
 	} //}
 
 	@Override

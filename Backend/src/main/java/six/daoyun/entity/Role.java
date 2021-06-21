@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -50,7 +49,7 @@ public class Role implements Serializable {
     }
 
     @JsonIgnore
-    @ManyToMany(cascade = { CascadeType.ALL })
+    @ManyToMany(mappedBy = "roles")
     private Collection<PermEntry> permEntries;
     public Collection<PermEntry> getPermEntries() {
         return this.permEntries;

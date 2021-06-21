@@ -47,7 +47,7 @@ public class PermEntry {
     static class PermEntryCreationDTO //{
     {
         @NotNull
-        @Pattern(regexp = "([a-zA-Z][a-zA-Z0-9_]{1,}\\.)*[a-zA-Z][a-zA-Z0-9_]{1,}([:](POST|DELETE|PUT|GET))?")
+        @Pattern(regexp = "([a-zA-Z][a-zA-Z0-9_]{1,}\\.)*[a-zA-Z][a-zA-Z0-9_]{1,}")
         private String descriptor;
         public String getDescriptor() {
             return this.descriptor;
@@ -66,7 +66,7 @@ public class PermEntry {
         }
 
         @NotNull
-        @Pattern(regexp = "(\\/[a-zA-Z][a-zA-Z0-9@_-]+)+\\/?")
+        @Pattern(regexp = "(\\/[a-zA-Z][a-zA-Z0-9@_\\-]+)+\\/?")
         private String link;
         public String getLink() {
             return this.link;
@@ -122,13 +122,24 @@ public class PermEntry {
             this.descriptor = descriptor;
         }
 
-        @Pattern(regexp = "(POST|DELETE|POST|GET)[:](\\/[a-zA-Z][a-zA-Z0-9@_-]+)+\\/?")
+        @NotNull
+        @Pattern(regexp = "(\\/[a-zA-Z][a-zA-Z0-9@_-]+)+\\/?")
         private String link;
         public String getLink() {
             return this.link;
         }
         public void setLink(String link) {
             this.link = link;
+        }
+
+        @NotNull
+        @Pattern(regexp = "POST|PUT|GET|DELETE|ALL")
+        private String method;
+        public String getMethod() {
+            return this.method;
+        }
+        public void setMethod(String method) {
+            this.method = method;
         }
 
         @Pattern(regexp = "(menu|page|button)")

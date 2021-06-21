@@ -52,7 +52,7 @@ public class CourseCrud {
         }
 
         @NotNull
-        @Pattern(regexp = "\\w{2,}")
+        @Pattern(regexp = "(\\w|\\p{sc=Han}){2,}")
         private String courseName;
         public String getCourseName() {
             return this.courseName;
@@ -88,7 +88,7 @@ public class CourseCrud {
             this.courseExId = courseExId;
         }
 
-        @Pattern(regexp = "\\w{2,}")
+        @Pattern(regexp = "(\\w|\\p{sc=Han}){2,}")
         private String courseName;
         public String getCourseName() {
             return this.courseName;
