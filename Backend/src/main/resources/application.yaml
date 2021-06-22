@@ -25,6 +25,7 @@ logging:
 
 jwt:
   secret: helloworld
+  aliveTimeFrame_second: 1800
 
 # using environment variable
 # AliyunAccessKeyId: 
