@@ -1,28 +1,28 @@
 
 <div class="tree-container">
-  <div [class]="'properties ' + (menu.enabled ? 'entry-enabled' : '')">
+  <div [class]="'properties ' + (menu?.enabled ? 'entry-enabled' : '')">
     <div class="toggle">
       <div class="toggle-icon-hidden" *ngIf='!hasChild'></div>
       <div class="toggle-icon" *ngIf='hasChild &&  show' (click)='closeSubmenu()'><nb-icon icon='chevron-down-outline'></nb-icon></div>
       <div class="toggle-icon" *ngIf='hasChild && !show' (click)='openSubmenu()' ><nb-icon icon='chevron-right-outline'></nb-icon></div>
     </div>
     <div class="type-icon"><nb-icon [icon]='icon'></nb-icon></div>
-    <div class="name"> {{ menu.permEntryName }} </div>
-    <div class="link"> {{ menu.BaseDescriptor }} </div>
+    <div class="name"> {{ menu?.permEntryName }} </div>
+    <div class="link"> {{ menu?.BaseDescriptor }} </div>
     <div class="take-space"></div>
     <div class="buttons" *ngIf='roleName'>
-      <button *ngIf='!menu.enabled' nbButton shape='semi-round' status='primary' outline
+      <button *ngIf='!menu?.enabled' nbButton shape='semi-round' status='primary' outline
               (click)='enablePerm()'
               [nbSpinner]="loadingStatus.enableIsLoading" nbSpinnerStatus="info" nbSpinnerSize="large">启用</button>
-      <button *ngIf=' menu.enabled' nbButton shape='semi-round' status='danger' outline
+      <button *ngIf=' menu?.enabled' nbButton shape='semi-round' status='danger' outline
               (click)='disablePerm()'
               [nbSpinner]="loadingStatus.disableIsLoading" nbSpinnerStatus="info" nbSpinnerSize="large">禁用</button>
       <button nbButton shape='semi-round' status='primary' outline
               (click)='enableRecurPerm()'
-              [nbSpinner]="loadingStatus.enableRecurIsLoading" nbSpinnerStatus="info" nbSpinnerSize="large" [disabled]='menu.enabledRecursively'>启用所有子项</button>
+              [nbSpinner]="loadingStatus.enableRecurIsLoading" nbSpinnerStatus="info" nbSpinnerSize="large" [disabled]='menu?.enabledRecursively'>启用所有子项</button>
       <button nbButton shape='semi-round' status='primary' outline
               (click)='disableRecurPerm()'
-              [nbSpinner]="loadingStatus.disableRecurIsLoading" nbSpinnerStatus="info" nbSpinnerSize="large" [disabled]='menu.disabledRecursively'>禁用所有子项</button>
+              [nbSpinner]="loadingStatus.disableRecurIsLoading" nbSpinnerStatus="info" nbSpinnerSize="large" [disabled]='menu?.disabledRecursively'>禁用所有子项</button>
     </div>
     <div class="buttons" *ngIf='!roleName'>
       <button nbButton (click)='showRoleList()' shape='semi-round' status='primary' outline
@@ -33,6 +33,6 @@
   </div>
 
   <div [class]="'children ' + (show ? 'children-show' : '')" *ngIf='hasChild'>
-    <ngx-menu-tree *ngFor='let subMenu of menu.children' [menu]='subMenu' [roleName]='roleName'></ngx-menu-tree>
+    <ngx-menu-tree *ngFor='let subMenu of menu.children || []' [menu]='subMenu' [roleName]='roleName'></ngx-menu-tree>
   </div>
 </div>

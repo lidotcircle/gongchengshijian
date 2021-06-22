@@ -10,6 +10,9 @@ export class PermMenu {
     children: PermMenu[];
     enabled: boolean = true;
 
+    remark: string;
+    sortOrder: number;
+
     private setEnableStatus(enabled: boolean, recursive: boolean) //{
     {
         this.enabled = enabled;

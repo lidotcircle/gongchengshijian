@@ -34,15 +34,15 @@ export class MenuTreeComponent implements OnInit {
                 private toastrService: NbToastrService) {}
 
     ngOnInit(): void {
-        if(this.menu.entryType == 'page') {
+        if(this.menu?.entryType == 'page') {
             this.icon = 'book-open-outline';
         }
-        if(this.menu.entryType == 'button') {
+        if(this.menu?.entryType == 'button') {
             this.icon = 'radio-button-on-outline';
         }
     }
 
-    get hasChild(): boolean {return this.menu.children && this.menu.children.length > 0;}
+    get hasChild(): boolean {return this.menu?.children && this.menu?.children.length > 0;}
 
     async openSubmenu() {
         this.show = true;

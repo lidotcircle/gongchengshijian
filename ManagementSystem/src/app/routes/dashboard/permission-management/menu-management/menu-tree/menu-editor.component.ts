@@ -6,7 +6,7 @@ import { Pattern } from 'src/app/shared/utils';
 
 @Component({
     template: `
-    <form (ngSubmit)="confirm()" #form="ngForm" aria-labelledby="title">
+    <form #form="ngForm" aria-labelledby="title">
         <div class="kv">
             <div class="key">菜单名称</div>
             <input type="text" required pattern='.{2,}'
@@ -32,6 +32,9 @@ import { Pattern } from 'src/app/shared/utils';
                   <nb-option value="button">按钮</nb-option>
                 </nb-select>
             </div>
+
+            <div class="key">备注</div>
+            <textarea nbInput name='remark' fullWidth [(ngModel)]='menu.remark' rows="5" placeholder='菜单项的说明'></textarea>
         </div>
         <div class="buttons" *ngIf='inEdit'>
             <button nbButton status='warning' (click)="delete()" hero
@@ -99,6 +102,7 @@ export class MenuEditorComponent implements OnInit {
 
         try {
             await this.permMenuService.delete(this.menu.descriptor);
+            this.cancel();
         } catch {
             this.toastrService.danger("删除菜单失败", "菜单管理");
         } finally {
@@ -112,6 +116,7 @@ export class MenuEditorComponent implements OnInit {
         
         try {
             await this.permMenuService.delete(this.menu.descriptor, true);
+            this.cancel();
         } catch {
             this.toastrService.danger("删除菜单失败", "菜单管理");
         } finally {
