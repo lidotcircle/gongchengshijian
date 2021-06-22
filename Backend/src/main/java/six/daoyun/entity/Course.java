@@ -7,6 +7,7 @@ import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -46,7 +47,7 @@ public class Course implements Serializable {
         this.courseName = courseName;
     }
 
-    @Column()
+    @Lob
     private String briefDescription;
     public String getBriefDescription() {
         return this.briefDescription;

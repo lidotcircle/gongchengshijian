@@ -7,6 +7,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -63,7 +64,7 @@ public class DictionaryType implements Serializable {
         this.datas = datas;
     }
 
-    @Column(name = "remark")
+    @Lob
     private String remark;
     public String getRemark() {
         return this.remark;

@@ -6,6 +6,7 @@ import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -71,6 +72,23 @@ public class PermEntry implements Serializable {
     }
     public void setEntryType(String entryType) {
         this.entryType = entryType;
+    }
+
+    @Lob
+    private String remark;
+    public String getRemark() {
+        return this.remark;
+    }
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    private String sortOrder;
+    public String getSortOrder() {
+        return this.sortOrder;
+    }
+    public void setSortOrder(String sortOrder) {
+        this.sortOrder = sortOrder;
     }
 
     @ManyToOne()

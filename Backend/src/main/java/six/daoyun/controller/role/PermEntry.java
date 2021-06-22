@@ -84,6 +84,22 @@ public class PermEntry {
             this.method = method;
         }
 
+        private String remark;
+        public String getRemark() {
+            return this.remark;
+        }
+        public void setRemark(String remark) {
+            this.remark = remark;
+        }
+
+        private String sortOrder;
+        public String getSortOrder() {
+            return this.sortOrder;
+        }
+        public void setSortOrder(String sortOrder) {
+            this.sortOrder = sortOrder;
+        }
+
         @NotNull
         @Pattern(regexp = "(menu|page|button)")
         private String entryType;
@@ -140,6 +156,22 @@ public class PermEntry {
         }
         public void setMethod(String method) {
             this.method = method;
+        }
+
+        private String remark;
+        public String getRemark() {
+            return this.remark;
+        }
+        public void setRemark(String remark) {
+            this.remark = remark;
+        }
+
+        private String sortOrder;
+        public String getSortOrder() {
+            return this.sortOrder;
+        }
+        public void setSortOrder(String sortOrder) {
+            this.sortOrder = sortOrder;
         }
 
         @Pattern(regexp = "(menu|page|button)")

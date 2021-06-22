@@ -68,6 +68,22 @@ public interface RoleService {
         public void setPermEntryName(String permEntryName) {
             this.permEntryName = permEntryName;
         }
+
+        private String remark;
+        public String getRemark() {
+            return this.remark;
+        }
+        public void setRemark(String remark) {
+            this.remark = remark;
+        }
+
+        private int sortOrder;
+        public int getSortOrder() {
+            return this.sortOrder;
+        }
+        public void setSortOrder(int sortOrder) {
+            this.sortOrder = sortOrder;
+        }
     } //}
     public static class PermEntryTree extends PermEntryItem //{
     {
