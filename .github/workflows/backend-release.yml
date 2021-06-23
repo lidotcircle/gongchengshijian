@@ -41,7 +41,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          upload_url: ${{ steps.create_release.output.upload_url }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./Backend/target/daoyun-${{ steps.version.outputs.version }}.jar
           asset_name: daoyun.jar
           asset_content_type: application/java-archive
