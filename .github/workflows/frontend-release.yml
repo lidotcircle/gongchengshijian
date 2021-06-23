@@ -25,7 +25,7 @@ jobs:
         run: pushd ManagementSystem && npm install
       - name: get application version
         id: version
-        run: printf "::set-output name=version::%s\n" "$(cat ManagementSystem/package.json | sed '/^  .version/!d;s/^.*: .//g;s/[^[:digit:]\.].*$//g')"
+        run: printf "::set-output name=version::%s\n" "$(echo 1.0.0)"
       - name: release name
         id: release
         run: |
