@@ -20,8 +20,8 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
       - name: setup maven
-        run: apt install maven
-      - name: sudo get application version
+        run: sudo apt install maven
+      - name: get application version
         id: version
         run: printf "::set-output name=version::%s\n" "$(cat Backend/pom.xml | sed '/^  <version/!d;s/[ ]*<\/\?version>//g')"
       - name: build application
