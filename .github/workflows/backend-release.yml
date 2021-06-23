@@ -9,7 +9,7 @@ on:
 
 jobs:
   build_jar_release:
-    if: "contains(github.event.head_commit.message, '*CI*')"
+    if: "contains(github.event.head_commit.message, '*CI*') || startsWith(github.ref, 'refs/tags')"
     runs-on: ubuntu-18.04
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -28,7 +28,7 @@ jobs:
       - name: release name
         id: release
         run: |
-          branch=$(echo ${{github.ref}} | sed 's/refs\/heads\///g') && \
+          branch=$(echo ${{github.ref}} | sed 's/refs\/\(heads\|tags\)\///g') && \
             release=$([[ "$branch" =~ v[\d\.]+ ]] && echo $branch || echo "$branch-${{ steps.version.outputs.version }}") && \
             echo "release_name=$release" && \
             printf "::set-output name=release::%s\n" "$release"
