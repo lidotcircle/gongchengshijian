@@ -1,0 +1,59 @@
+
+name: Daoyun Frontend
+on:
+  push:
+    branches:
+      - frontend
+    tags:
+      - v[0-9]+.[0-9]+(.[0-9])?
+
+jobs:
+  build_static_files:
+    if: "contains(github.event.head_commit.message, '*CI*') || startsWith(github.ref, 'refs/tags')"
+    runs-on: ubuntu-18.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      release: ${{ steps.release.outputs.release }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+      - name: install angular
+        run: sudo npm -g install @angular/cli@10.2.0
+      - name: install npm dependencies
+        run: pushd ManagementSystem && npm install
+      - name: get application version
+        id: version
+        run: printf "::set-output name=version::%s\n" "$(cat ManagementSystem/package.json | grep -se 'version' | grep -soe '[[:digit:]\.]*')"
+      - name: release name
+        id: release
+        run: |
+          branch=$(echo ${{github.ref}} | sed 's/refs\/\(heads\|tags\)\///g') && \
+            release=$([[ "$branch" =~ v[\d\.]+ ]] && echo $branch || echo "$branch-${{ steps.version.outputs.version }}") && \
+            echo "release_name=$release" && \
+            printf "::set-output name=release::%s\n" "$release"
+      - name: build application
+        run: |
+          pushd ManagementSystem && ng build --prod && \
+          tar -caf dist.tar.gz dist && popd
+      - name: release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${{ steps.release.outputs.release }}
+          tag_name: ${{ steps.release.outputs.release }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: upload
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./ManagementSystem/dist.tar.gz
+          asset_name: dist.tar.gz
+          asset_content_type: application/gzip
+

@@ -1,10 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbMediaBreakpointsService, NbMenuService, NbSidebarService, NbThemeService } from '@nebular/theme';
 
-import { UserData } from '../../../@core/data/users';
 import { LayoutService } from '../../../@core/utils';
-import { map, takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { UserService } from 'src/app/service/user/user.service';
+import { User } from 'src/app/entity/User';
+import { AuthService } from 'src/app/service/auth';
 
 @Component({
   selector: 'ngx-header',
@@ -15,7 +17,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private destroy$: Subject<void> = new Subject<void>();
   userPictureOnly: boolean = false;
-  user: any;
+  user: User;
 
   themes = [
     {
@@ -43,7 +45,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(private sidebarService: NbSidebarService,
               private menuService: NbMenuService,
               private themeService: NbThemeService,
-              private userService: UserData,
+              private userService: UserService,
+              private authService: AuthService,
               private layoutService: LayoutService,
               private breakpointService: NbMediaBreakpointsService) {
   }
@@ -51,9 +54,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.currentTheme = this.themeService.currentTheme;
 
-    this.userService.getUsers()
+    this.userService.getUser()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((users: any) => this.user = users.zhangsan);
+      .subscribe(user => this.user = user);
+
+    this.menuService.onItemClick()
+      .pipe(takeUntil(this.destroy$))
+      .pipe(filter(({ tag }) => tag == 'user-click'))
+      .subscribe(async ({ item: {title} }) => {
+          if(title == '退出') {
+              await this.authService.logout();
+              window.location.reload();
+          }
+      });
 
     const { xl } = this.breakpointService.getBreakpointsMap();
     this.themeService.onMediaQueryChange()

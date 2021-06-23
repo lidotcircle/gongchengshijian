@@ -1,10 +1,9 @@
 <ngx-dashboard-header title='角色列表'></ngx-dashboard-header>
 
 <nb-card>
-    <nb-card-body [class]='recordLength == 0 ? "record-length-equal-zero" : ""'>
+    <nb-card-body [class]='source.count() == 0 ? "record-length-equal-zero" : ""'>
         <ng2-smart-table [settings]="settings" [source]="source"
             (createConfirm)="onCreateConfirm($event)"
-            (editConfirm)="onEditConfirm($event)"
             (deleteConfirm)="onDeleteConfirm($event)" 
             #datatable>
         </ng2-smart-table>

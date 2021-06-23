@@ -1,13 +1,13 @@
 {
-  "name": "ngx-admin",
-  "version": "7.0.0",
+  "name": "daoyun",
+  "version": "1.0.0",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/akveo/ngx-admin.git"
+    "url": "https://github.com/N1ckstrong/gongchengshijian.git"
   },
   "bugs": {
-    "url": "https://github.com/akveo/ngx-admin/issues"
+    "url": "https://github.com/N1ckstrong/gongchengshijian/issues"
   },
   "scripts": {
     "ng": "ng",
@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@akveo/ng2-completer": "^9.0.1",
+    "@angular-builders/custom-webpack": "^11.1.1",
     "@angular/animations": "^11.0.9",
     "@angular/cdk": "11.0.4",
     "@angular/common": "^11.0.9",
@@ -63,6 +64,7 @@
     "ng2-ckeditor": "^1.2.9",
     "ng2-smart-table": "^1.6.0",
     "ngx-echarts": "^4.2.2",
+    "ngx-pagination": "^5.0.0",
     "node-sass": "^4.12.0",
     "normalize.css": "6.0.0",
     "pace-js": "1.0.2",
@@ -103,11 +105,13 @@
     "karma-jasmine-html-reporter": "^1.5.0",
     "npm-run-all": "4.0.2",
     "protractor": "~7.0.0",
+    "raw-loader": "^4.0.2",
     "rimraf": "2.6.1",
     "stylelint": "7.13.0",
     "ts-node": "3.2.2",
     "tslint": "~6.1.0",
     "tslint-language-service": "^0.9.9",
-    "typescript": "4.0.5"
+    "typescript": "4.0.5",
+    "url-loader": "^4.1.1"
   }
 }

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
+import { concatMap, map, tap } from 'rxjs/operators';
 import { User } from 'src/app/entity/User';
 import { AuthService } from '../auth';
 import { RESTfulAPI } from '../restful';
@@ -13,32 +14,29 @@ import { LocalStorageService, SessionStorageService, StorageKeys } from '../stor
 export class UserService {
     private userSub: Subject<User>;
     private user: User;
-    public getUser(): Observable<User> {return this.userSub;}
-
-    constructor(private authService: AuthService,
-                private http: HttpClient) {
-        this.userSub = new Subject();
-
-        this.authService.JwtClaim.subscribe(async (claim) => {
-            if(!claim) {
-                this.user = null;
-                this.trigger();
-            } else {
-                try {
-                    const info = await this.http.get(RESTfulAPI.User.info).toPromise();
-                    this.user = Object.create(User.prototype, Object.getOwnPropertyDescriptors(info));
-                } catch {
-                    this.user = null;
-                } finally {
-                    this.trigger();
-                }
+    public getUser(): Observable<User> {
+        return new Observable(subscriber => {
+            if(this.user) {
+                subscriber.next(this.user);
             }
-        });
 
-        this.authService.trigger();
+            return this.userSub.subscribe(subscriber);
+        });
     }
 
-    trigger() {
+    constructor(private authService: AuthService,
+                private http: HttpClient) 
+    {
+        this.userSub = new Subject();
+
+        this.authService.getJwtClaim()
+            .pipe(concatMap(() => this.http.get(RESTfulAPI.User.info)))
+            .pipe(map(value => Object.create(User.prototype, Object.getOwnPropertyDescriptors(value))))
+            .pipe(tap(user => this.user = user))
+            .subscribe(this.userSub);
+    }
+
+    private trigger() {
         this.userSub.next(this.user);
     }
 

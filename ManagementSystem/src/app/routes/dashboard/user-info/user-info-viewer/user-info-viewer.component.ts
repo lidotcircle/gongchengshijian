@@ -9,6 +9,7 @@ import { UserService } from 'src/app/service/user/user.service';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window.component';
 import { computeDifference, Pattern } from 'src/app/shared/utils';
 import { PrivEditWindowComponent } from './priv-edit-window.component';
+import { ProfilePhotoUploadComponent } from './profile-photo-upload.component';
 
 
 @Component({
@@ -25,17 +26,19 @@ export class UserInfoViewerComponent implements OnInit, OnDestroy {
     constructor(private userService: UserService,
                 private toastService: NbToastrService,
                 private windowService: NbWindowService) {
+        this.user = new User();
+        this.updatedUser = new User();
+
         this.userService.getUser()
         .pipe(takeUntil(this.destroy$))
         .subscribe(user => {
             this.user = user || new User();
-            this.updatedUser = Object.assign({}, this.user);
+            this.updatedUser = Object.create(User.prototype, Object.getOwnPropertyDescriptors(this.user));
+
             if(this.user.birthday != null) {
                 this.birthday = new Date(this.user.birthday);
             }
         });
-
-        this.userService.trigger();
     }
 
     ngOnDestroy(): void {
@@ -54,6 +57,7 @@ export class UserInfoViewerComponent implements OnInit, OnDestroy {
         this.inEdit = true;
     }
 
+    inSavingUserinfo: boolean = false;
     async gotoInfoView() {
         this.updatedUser.birthday = this.birthday?.getTime() || this.updatedUser.birthday;
         const diff = computeDifference(this.updatedUser, this.user);
@@ -67,7 +71,15 @@ export class UserInfoViewerComponent implements OnInit, OnDestroy {
             const confirmed = win.config.context['isConfirmed'];
 
             if(confirmed) {
-                await this.userService.updateUser(diff);
+                try {
+                    this.inSavingUserinfo = true;
+                    await this.userService.updateUser(diff);
+                } catch {
+                    this.toastService.show("保存用户信息失败", "保存", {status: 'danger'});
+                    return;
+                } finally {
+                    this.inSavingUserinfo = false;
+                }
             } else {
                 return;
             }
@@ -151,12 +163,26 @@ export class UserInfoViewerComponent implements OnInit, OnDestroy {
         }
     }
 
-    get roles(): string {
-        if(!this.user.roles || this.user.roles.length == 0) {
-            return "无";
-        } else {
-            return this.user.roles.join(', ');
+    async editProfilePhoto() {
+        const win = this.windowService.open(ProfilePhotoUploadComponent, {
+            title: '修改头像',
+            context: {
+                photo: this.user.photo
+            }
+        });
+        await win.onClose.toPromise();
+
+        if(win.config.context['isConfirmed']) {
+            const photo = win.config.context['photo'];
+
+            try {
+                await this.userService.updateUser({photo: photo});
+                this.toastService.show('修改头像成功', '头像', {status: 'info'});
+            } catch {
+                this.toastService.show('修改头像失败', '头像', {status: 'danger'});
+            }
         }
+
     }
 }
 

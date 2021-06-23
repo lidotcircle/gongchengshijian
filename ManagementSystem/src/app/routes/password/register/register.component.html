@@ -19,25 +19,26 @@
   <div class="form-control-group">
     <label class="label" for="input-name">用户名:</label>
     <input nbInput
-           [(ngModel)]="user.fullName"
-           #fullName="ngModel"
+           [(ngModel)]="user.userName"
+           #userName="ngModel"
            id="input-name"
-           name="fullName"
+           name="userName"
            placeholder="用户名"
            autofocus
+           pattern='[a-zA-Z]\w{2,31}'
            fullWidth
            fieldSize="large"
-           [status]="fullName.dirty ? (fullName.invalid  ? 'danger' : 'success') : 'basic'"
+           [status]="userName.dirty ? (userName.invalid  ? 'danger' : 'success') : 'basic'"
            required
            minlength="2"
            maxlength="32"
-           [attr.aria-invalid]="fullName.invalid && fullName.touched ? true : null">
-    <ng-container *ngIf="fullName.invalid && fullName.touched">
-      <p class="caption status-danger" *ngIf="fullName.errors?.required">
+           [attr.aria-invalid]="userName.invalid && userName.touched ? true : null">
+    <ng-container *ngIf="userName.invalid && userName.touched">
+      <p class="caption status-danger" *ngIf="userName.errors?.required">
       用户名是必须的
       </p>
-      <p class="caption status-danger" *ngIf="fullName.errors?.minlength || fullName.errors?.maxlength">
-      请输入正确的用户名, 用户名需为2-32字节长
+      <p class="caption status-danger" *ngIf="userName.errors?.minlength || userName.errors?.maxlength">
+      请输入正确的用户名, 用户名为英文字符数字下划线, 且首字符为英文字符, 用户名需为3-32字节长
       </p>
     </ng-container>
   </div>
@@ -49,7 +50,7 @@
            #phone="ngModel"
            id="input-phone"
            name="phone"
-           pattern=".+@.+..+"
+           pattern="1[3456789]\d{9}"
            placeholder="手机号码"
            fullWidth
            fieldSize="large"
@@ -70,33 +71,43 @@
       <label class="label" for="input-code">验证码:</label>
       <div class="input-button">
           <input nbInput
-                 [(ngModel)]="user.validationCode"
-                 #validationCode="ngModel"
-                 id="input-validationCode"
-                 name="validationCode"
+                 [(ngModel)]="user.messageCode"
+                 #messageCode="ngModel"
+                 id="input-messageCode"
+                 name="messageCode"
                  pattern="\d{6}"
                  placeholder="验证码"
                  autofocus
                  fullWidth
                  fieldSize="large"
-                 [status]="validationCode.dirty ? (validationCode.invalid  ? 'danger' : 'success') : 'basic'"
+                 [status]="messageCode.dirty ? (messageCode.invalid  ? 'danger' : 'success') : 'basic'"
                  required
-                 [attr.aria-invalid]="validationCode.invalid && validationCode.touched ? true : null">
+                 [attr.aria-invalid]="messageCode.invalid && messageCode.touched ? true : null">
 
-          <button nbButton
+          <button ngHcaptchaInvisibleButton [captchaEnabled]='requireCaptcha'
+                  (verify)='onVerify($event)' 
+                  (expired)='onExpired($event)' 
+                  (error)='onError($event)'
+                  nbButton
                   fullWidth
+                  type='button'
                   status="primary"
                   size="large"
-                  [disabled]="submitted || !phone.valid"
-                  [class.btn-pulse]="submitted">
-              获取验证码
+                  (click)="sendMessage()"
+                  [disabled]="messageWaiting!=0 || !phone.valid">
+              <div style='min-width: 5em; text-align: center;' *ngIf='messageWaiting==0'>
+                获取验证码
+              </div>
+              <div style='min-width: 5em; text-align: center;' *ngIf='messageWaiting!=0'>
+                {{ WaitText }}
+              </div>
           </button>
       </div>
-      <ng-container *ngIf="validationCode.invalid && validationCode.touched">
-          <p class="caption status-danger" *ngIf="validationCode.errors?.required">
+      <ng-container *ngIf="messageCode.invalid && messageCode.touched">
+          <p class="caption status-danger" *ngIf="messageCode.errors?.required">
           请输入验证码
           </p>
-          <p class="caption status-danger" *ngIf="validationCode.errors?.pattern">
+          <p class="caption status-danger" *ngIf="messageCode.errors?.pattern">
           请输入合法的验证码
           </p>
       </ng-container>
@@ -130,7 +141,7 @@
   <div class="form-control-group">
     <label class="label" for="input-re-password">确认密码:</label>
     <input nbInput
-           [(ngModel)]="user.confirmPassword"
+           [(ngModel)]="confirmPassword"
            #rePass="ngModel"
            type="password"
            id="input-re-password"
@@ -141,11 +152,11 @@
            [status]="rePass.dirty ? (rePass.invalid || password.value != rePass.value  ? 'danger' : 'success') : 'basic'"
            required
            [attr.aria-invalid]="rePass.invalid && rePass.touched ? true : null">
-    <ng-container *ngIf="rePass.invalid && rePass.touched">
+    <ng-container *ngIf="rePass.touched">
       <p class="caption status-danger" *ngIf="rePass.errors?.required">
       请输入确认密码
       </p>
-      <p class="caption status-danger" *ngIf="password.value != rePass.value && !rePass.errors?.required">
+      <p class="caption status-danger" *ngIf="user.password != confirmPassword && !rePass.errors?.required">
       确认密码与密码不符
       </p>
     </ng-container>
@@ -161,7 +172,7 @@
           fullWidth
           status="primary"
           size="large"
-          [disabled]="submitted || !form.valid"
+          [disabled]="!form.valid || user.password != confirmPassword"
           [class.btn-pulse]="submitted">
       注册
   </button>

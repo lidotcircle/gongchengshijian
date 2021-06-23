@@ -2,5 +2,18 @@
 
 ngx-parameter-list {
     @include TableIsEmpty()
+
+    table thead th {
+        text-align: center;
+    }
+
+    table th:last-child {
+        width: 8em;
+        text-align: center;
+    }
+
+    tbody tr {
+        height: 3.5em;
+    }
 }
 

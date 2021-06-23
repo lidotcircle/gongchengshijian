@@ -1,8 +1,17 @@
 
 <ngx-dashboard-header title='系统参数'></ngx-dashboard-header>
 
+<nb-card accent='primary'>
+  <nb-card-header>
+    系统参数数量: {{ source.count() }}
+  </nb-card-header>
+  <nb-card-body>
+    <app-search-bar (searchinput)='onsearchinput($event)' (searchenter)='onsearchenter($event)'></app-search-bar>
+  </nb-card-body>
+</nb-card>
+
 <nb-card>
-    <nb-card-body [class]='recordLength == 0 ? "record-length-equal-zero" : ""'>
+    <nb-card-body [class]='!source.count() ? "record-length-equal-zero" : ""'>
         <ng2-smart-table [settings]="settings" [source]="source"
             (createConfirm)="onCreateConfirm($event)"
             (editConfirm)="onEditConfirm($event)"

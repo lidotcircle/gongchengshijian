@@ -1,6 +1,7 @@
 
 ManagementSystem/node_modules
 ManagementSystem/package-lock.json
+ManagementSystem/dist/**
 
 Backend/target/*
 Backend/.settings/*

@@ -1,0 +1,20 @@
+
+<div class="outline">
+    <div class="search-row">
+        <div class="icon"><nb-icon icon='search-outline'></nb-icon></div>
+        <input class="input" type="text" [(ngModel)]='inputvalue' name='invalue' 
+               (input)='oninput($event)' (keyup)='onkeyup($event)' (blur)='onblur()' #invalue>
+        <div *ngIf='inputvalue.length > 0' class="close" (click)='onclear()'><nb-icon icon='close-outline'></nb-icon></div>
+    </div>
+    <div class="hints" *ngIf='hints.length > 0'>
+        <div class="divider"></div>
+
+        <div class="hint" *ngFor='let hint of hints; let i = index;'>
+            <div class="hint-wrapper" (mousedown)='onhintclick(i)'>
+                <div class="query-icon"><nb-icon icon='star-outline'></nb-icon></div>
+                <div class="message"> {{ hint }} </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { NbActionsModule, NbAlertModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbDatepickerModule, NbIconModule, NbInputModule, NbLayoutModule, NbListModule, NbRadioModule, NbSelectModule, NbUserModule } from '@nebular/theme';
+import { NbActionsModule, NbAlertModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbDatepickerModule, NbIconModule, NbInputModule, NbLayoutModule, NbListModule, NbRadioModule, NbSelectModule, NbSpinnerModule, NbTimepickerModule, NbUserModule } from '@nebular/theme';
 import { ThemeModule } from '../@theme/theme.module';
 import { DashboardHeaderComponent } from './components/dashboard-header/dashboard-header.component';
 import { ComponentsModule } from './components/components.module';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { InterceptorProviders } from '../core/http';
 
 
 @NgModule({
@@ -21,7 +22,9 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
         Ng2SmartTableModule,
         ThemeModule,
         NbDatepickerModule,
+        NbTimepickerModule,
         NbActionsModule,
+        NbSpinnerModule,
         NbSelectModule,
         NbListModule,
         NbLayoutModule,
@@ -34,6 +37,9 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
         NbButtonModule,
         NbCheckboxModule,
         ComponentsModule,
+    ],
+    providers: [
+        ...InterceptorProviders
     ]
 })
 export class SharedModule { }

@@ -21,9 +21,12 @@ export class ButtonsCellComponent implements ViewCell, OnInit {
     }
 
     async nav() {
-        await this.router.navigate(['/daoyun/dashboard/permission-management/menu'], {queryParams: {
-            roleName: this.rowData.roleName
-        }});
+        await this.router.navigate(['../menu'], {
+            relativeTo: this.activatedRouter,
+            queryParams: {
+                roleName: this.rowData.roleName
+            }
+        });
     }
 }
 

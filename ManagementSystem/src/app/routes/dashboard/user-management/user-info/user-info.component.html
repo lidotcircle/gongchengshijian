@@ -3,7 +3,7 @@
 
 <nb-card [class]='inEdit ? "in-edit" : ""'>
   <nb-card-header>
-    <nb-user [name]='user?.nickname || user?.name' [picture]='user?.picture'></nb-user>
+    <nb-user [name]='user?.userName' [picture]='user?.photo'></nb-user>
     <div class="editing-mode">
       <button nbButton status='primary' shape='round' size='tiny' outline>编辑头像</button>
     </div>
@@ -12,88 +12,86 @@
   <nb-card-body>
     <div class="user-info-list">
       <div class="user-info-field">姓名</div>
-      <div class="user-info-value viewing-mode">张三</div>
+      <div class="user-info-value viewing-mode">{{ user.name }}</div>
       <div class="user-info-value editing-mode">
-        <input type="text" nbInput fullWidth shape="rectangle" placeholder="姓名">
+        <input type="text" [(ngModel)]="updatedUser.name" nbInput fullWidth shape="rectangle" placeholder="姓名">
       </div>
 
       <div class="user-info-field">角色</div>
-      <div class="user-info-value viewing-mode">
-        <div class="roles">
-          <div class="role">
-            管理员
-          </div>
-        </div>
-      </div>
+      <div class="user-info-value viewing-mode">{{ user?.Roles }}</div>
       <div class="user-info-value editing-mode">
-        <div class="roles">
-          <div class="role">
-            管理员
-          </div>
-        </div>
-        <nb-select selected="1">
-          <nb-option value="1">管理员</nb-option>
-          <nb-option value="2">教师</nb-option>
+        <div class="roles"><div class="role" style='white-space: nowrap; font-size: 0.6em;'>{{ updatedUser?.Roles }}</div></div>
+        <nb-select [(ngModel)]="selectedRoleIndex">
+          <nb-option *ngFor="let role of (roleList || []); let i=index" value="{{ i }}"> {{ role }}</nb-option>
         </nb-select>
-        <button nbButton shpae='semi-round' status='primary' size='small' outline>添加</button>
-        <button nbButton shpae='semi-round' status='danger' size='small' outline>移除</button>
+        <button nbButton shpae='semi-round' [disabled]='!canAdd' 
+                (click)='addRole()' status='primary' size='small' outline>添加</button>
+        <button nbButton shpae='semi-round' [disabled]='!canDel' 
+                (click)='delRole()' status='danger'  size='small' outline>移除</button>
       </div>
 
       <div class="user-info-field">性别</div>
-      <div class="user-info-value viewing-mode">男</div>
+      <div class="user-info-value viewing-mode">{{ user?.Gender }}</div>
       <div class="user-info-value editing-mode">
-        <input type="text" nbInput fullWidth shape="rectangle" placeholder="性别">
+        <nb-select fullWidth [(ngModel)]="updatedUser.gender">
+          <nb-option value="male">男</nb-option>
+          <nb-option value="female">女</nb-option>
+          <nb-option value="unknown">隐藏</nb-option>
+        </nb-select>
       </div>
 
       <div class="user-info-field">出生日期</div>
-      <div class="user-info-value viewing-mode">1999-09-09</div>
+      <div class="user-info-value viewing-mode">{{ user?.Birthday }}</div>
       <div class="user-info-value editing-mode">
-        <input type="text" nbInput fullWidth shape="rectangle" placeholder="出生日期">
+        <input nbInput fullWidth shape="rectangle" [(ngModel)]="birthday"
+                                 placeholder="出生日期"
+                                 [nbDatepicker]="datepicker">
+        <nb-datepicker #datepicker></nb-datepicker>
       </div>
 
       <div class="user-info-field">学工号</div>
-      <div class="user-info-value viewing-mode">10101010</div>
+      <div class="user-info-value viewing-mode">{{ user?.studentTeacherId }}</div>
       <div class="user-info-value editing-mode">
-        <input type="text" nbInput fullWidth shape="rectangle" placeholder="学工号">
+        <input type="text" [(ngModel)]="updatedUser.studentTeacherId" nbInput fullWidth shape="rectangle" placeholder="学工号">
       </div>
 
       <div class="user-info-field">学校</div>
-      <div class="user-info-value viewing-mode">福州大学</div>
+      <div class="user-info-value viewing-mode">{{ user?.school }}</div>
       <div class="user-info-value editing-mode">
-        <input type="text" nbInput fullWidth shape="rectangle" placeholder="学校">
+        <input type="text" [(ngModel)]="updatedUser.school" nbInput fullWidth shape="rectangle" placeholder="学校">
       </div>
 
       <div class="user-info-field">院系</div>
-      <div class="user-info-value viewing-mode">数学与计算机科学学院</div>
+      <div class="user-info-value viewing-mode">{{ user?.college }}</div>
       <div class="user-info-value editing-mode">
-        <input type="text" nbInput fullWidth shape="rectangle" placeholder="院系">
+        <input type="text" [(ngModel)]="updatedUser.college" nbInput fullWidth shape="rectangle" placeholder="院系">
       </div>
 
       <div class="user-info-field">专业</div>
-      <div class="user-info-value viewing-mode">电子信息</div>
+      <div class="user-info-value viewing-mode">{{ user?.major }}</div>
       <div class="user-info-value editing-mode">
-        <input type="text" nbInput fullWidth shape="rectangle" placeholder="专业">
+        <input type="text" [(ngModel)]="updatedUser.major" nbInput fullWidth shape="rectangle" placeholder="专业">
       </div>
     </div>
 
     <div class="user-info-list user-secret-info-list">
       <div class="user-info-field">手机</div>
-      <div class="user-info-value viewing-mode">13344556677</div>
+      <div class="user-info-value viewing-mode">{{ user?.phone }}</div>
       <div class="user-info-value editing-mode">
-        <input type="text" nbInput fullWidth shape="rectangle" placeholder="手机">
+        <input type="text" [(ngModel)]="updatedUser.phone" nbInput fullWidth shape="rectangle" placeholder="手机">
       </div>
 
 
       <div class="user-info-field">邮箱</div>
-      <div class="user-info-value viewing-mode">good@gmail.com</div>
+      <div class="user-info-value viewing-mode">{{ user?.email }}</div>
       <div class="user-info-value editing-mode">
-        <input type="text" nbInput fullWidth shape="rectangle" placeholder="邮箱">
+        <input type="text" [(ngModel)]="updatedUser.email" nbInput fullWidth shape="rectangle" placeholder="邮箱">
       </div>
 
       <div class="user-info-field">密码</div>
       <div class="user-info-value viewing-mode">••••••••</div>
       <div class="user-info-value editing-mode">
-        <input type="text" nbInput fullWidth shape="rectangle" placeholder="密码">
+        <input type="text" [(ngModel)]="password" nbInput fullWidth shape="rectangle" placeholder="密码">
       </div>
     </div>
   </nb-card-body>
@@ -108,8 +106,9 @@
 
     <div class="editing-mode">
       <div class="footer-buttons">
-        <div></div>
         <button nbButton status='primary' hero (click)='gotoInfoView()'>保存用户信息</button>
+        <div></div>
+        <button nbButton status='warning' hero (click)='cancelAndGotoInfoView()'>取消保存</button>
       </div>
     </div>
   </nb-card-footer>

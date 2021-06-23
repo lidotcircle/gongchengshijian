@@ -2,6 +2,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ViewCell } from 'ng2-smart-table';
+import { DictionaryType } from 'src/app/entity';
 
 @Component({
     template: `
@@ -12,13 +13,18 @@ export class ClickCellComponent implements ViewCell, OnInit {
     constructor(private router: Router, private activatedRouter: ActivatedRoute) {}
 
     @Input() value: string | number;
-    @Input() rowData: any;
+    @Input() rowData: DictionaryType;
 
     ngOnInit() {
     }
 
     async gotoDict() {
-        await this.router.navigateByUrl('/daoyun/dashboard/data-dictionary/dict-info');
+        await this.router.navigate(['../dict-info'], {
+            relativeTo: this.activatedRouter,
+            queryParams: {
+                typeCode: this.rowData.typeCode
+            },
+        });
     }
 }
 

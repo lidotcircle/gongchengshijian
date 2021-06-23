@@ -2,7 +2,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ViewCell } from 'ng2-smart-table';
-import { ICommonUser } from 'src/app/shared/utils';
+import { User } from 'src/app/entity/User';
 
 @Component({
     template: `
@@ -13,13 +13,18 @@ export class ClickCellComponent implements ViewCell, OnInit {
     constructor(private router: Router, private activatedRouter: ActivatedRoute) {}
 
     @Input() value: string | number;
-    @Input() rowData: ICommonUser;
+    @Input() rowData: User;
 
     ngOnInit() {
     }
 
     async gotoUserInfo() {
-        await this.router.navigateByUrl('/daoyun/dashboard/user-management/user-info');
+        await this.router.navigate(['../user-info'], {
+            relativeTo: this.activatedRouter,
+            queryParams: {
+                userName: this.rowData.userName,
+            }
+        });
     }
 }
 

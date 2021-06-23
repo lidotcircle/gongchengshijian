@@ -15,6 +15,24 @@
             border: none;
         }
 
+        tr[ng2-st-thead-form-row] td:nth-child(#{$nth}) {
+            visibility: hidden;
+            border: none;
+        }
+
+        thead th {
+            text-align: center;
+        }
+
+        tbody tr {
+            height: 3.5em;
+        }
+
+        th:last-child {
+            width: 8em;
+            text-align: center;
+        }
+
         tbody tr td:nth-child(#{$nth}) {
             background: nb-theme(background-basic-color-1);
             border: none;

@@ -2,18 +2,18 @@
 
 <nb-card accent='primary'>
   <nb-card-body>
-    <div class="user-info-list">
-      <div class="user-info-field required">课程名</div>
-      <div class="user-info-value">
-        <input type="text" nbInput fullWidth shape="rectangle" placeholder="">
+    <div class="block">
+      <div class="key required">课程名</div>
+      <div class="value">
+        <input type="text" nbInput fullWidth [(ngModel)]="course.courseName" shape="rectangle" placeholder="课程名, 至少两个字符">
       </div>
+    </div>
 
-      <div></div>
-      <div></div>
-
-      <div class="user-info-field">课程介绍</div>
-      <div class="user-info-value textarea">
-        <textarea nbInput fullWidth></textarea>
+    <div class="block">
+      <div class="key">课程介绍</div>
+      <div class="value textarea">
+        <textarea nbInput fullWidth [(ngModel)]="course.briefDescription"
+                  placeholder="A JSON description of this course"></textarea>
       </div>
     </div>
   </nb-card-body>

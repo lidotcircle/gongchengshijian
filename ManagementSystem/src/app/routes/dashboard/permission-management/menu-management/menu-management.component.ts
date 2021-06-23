@@ -1,9 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
+import { NbToastrService, NbWindowService } from '@nebular/theme';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { concatMap, map, takeUntil, tap } from 'rxjs/operators';
 import { PermMenu } from 'src/app/entity';
-import { MenuService } from './menu.service';
+import { PermMenuService } from 'src/app/service/role/perm-menu.service';
+import { softAssignEnum } from 'src/app/shared/utils';
+import { MenuEditorComponent } from './menu-tree/menu-editor.component';
 
 @Component({
     selector: 'ngx-menu-management',
@@ -14,9 +17,49 @@ export class MenuManagementComponent implements OnInit, OnDestroy {
     private $destroy = new Subject<void>();
     menus: PermMenu[];
     roleName: string;
+    private refreshMe: Subject<void>;
 
-    constructor(private menuservice: MenuService,
-                private activatedRouter: ActivatedRoute) {
+    constructor(private activatedRouter: ActivatedRoute,
+                private permMenuService: PermMenuService,
+                private windowService: NbWindowService,
+                private toastrService: NbToastrService) {
+        this.menus = [];
+        this.refreshMe = new Subject<void>();
+        this.refreshMe
+            .pipe(concatMap(() => this.permMenuService.getTree()))
+            .pipe(concatMap(async (tree) => {
+                if(this.roleName) {
+                    const entries = await this.permMenuService.getEntries(this.roleName);
+                    const ds = new Set<string>();
+                    for(const entry of entries) ds.add(entry.descriptor);
+
+                    const goThroughTree = (node: PermMenu) => {
+                        node.enabled = ds.has(node.descriptor);
+                        for(const cnode of node.children || []) {
+                            goThroughTree(cnode);
+                        }
+                    }
+                    for(const node of tree) {
+                        goThroughTree(node);
+                    }
+                }
+                return tree;
+            }))
+            .subscribe(tree => softAssignEnum(this.menus, tree), error => {
+                this.toastrService.danger("获取权限信息失败", "菜单管理");
+            });
+
+        this.permMenuService.menuDuk
+            .pipe(takeUntil(this.$destroy))
+            .subscribe(this.refreshMe);
+
+        this.activatedRouter.queryParamMap
+            .pipe(takeUntil(this.$destroy))
+            .pipe(tap(params => {
+                this.roleName = params.get('roleName');
+            }))
+            .pipe(map(() => {return;}))
+            .subscribe(this.refreshMe);
     }
 
     ngOnDestroy(): void {
@@ -25,17 +68,30 @@ export class MenuManagementComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.activatedRouter.queryParamMap
-            .pipe(takeUntil(this.$destroy))
-            .subscribe(params => {
-                this.roleName = params.get('roleName');
-            });
+    }
 
-        this.menus = [];
-        this.menuservice.menus
-            .pipe(takeUntil(this.$destroy))
-            .subscribe(menus => this.menus = menus);
-        this.menuservice.refresh();
+    inAdding: boolean = false;
+    async addRootEntry() {
+        if(this.inAdding) return;
+        this.inAdding = true;
+
+        const win = this.windowService.open(MenuEditorComponent, {
+            context: {},
+            title: "添加根节点菜单",
+        });
+
+        try {
+            await win.onClose.toPromise();
+
+            if(win.config.context['isConfirmed']) {
+                const menu = win.config.context['menu'] as PermMenu;
+                await this.permMenuService.create(null, menu);
+            }
+        } catch {
+            this.toastrService.danger("创建菜单失败", "菜单管理")
+        } finally {
+            this.inAdding = false;
+        }
     }
 }
 

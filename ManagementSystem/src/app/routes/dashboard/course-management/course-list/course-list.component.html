@@ -1,5 +1,14 @@
 <ngx-dashboard-header title='班课管理/课程列表'></ngx-dashboard-header>
 
+<nb-card accent='primary'>
+  <nb-card-header>
+    课程数量: {{ total || 0 }}
+  </nb-card-header>
+  <nb-card-body>
+    <app-search-bar (searchinput)='onsearchinput($event)' (searchenter)='onsearchenter($event)'></app-search-bar>
+  </nb-card-body>
+</nb-card>
+
 <nb-card status='primary'>
   <nb-card-header>课程列表</nb-card-header>
   <nb-card-body>
@@ -18,25 +27,36 @@
           课程简述
         </div>
       </nb-list-item>
-      <nb-list-item *ngFor='let course of courses; let i = index;' class='course'>
+      <nb-list-item *ngFor='let course of courses | paginate: {
+          itemsPerPage: pagesize,
+          currentPage: pageno,
+          totalItems: total
+        }' class='course'>
         <div class="course-name">
           {{ course.courseName }}
         </div>
         <div class="teacher">
-          {{ course.teacher }}
+          {{ course.Teacher }}
         </div>
         <div class="course-id">
-          {{ course.courseUID }}
+          {{ course.courseExId }}
         </div>
         <div class="brief-description">
-          {{ course.briefDescription }}
+          {{ course.BriefDescription }}
         </div>
         <div class="buttons">
           <div class="take-space"></div>
-          <button (click)='gotoCourseDetail(i)' nbButton status='primary' hero>查看</button>
+          <button (click)='gotoCourseDetail(course.courseExId)' nbButton status='primary' hero>查看</button>
         </div>
       </nb-list-item>
     </nb-list>
+
+    <div class="pager">
+      <pagination-controls 
+        (pageChange)="pageno = $event"
+        previousLabel="上一页"
+        nextLabel="下一页"></pagination-controls>
+    </div>
   </nb-card-body>
 </nb-card>
 

@@ -1,18 +1,19 @@
 <ngx-dashboard-header title='菜单'></ngx-dashboard-header>
 
 <nb-card status='info'>
-  <nb-card-header *ngIf='roleName'>
-    角色: {{ roleName }}
+  <nb-card-header *ngIf='roleName' class='title'>
+    <div class="key">角色</div>
+    <div class="value">{{ roleName }}</div>
   </nb-card-header>
 
-  <nb-card-header *ngIf='!roleName'>
-    菜单信息查看
+  <nb-card-header *ngIf='!roleName' class='title'>
+    <div class="value">菜单信息查看</div>
+    <div class="take-space"></div>
+    <button nbButton status='primary' hero [nbSpinner]='inAdding' nbSpinnerStatus='info' (click)='addRootEntry()'>添加</button>
   </nb-card-header>
 
   <nb-card-body>
-    <div *ngFor='let menu of menus'>
-      <ngx-menu-tree [menu]='menu' [roleName]='roleName'></ngx-menu-tree>
-    </div>
+    <ngx-menu-tree *ngFor='let menu of menus' [menu]='menu' [roleName]='roleName'></ngx-menu-tree>
   </nb-card-body>
 
   <nb-card-footer>

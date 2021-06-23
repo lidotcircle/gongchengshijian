@@ -3,9 +3,9 @@
 
 <nb-card [class]='inEdit ? "in-edit" : ""'>
     <nb-card-header>
-        <nb-user [name]='user?.name || user?.userName'></nb-user>
+        <nb-user [name]='user?.name || user?.userName' [picture]='user?.Photo'></nb-user>
         <div class="editing-mode">
-            <button nbButton status='primary' shape='round' size='tiny' outline>编辑头像</button>
+            <button nbButton status='primary' shape='round' (click)='editProfilePhoto()' size='tiny' outline>编辑头像</button>
         </div>
     </nb-card-header>
 
@@ -21,7 +21,7 @@
             </div>
 
             <div class="user-info-field">角色</div>
-            <div class="user-info-value">{{ roles }}</div>
+            <div class="user-info-value">{{ user?.Roles }}</div>
 
             <div class="user-info-field">性别</div>
             <div class="user-info-value viewing-mode">{{ user?.Gender }}</div>
@@ -103,7 +103,9 @@
         <div class="editing-mode">
             <div class="footer-buttons">
                 <div></div>
-                <button nbButton status='primary' hero (click)='gotoInfoView()'>保存</button>
+                <button nbButton status='primary' hero (click)='gotoInfoView()'
+                       [nbSpinner]="inSavingUserinfo" nbSpinnerStatus="primary" nbSpinnerSize="large" nbSpinnerMessage=""
+                  >保存</button>
             </div>
         </div>
     </nb-card-footer>

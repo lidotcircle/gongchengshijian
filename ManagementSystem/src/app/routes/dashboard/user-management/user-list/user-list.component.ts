@@ -1,8 +1,12 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { NbToastrService } from '@nebular/theme';
-import { LocalDataSource } from 'ng2-smart-table';
+import { NbToastrService, NbWindowService } from '@nebular/theme';
+import { LocalDataSource, ServerDataSource } from 'ng2-smart-table';
+import { User } from 'src/app/entity';
+import { AdminUserService } from 'src/app/service/admin-user/admin-user.service';
+import { RESTfulAPI } from 'src/app/service/restful';
+import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window.component';
 import { OptionalCellComponent } from 'src/app/shared/components/optional-cell.component';
-import { ICommonUser } from 'src/app/shared/utils';
 import { ClickCellComponent } from './click-cell.component';
 
 @Component({
@@ -12,7 +16,10 @@ import { ClickCellComponent } from './click-cell.component';
     encapsulation: ViewEncapsulation.None,
 })
 export class UserListComponent implements OnInit {
+    // settings //{
     settings = {
+        hideSubHeader: true,
+
         actions: {
             columnTitle: '操作',
             add: false,
@@ -44,87 +51,119 @@ export class UserListComponent implements OnInit {
                 type: 'custom',
                 renderComponent: ClickCellComponent,
             },
-            name: {
+            userName: {
                 title: '用户名',
+                filter: false,
+                type: 'text',
+            },
+            name: {
+                title: '姓名',
+                filter: false,
                 type: 'text',
             },
             role: {
                 title: '角色',
+                filter: false,
                 type: 'text',
             },
             email: {
                 title: '邮箱',
+                filter: false,
                 type: 'custom',
                 renderComponent: OptionalCellComponent,
             },
-            phoneno: {
+            phone: {
                 title: '手机号',
+                filter: false,
                 type: 'text',
             },
         },
-    };
-    source: ICommonUser[] = [
-        {
-            name: 'niki',
-            role: 'admin',
-            phoneno: '110',
-        }
-    ];
+    }; //}
+    source: ServerDataSource;
 
-    constructor(private toastrService: NbToastrService) { }
+    constructor(private toastrService: NbToastrService,
+                private adminUser: AdminUserService,
+                private windowService: NbWindowService,
+                private http: HttpClient) { }
 
-    recordLength: number;
-    ngOnInit(): void {
-        this.recordLength = this.source.length;
-    }
-
-    private async checkData(row: ICommonUser, toaster: boolean = true): Promise<boolean> //{
-        {
-            return true;
-        } //}
-
-
-    async onCreateConfirm(event: {
-        newData: ICommonUser,
-        source: LocalDataSource,
-        confirm: {resolve: (data: ICommonUser) => void, reject: () => void},
-    }) //{
+    ngOnInit(): void //{
     {
-        if(!(await this.checkData(event.newData))) {
-            event.confirm.reject();
-            return;
-        }
+        this.source = new ServerDataSource(this.http, {
+            endPoint: RESTfulAPI.AdminUser.getPage,
+            pagerPageKey: 'pageno',
+            pagerLimitKey: 'size',
+            sortFieldKey: 'sort',
+            sortDirKey: 'sortDir',
+            filterFieldKey: '#field#',
+            dataKey: 'pairs',
+            totalKey: 'total',
+        });
 
-        console.log(await event.source.getAll());
-        this.recordLength++;
-        event.confirm.resolve(event.newData);
+        (this.source as any).find = function (element: User): Promise<any> {
+            const found = (this.data as User[]).find(elem => elem.userName == element.userName);
+            if(found) {
+                return Promise.resolve(found);
+            } else {
+                return Promise.reject("NOT FOUND");
+            }
+        }
     } //}
 
-    async onEditConfirm(event: {
-        data: ICommonUser,
-        newData: ICommonUser,
-        source: LocalDataSource,
-        confirm: {resolve: (data: ICommonUser) => void, reject: () => void},
-    }) //{
+    onsearchinput(pair: [string, (hints: string[]) => void]) //{
     {
-        if(!(await this.checkData(event.newData))) {
-            event.confirm.reject();
-            return;
+        const input = pair[0];
+        const hook = pair[1];
+
+        const data: User[] = (this.source as any).data;
+        let ans = [];
+        if(data && input.trim().length > 0) {
+            data.forEach((value) => {
+                if(value.userName.match(input)) {
+                    ans.push(value.userName);
+                }
+
+                if(value.name && value.name.match(input)) {
+                    ans.push(value.name);
+                }
+            })
         }
 
-        console.log(await event.source.getAll());
-        event.confirm.resolve(event.newData);
+        hook(ans);
+    } //}
+
+    onsearchenter(search: string) //{
+    {
+        this.source.addFilter({
+            field: 'searchWildcard',
+            search: search.trim()
+        });
+        this.source.refresh();
     } //}
 
     async onDeleteConfirm(event: {
-        data: ICommonUser, 
+        data: User, 
         source: LocalDataSource,
-        confirm: {resolve: (data: ICommonUser) => void, reject: () => void},
+        confirm: {resolve: (data: User) => void, reject: () => void},
     }) //{
     {
-        console.log(await event.source.getAll(), this.source);
-        this.recordLength--;
+        const win = this.windowService.open(ConfirmWindowComponent, {
+            title: '用户管理',
+            context: {message: '确认删除用户?'}
+        });
+        await win.onClose.toPromise();
+        const confirmed = win.config.context['isConfirmed'];
+        if(!confirmed) return;
+
+        try {
+            await this.adminUser.delete(event.data.userName);
+            this.toastrService.success(`删除'${event.data.userName}'`, "用户管理");
+        } catch {
+            this.toastrService.danger(`删除用户'${event.data.userName}'失败`, "用户管理");
+            return event.confirm.reject();
+        }
+
         event.confirm.resolve(event.data);
+        this.source.refresh();
     } //}
 }
 
