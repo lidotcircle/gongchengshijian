@@ -1,13 +1,13 @@
 {
-  "name": "ngx-admin",
-  "version": "7.0.0",
+  "name": "daoyun",
+  "version": "1.0.0",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/akveo/ngx-admin.git"
+    "url": "https://github.com/N1ckstrong/gongchengshijian.git"
   },
   "bugs": {
-    "url": "https://github.com/akveo/ngx-admin/issues"
+    "url": "https://github.com/N1ckstrong/gongchengshijian/issues"
   },
   "scripts": {
     "ng": "ng",
