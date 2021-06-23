@@ -14,19 +14,24 @@ jobs:
     runs-on: ubuntu-18.04
     outputs:
       version: ${{ steps.version.outputs.version }}
+      release: ${{ steps.release.outputs.release }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: '11'
-      - name: dump github context
-        run: echo ${{ toJson(github) }}
       - name: setup maven
         run: sudo apt install maven
       - name: get application version
         id: version
         run: printf "::set-output name=version::%s\n" "$(cat Backend/pom.xml | sed '/^  <version/!d;s/[ ]*<\/\?version>//g')"
+      - name: release name
+        id: release_name
+        run: |
+          branch=$(echo ${{github.ref}} | sed 's/refs\/heads\///g') && |
+          release=$([[ "$branch" =~ v[\d\.]+ ]] && echo $branch || echo "${{ job.outputs.version }}-$branch" && |
+          printf "::set-output name=release::%s\n" "$release"
       - name: build application
         run: pushd Backend && mvn clean install && popd
       - name: release
@@ -35,8 +40,8 @@ jobs:
         with:
           draft: false
           prerelease: false
-          release_name: Release ${{ steps.version.outputs.version }}
-          tag_name: ${{ steps.version.outputs.version }}
+          release_name: ${{ job.outputs.release }}
+          tag_name: ${{ job.outputs.release }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: upload
