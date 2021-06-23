@@ -1,20 +1,19 @@
 package six.daoyun.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import javax.persistence.GeneratedValue;
 
 
 @Entity
-@Table(name="commit_task")
+@Table(name="tbl_commit_task")
 public class CommitTask implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -27,6 +26,17 @@ public class CommitTask implements Serializable {
         this.id = id;
     }
 
+    @Column(name = "gmt_created", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)
+    private Date createdDate;
+    public Date getCreatedDate() {
+        return this.createdDate;
+    }
+    @Column(name = "gmt_modified", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", insertable = false, updatable = false)
+    private Date modifiedDate;
+    public Date getModifiedDate() {
+        return this.modifiedDate;
+    }
+
     @Column()
     private String commitContent;
     public String getCommitContent() {
@@ -36,18 +46,35 @@ public class CommitTask implements Serializable {
         this.commitContent = commitContent;
     }
 
-    private Collection<User> student;
-    @OneToOne()
-    public Collection<User> getStudent() {
+    @Column()
+    private String teacherDoThis;
+    public String getTeacherDoThis() {
+        return this.teacherDoThis;
+    }
+    public void setTeacherDoThis(String teacherDoThis) {
+        this.teacherDoThis = teacherDoThis;
+    }
+
+    @Column()
+    private long grade;
+    public long getGrade() {
+        return this.grade;
+    }
+    public void setGrade(long grade) {
+        this.grade = grade;
+    }
+
+    @ManyToOne()
+    private User student;
+    public User getStudent() {
         return this.student;
     }
-    public void setStudent(Collection<User> student) {
+    public void setStudent(User student) {
         this.student = student;
     }
 
-    @Column(name = "course_task")
-    private CourseTask courseTask;
     @ManyToOne()
+    private CourseTask courseTask;
     public CourseTask getCourseTask() {
         return this.courseTask;
     }

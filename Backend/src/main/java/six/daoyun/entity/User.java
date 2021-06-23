@@ -2,19 +2,21 @@ package six.daoyun.entity;
 
 import java.util.Collection;
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import javax.persistence.GeneratedValue;
 
 
 @Entity
-@Table(name="user")
+@Table(name="tbl_user")
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -24,13 +26,13 @@ public class User implements Serializable {
     @Column(name = "uk_user_name", unique = true)
 	private String userName;
 
-    @Column(name = "gmt_created", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "gmt_created", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)
     private Date createdDate;
-    @Column(name = "gmt_modified", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @Column(name = "gmt_modified", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", insertable = false, updatable = false)
     private Date modifiedDate;
 
+    @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles;
-    @OneToMany
     public Collection<Role> getRoles() {
         return this.roles;
     }
@@ -38,7 +40,14 @@ public class User implements Serializable {
         this.roles = roles;
     }
 
-    // TODO 头像
+    @Lob
+    private byte[] profilePhoto;
+    public byte[] getProfilePhoto() {
+        return this.profilePhoto;
+    }
+    public void setProfilePhoto(byte[] profilePhoto) {
+        this.profilePhoto = profilePhoto;
+    }
 
     @Column(name = "name", columnDefinition = "VARCHAR(32) NULL")
     private String name;
@@ -56,7 +65,7 @@ public class User implements Serializable {
     @Column(name = "major", columnDefinition = "VARCHAR(48) NULL")
     private String major;
 
-    @Column(name = "idx_phone", columnDefinition = "VARCHAR(20) NULL")
+    @Column(name = "idx_phone", columnDefinition = "VARCHAR(20) NULL UNIQUE")
     private String phone;
 
     // 第三方账号信息
@@ -68,6 +77,14 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "email")
+    private String email;
+    public String getEmail() {
+        return this.email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     // getter and setter
     

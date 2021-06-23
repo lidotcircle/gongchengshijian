@@ -1,0 +1,56 @@
+
+name: Daoyun Backend
+on:
+  push:
+    branches:
+      - backend
+    tags:
+      - v[0-9]+.[0-9]+(.[0-9])?
+
+jobs:
+  build_jar_release:
+    if: "contains(github.event.head_commit.message, '*CI*')"
+    runs-on: ubuntu-18.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      release: ${{ steps.release.outputs.release }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+      - name: setup maven
+        run: sudo apt install maven
+      - name: get application version
+        id: version
+        run: printf "::set-output name=version::%s\n" "$(cat Backend/pom.xml | sed '/^  <version/!d;s/[ ]*<\/\?version>//g')"
+      - name: release name
+        id: release
+        run: |
+          branch=$(echo ${{github.ref}} | sed 's/refs\/heads\///g') && \
+            release=$([[ "$branch" =~ v[\d\.]+ ]] && echo $branch || echo "$branch-${{ steps.version.outputs.version }}") && \
+            echo "release_name=$release" && \
+            printf "::set-output name=release::%s\n" "$release"
+      - name: build application
+        run: pushd Backend && mvn clean install && popd
+      - name: release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${{ steps.release.outputs.release }}
+          tag_name: ${{ steps.release.outputs.release }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: upload
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Backend/target/daoyun-${{ steps.version.outputs.version }}.jar
+          asset_name: daoyun.jar
+          asset_content_type: application/java-archive
+

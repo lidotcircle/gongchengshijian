@@ -7,7 +7,9 @@ services:
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=daoyun
+    # - MYSQL_DATABASE=daoyun
+    volumes:
+      - ./mysql:/docker-entrypoint-initdb.d
     ports:
       - 33061:3306
 
@@ -22,4 +24,10 @@ services:
     # volumes:
       # - $PWD/redis-data:/var/lib/redis
       # - $PWD/redis.conf:/usr/local/redis/redis.conf
+
+  adminer.daoyun.six:
+    image: adminer
+    restart: always
+    ports:
+      - 6080:8080
 
