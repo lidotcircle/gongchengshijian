@@ -1,11 +1,11 @@
 server:
-  port: 8099
+  port: "${PORT:8099}"
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:33061/daoyun
-    username: root
-    password: password
+    url: "${DB_URL:jdbc:mysql://localhost:33061/daoyun}"
+    username: "${DB_USER:root}"
+    password: "${DB_PASS:password}"
 
   jpa:
     hibernate:
@@ -15,28 +15,25 @@ spring:
       # ddl-auto: create-drop # DEV
 
 redis:
-  host: localhost
-  port: 63791
-  password: password
+  host: "${REDIS_HOST:localhost}"
+  port: "${REDIS_PORT:63791}"
+  password: "${REDIS_PASS:password}"
 
 logging:
   level:
     root: INFO
 
 jwt:
-  secret: helloworld
+  secret: "${JWT_SECRET:helloworld}"
   aliveTimeFrame_second: 1800
 
 # using environment variable
 # AliyunAccessKeyId: 
 # AliyunAccessKeySecret: 
 
-
 daoyun:
-  # super admin, just for testing api 
-  # set HTTP Header 'X-IM_ADMIN: supersuper.name'
   supersuper:
-    enable: true
+    enable: false
     name: daoyun
   message:
     enable: true
@@ -45,12 +42,12 @@ daoyun:
   reset:
     validMs: 300000
   aliyun:
-    AliyunSmsSignName: 生意专家
+    AliyunSmsSignName: "${ALIYUN_SMS_SIGN_NAME:生意专家}"
     TemplateCode:
-      login: SMS_205462496
-      signup: SMS_205462496
-      reset: SMS_205462496
-      bindPhoneNum: SMS_205462496
+      login:  "${SMS_LOGIN_TEMPLATE_CODE:SMS_205462496}"
+      signup: "${SMS_SIGNUP_TEMPLATE_CODE:SMS_205462496}"
+      reset:  "${SMS_RESET_TEMPLATE_CODE:SMS_205462496}"
+      bindPhoneNum: "${SMS_BIND_PHONE_TEMPLATE_CODE:SMS_205462496}"
   hcaptcha:
     allowNum: 30
     retainS: 300

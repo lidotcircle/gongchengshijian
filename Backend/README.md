@@ -3,6 +3,7 @@
 
 <!-- vim-markdown-toc GFM -->
 
+* [环境变量](#环境变量)
 * [RESTful APIs](#restful-apis)
     * [认证](#认证)
         * [获取短信](#获取短信)
@@ -76,6 +77,26 @@
 * [测试](#测试)
 
 <!-- vim-markdown-toc -->
+
+## 环境变量
+
+```base
+export PORT=
+export DB_URL=
+export DB_USER=
+export DB_PASS=
+export REDIS_HOST=
+export REDIS_PORT=
+export REDIS_PASS=
+export JWT_SECRET=
+export AliyunAccessKeyId=
+export AliyunAccessKeySecret=
+export ALIYUN_SMS_SIGN_NAME=
+export SMS_LOGIN_TEMPLATE_CODE=
+export SMS_SIGNUP_TEMPLATE_CODE=
+export SMS_RESET_TEMPLATE_CODE=
+export SMS_BIND_PHONE_TEMPLATE_CODE=
+```
 
 
 ## RESTful APIs
