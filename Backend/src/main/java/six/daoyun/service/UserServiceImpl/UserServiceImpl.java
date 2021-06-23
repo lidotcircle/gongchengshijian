@@ -6,19 +6,28 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import six.daoyun.entity.Role;
 import six.daoyun.entity.User;
+import six.daoyun.exception.Forbidden;
 import six.daoyun.exchange.UserInfo;
 import six.daoyun.repository.UserRepository;
+import six.daoyun.service.RoleService;
 import six.daoyun.service.UserService;
-import six.daoyun.utils.ObjUitl;
+import six.daoyun.utils.ObjUtil;
 
 @Service
 public class UserServiceImpl implements UserService {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UserServiceImpl.class);
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     private RedisTemplate<String, UserInfo> userinfoCache;
@@ -80,9 +89,14 @@ public class UserServiceImpl implements UserService {
             final UserInfo userinfo = new UserInfo();
             try {
                 final User user = this.getUser(username).get();
-                ObjUitl.assignFields(userinfo, user);
+                ObjUtil.assignFields(userinfo, user);
 
-                userinfo.setBirthday(user.getBirthday().getTime());
+                if(user.getBirthday() != null) {
+                    userinfo.setBirthday(user.getBirthday().getTime());
+                }
+                if(user.getProfilePhoto() != null && user.getProfilePhoto().length > 0) {
+                    userinfo.setPhoto(new String(user.getProfilePhoto()));
+                }
 
                 Collection<String> roles = new ArrayList<>();
                 user.getRoles().forEach(role -> roles.add(role.getRoleName()));
@@ -95,5 +109,65 @@ public class UserServiceImpl implements UserService {
 
 		return Optional.empty();
     } //}
+
+	@Override
+	public Optional<User> getUserByPhone(String phone) {
+        return Optional.ofNullable(this.userRepository.getUserByPhone(phone));
+	}
+
+	@Override
+	public Page<User> getUserPage(int pageno, int size, String sortKey, boolean desc, String filter) {
+        Sort sort = Sort.by(sortKey);
+        if(desc) {
+            sort = sort.descending();
+        } else {
+            sort = sort.ascending();
+        }
+        Pageable page = PageRequest.of(pageno, size, sort);
+        if(filter == null || filter.isBlank()) {
+            return this.userRepository.findAll(page);
+        } else {
+            return this.userRepository.findAll(filter, page);
+        }
+	}
+
+	@Override
+	public void addRole(User user, Role role) {
+        if(user.getRoles().contains(role)) {
+            throw new Forbidden("用户已拥有角色");
+        }
+
+        user.getRoles().add(role);
+        this.userRepository.save(user);
+	}
+
+	@Override
+    public void removeRole(User user, Role role) {
+        if(!user.getRoles().contains(role)) {
+            throw new Forbidden("用户未拥有角色");
+        }
+
+        user.getRoles().remove(role);
+        this.userRepository.save(user);
+	}
+
+	@Override
+	public boolean hasPermission(User user, String link, String method) //{
+    {
+        for(final Role role: user.getRoles()) {
+            if(this.roleService.hasPermissionInLink(role.getRoleName(), link, method)) {
+                return true;
+            }
+        }
+        return false;
+	} //}
+
+	@Override
+	public boolean hasPermission(String user, String link, String method) {
+        var u = this.getUser(user);
+        if(u.isEmpty()) return false;
+
+        return this.hasPermission(u.get(), link, method);
+	}
 }
 

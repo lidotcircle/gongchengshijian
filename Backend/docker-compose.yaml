@@ -7,7 +7,9 @@ services:
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=daoyun
+    # - MYSQL_DATABASE=daoyun
+    volumes:
+      - ./mysql:/docker-entrypoint-initdb.d
     ports:
       - 33061:3306
 

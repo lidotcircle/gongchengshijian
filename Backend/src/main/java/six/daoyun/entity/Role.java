@@ -11,6 +11,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
 import javax.persistence.GeneratedValue;
 
 
@@ -47,7 +49,7 @@ public class Role implements Serializable {
     }
 
     @JsonIgnore
-    @ManyToMany()
+    @ManyToMany(mappedBy = "roles")
     private Collection<PermEntry> permEntries;
     public Collection<PermEntry> getPermEntries() {
         return this.permEntries;

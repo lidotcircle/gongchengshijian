@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import javax.persistence.GeneratedValue;
@@ -43,13 +44,22 @@ public class SystemParameter implements Serializable {
         this.parameterName = parameterName;
     }
 
-    @Column(name = "uk_value")
+    @Column(name = "value")
     private String parameterValue;
     public String getParameterValue() {
         return this.parameterValue;
     }
     public void setParameterValue(String parameterValue) {
         this.parameterValue = parameterValue;
+    }
+
+    @Lob
+    private String remark;
+    public String getRemark() {
+        return this.remark;
+    }
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }
 

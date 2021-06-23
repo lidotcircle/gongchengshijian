@@ -7,6 +7,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -36,25 +37,25 @@ public class DictionaryType implements Serializable {
         return this.modifiedDate;
     }
 
-    @Column(name = "uk_dict_type_name", unique = true)
-    private String dictTypeName;
-    public String getDictTypeName() {
-        return this.dictTypeName;
+    @Column(name = "uk_dict_type_name", unique = true, nullable = false)
+    private String typeName;
+    public String getTypeName() {
+        return this.typeName;
     }
-    public void setDictTypeName(String dictTypeName) {
-        this.dictTypeName = dictTypeName;
-    }
-
-    @Column(name = "type_code")
-    private String typeCOde;
-    public String getTypeCOde() {
-        return this.typeCOde;
-    }
-    public void setTypeCOde(String typeCOde) {
-        this.typeCOde = typeCOde;
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
     }
 
-    @OneToMany()
+    @Column(name = "type_code", unique = true, nullable = false)
+    private String typeCode;
+    public String getTypeCode() {
+        return this.typeCode;
+    }
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
+
+    @OneToMany(mappedBy = "dictionaryType")
     private Collection<DictionaryData> datas;
     public Collection<DictionaryData> getDatas() {
         return this.datas;
@@ -63,7 +64,7 @@ public class DictionaryType implements Serializable {
         this.datas = datas;
     }
 
-    @Column(name = "remark")
+    @Lob
     private String remark;
     public String getRemark() {
         return this.remark;

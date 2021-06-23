@@ -1,14 +1,15 @@
 package six.daoyun.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import javax.persistence.GeneratedValue;
@@ -28,6 +29,15 @@ public class Course implements Serializable {
         this.id = id;
     }
 
+    @Column(unique = true)
+    private String courseExId;
+    public String getCourseExId() {
+        return this.courseExId;
+    }
+    public void setCourseExId(String courseExId) {
+        this.courseExId = courseExId;
+    }
+
     @Column(name = "course_name")
     private String courseName;
     public String getCourseName() {
@@ -37,7 +47,16 @@ public class Course implements Serializable {
         this.courseName = courseName;
     }
 
-    @OneToOne
+    @Lob
+    private String briefDescription;
+    public String getBriefDescription() {
+        return this.briefDescription;
+    }
+    public void setBriefDescription(String briefDescription) {
+        this.briefDescription = briefDescription;
+    }
+
+    @ManyToOne()
     private User teacher;
     public User getTeacher() {
         return this.teacher;
@@ -46,22 +65,28 @@ public class Course implements Serializable {
         this.teacher = teacher;
     }
 
-    @ManyToMany
-    private Collection<User> students;
-    public Collection<User> getStudents() {
+    @OneToMany(mappedBy = "course")
+    private Collection<CourseStudent> students;
+    public Collection<CourseStudent> getStudents() {
         return this.students;
     }
-    public void setStudents(Collection<User> students) {
+    public void setStudents(Collection<CourseStudent> students) {
         this.students = students;
     }
 
-    @OneToMany(mappedBy = "course")
-    private Collection<CheckInTask> checkInTask;
-    public Collection<CheckInTask> getCheckInTask() {
-        return this.checkInTask;
+    public Collection<User> getTrueStudents() {
+        Collection<User> ans = new ArrayList<>();
+        this.getStudents().forEach(val -> ans.add(val.getStudent()));
+        return ans;
     }
-    public void setCheckInTask(Collection<CheckInTask> checkInTask) {
-        this.checkInTask = checkInTask;
+
+    @OneToMany(mappedBy = "course")
+    private Collection<CourseCheckin> checkins;
+    public Collection<CourseCheckin> getCheckins() {
+        return this.checkins;
+    }
+    public void setCheckins(Collection<CourseCheckin> checkins) {
+        this.checkins = checkins;
     }
 
     @OneToMany(mappedBy = "course")

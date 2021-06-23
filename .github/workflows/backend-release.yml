@@ -1,0 +1,45 @@
+
+name: Daoyun Backend
+on:
+  push:
+    branch: backend
+    tags:
+      - v[0-9]+.[0-9]+(.[0-9])?
+
+jobs:
+  build_jar_release:
+    runs-on: ubuntu-18.04
+    outputs:
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+      - name: setup maven
+        run: apt install maven
+      - name: get application version
+        id: version
+        run: printf "::set-output name=version::%s\n" "$(cat Backend/pom.xml | sed '/^  <version/!d;s/[ ]*<\/\?version>//g')"
+      - name: build application
+        run: pushd Backend && mvn clean install && popd
+      - name: release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: upload
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.output.upload_url }}
+          asset_path: ./Backend/target/daoyun-${{ steps.version.outputs.version }}.jar
+          asset_name: daoyun.jar
+          asset_content_type: application/java-archive
+

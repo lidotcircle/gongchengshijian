@@ -14,12 +14,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import six.daoyun.service.UserService;
 
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private UserService userService;
+
     @Value("${daoyun.supersuper.enable}")
     private boolean superEnable;
     @Value("${daoyun.supersuper.name}")
@@ -28,9 +32,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private static final ArrayList<String> bypassURIs;
     static {
         bypassURIs = new ArrayList<String>();
-        bypassURIs.add("/apis/auth/signup");
-        bypassURIs.add("/apis/auth/login");
+        bypassURIs.add("/apis/auth/user");
+        bypassURIs.add("/apis/auth/refresh-token");
         bypassURIs.add("/apis/auth/jwt");
+        bypassURIs.add("/apis/auth/password");
+        bypassURIs.add("/apis/message");
     }
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JwtRequestFilter.class);
@@ -68,6 +74,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     username = jwtTokenUtil.getUsernameFromToken(jwtToken);
 
                     if(username == null) {
+                        System.out.println("bad username");
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                         return;
                     } else {
@@ -83,8 +90,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     return;
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setHeader("X-REASON", "REQUIRE JWT");
+                System.out.println("JWT Token is null");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "require JWT");
                 return;
+            }
+
+            var uri = request.getRequestURI();
+            if(uri.endsWith("/")) uri = uri.substring(0, uri.length() - 1);
+            final var method = request.getMethod().toUpperCase();
+            if (!this.userService.hasPermission(username, uri, method)) {
+                log.info("Deny {} to Access {} with {} method", username, uri, method);
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "No Permission");
             }
         }
 

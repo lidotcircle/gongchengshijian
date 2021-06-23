@@ -1,6 +1,7 @@
 package six.daoyun.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +26,17 @@ public class CommitTask implements Serializable {
         this.id = id;
     }
 
+    @Column(name = "gmt_created", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)
+    private Date createdDate;
+    public Date getCreatedDate() {
+        return this.createdDate;
+    }
+    @Column(name = "gmt_modified", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", insertable = false, updatable = false)
+    private Date modifiedDate;
+    public Date getModifiedDate() {
+        return this.modifiedDate;
+    }
+
     @Column()
     private String commitContent;
     public String getCommitContent() {
@@ -32,6 +44,24 @@ public class CommitTask implements Serializable {
     }
     public void setCommitContent(String commitContent) {
         this.commitContent = commitContent;
+    }
+
+    @Column()
+    private String teacherDoThis;
+    public String getTeacherDoThis() {
+        return this.teacherDoThis;
+    }
+    public void setTeacherDoThis(String teacherDoThis) {
+        this.teacherDoThis = teacherDoThis;
+    }
+
+    @Column()
+    private long grade;
+    public long getGrade() {
+        return this.grade;
+    }
+    public void setGrade(long grade) {
+        this.grade = grade;
     }
 
     @ManyToOne()
