@@ -29,9 +29,9 @@ jobs:
       - name: release name
         id: release_name
         run: |
-          branch=$(echo ${{github.ref}} | sed 's/refs\/heads\///g') && |
-          release=$([[ "$branch" =~ v[\d\.]+ ]] && echo $branch || echo "${{ job.outputs.version }}-$branch" && |
-          printf "::set-output name=release::%s\n" "$release"
+          branch=$(echo ${{github.ref}} | sed 's/refs\/heads\///g') && \
+            release=$([[ "$branch" =~ v[\d\.]+ ]] && echo $branch || echo "${{ job.outputs.version }}-$branch" && \
+            printf "::set-output name=release::%s\n" "$release"
       - name: build application
         run: pushd Backend && mvn clean install && popd
       - name: release
