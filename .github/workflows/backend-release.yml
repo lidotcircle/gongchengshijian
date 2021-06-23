@@ -2,7 +2,9 @@
 name: Daoyun Backend
 on:
   push:
-    branch: backend
+    branches:
+      - backend
+      - main
     tags:
       - v[0-9]+.[0-9]+(.[0-9])?
 
