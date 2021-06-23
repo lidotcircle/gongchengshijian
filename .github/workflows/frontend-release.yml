@@ -25,11 +25,11 @@ jobs:
         run: pushd ManagementSystem && npm install
       - name: get application version
         id: version
-        run: printf "::set-output name=version::%s\n" "$(echo 1.0.0)"
+        run: printf "::set-output name=version::%s\n" "$(cat ManagementSystem/package.json | grep -se 'version' | grep -soe '[[:digit:]\.]*')"
       - name: release name
         id: release
         run: |
-          branch=$(echo ${{github.ref}} | sed 's/refs\/(heads|tags\)\///g') && \
+          branch=$(echo ${{github.ref}} | sed 's/refs\/(heads|tags)\///g') && \
             release=$([[ "$branch" =~ v[\d\.]+ ]] && echo $branch || echo "$branch-${{ steps.version.outputs.version }}") && \
             echo "release_name=$release" && \
             printf "::set-output name=release::%s\n" "$release"
