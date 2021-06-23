@@ -6,11 +6,12 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ThemeModule } from '../../@theme/theme.module';
 import { OptionalCellComponent } from './optional-cell.component';
+import { ConfirmWindowComponent } from './confirm-window.component';
 
 
 
 @NgModule({
-    declarations: [DashboardHeaderComponent, OptionalCellComponent],
+    declarations: [ DashboardHeaderComponent, OptionalCellComponent, ConfirmWindowComponent ],
     imports: [
         CommonModule,
         FormsModule,

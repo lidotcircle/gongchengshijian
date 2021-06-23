@@ -1,17 +1,20 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { AuthDomainGuard, DashboardDomainGuard } from 'src/app/core/guard';
 
 const routes: Routes = [
     {
         path: 'auth',
         loadChildren: () => import('./password/password.module')
         .then(m => m.PasswordModule),
+        canActivate: [ AuthDomainGuard ],
     },
     {
 
         path: 'dashboard',
         loadChildren: () => import('./dashboard/dashboard.module')
         .then(m => m.DashboardModule),
+        canActivate: [ DashboardDomainGuard ],
     },
     {
 
