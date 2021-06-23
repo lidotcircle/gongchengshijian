@@ -30,7 +30,7 @@ jobs:
         id: release
         run: |
           branch=$(echo ${{github.ref}} | sed 's/refs\/heads\///g') && \
-            release=$([[ "$branch" =~ v[\d\.]+ ]] && echo $branch || echo "$branch-{{ steps.version.outputs.version }}") && \
+            release=$([[ "$branch" =~ v[\d\.]+ ]] && echo $branch || echo "$branch-${{ steps.version.outputs.version }}") && \
             echo "release_name=$release" && \
             printf "::set-output name=release::%s\n" "$release"
       - name: build application
