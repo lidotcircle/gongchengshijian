@@ -44,5 +44,10 @@ export class User {
             return this.roles.join(', ');
         }
     }
+
+    constructor() {
+        this.roles = [];
+        this.birthday = (new Date("2000-01-01")).getTime();
+    }
 }
 

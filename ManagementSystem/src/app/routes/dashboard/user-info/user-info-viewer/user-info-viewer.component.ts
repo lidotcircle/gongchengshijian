@@ -7,7 +7,7 @@ import { User } from 'src/app/entity/User';
 import { LocalStorageService } from 'src/app/service/storage';
 import { UserService } from 'src/app/service/user/user.service';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window.component';
-import { computeDifference, Pattern } from 'src/app/shared/utils';
+import { computeDifference, httpErrorHandler, Pattern } from 'src/app/shared/utils';
 import { PrivEditWindowComponent } from './priv-edit-window.component';
 import { ProfilePhotoUploadComponent } from './profile-photo-upload.component';
 
@@ -28,6 +28,7 @@ export class UserInfoViewerComponent implements OnInit, OnDestroy {
                 private windowService: NbWindowService) {
         this.user = new User();
         this.updatedUser = new User();
+        this.birthday = new Date(this.user.birthday);
 
         this.userService.getUser()
         .pipe(takeUntil(this.destroy$))
@@ -74,8 +75,8 @@ export class UserInfoViewerComponent implements OnInit, OnDestroy {
                 try {
                     this.inSavingUserinfo = true;
                     await this.userService.updateUser(diff);
-                } catch {
-                    this.toastService.show("保存用户信息失败", "保存", {status: 'danger'});
+                } catch (err) {
+                    httpErrorHandler(err, "用户信息", "保存用户信息失败");
                     return;
                 } finally {
                     this.inSavingUserinfo = false;

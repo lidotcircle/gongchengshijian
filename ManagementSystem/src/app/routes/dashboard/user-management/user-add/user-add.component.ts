@@ -25,8 +25,7 @@ export class UserAddComponent implements OnInit {
                 private roleService: RoleService,
                 private toastrService: NbToastrService) {
         this.user = new User();
-        this.user.roles = this.user.roles || [];
-        this.birthday = new Date(0);
+        this.birthday = new Date(this.user.birthday);
         this.roleList = [];
         this.selectedRoleIndex = "0";
     }
@@ -78,9 +77,9 @@ export class UserAddComponent implements OnInit {
         try {
             await this.adminUserService.post(this.user);
             this.toastrService.success("创建用户成功");
-            this.user = {} as any;
+            this.user = new User();
+            this.birthday = new Date(this.user.birthday);
             this.password = '';
-            this.birthday = new Date(0);
         } catch (err) {
             httpErrorHandler(err, "用户管理", "创建用户失败");
         }

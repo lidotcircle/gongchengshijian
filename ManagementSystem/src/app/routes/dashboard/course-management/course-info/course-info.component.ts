@@ -56,7 +56,6 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
         });
     }
     private runCheckinsFilter() {
-        console.log(this.course.CheckinList);
         this.checkins = this.course.CheckinList.filter(checkins => {
             return this.checkinsFilter.trim().length == 0 ||
                 checkins.deadline.toISOString().match(this.checkinsFilter);
