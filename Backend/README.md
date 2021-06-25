@@ -41,7 +41,10 @@
     * [班课](#班课)
         * [新建班课](#新建班课)
         * [获取班课](#获取班课)
-        * [分页获取班课](#分页获取班课)
+        * [分页获取班课(教师或者老师)](#分页获取班课教师或者老师)
+        * [分页获取班课(学生)](#分页获取班课学生)
+        * [分页获取班课(教师)](#分页获取班课教师)
+        * [分页获取班课(管理员)](#分页获取班课管理员)
         * [删除班课](#删除班课)
         * [更新班课](#更新班课)
     * [班课学生相关](#班课学生相关)
@@ -724,14 +727,15 @@ interface Task {
 }
 ```
 
-#### 分页获取班课
+#### 分页获取班课(教师或者老师)
+
+返回的班课中, 用户是班课的老师或者学生, 具体可以从返回值的班课中的教师字段判断
 
 Method: **GET** :key:  
 URI: `/apis/course/page`  
 参数: 
 ``` typescript
 {
-    role: "teacher" | "student" | null;
     pageno: number;
     size: number;
     sortDir: "desc" | "asc";
@@ -741,8 +745,86 @@ URI: `/apis/course/page`
 返回值:
 ``` typescript
 {
-total: number;
-pairs: Course[];
+    total: number;
+    pairs: Course[];
+}
+interface Course {
+    // 见获取班课的返回值
+}
+```
+
+#### 分页获取班课(学生)
+
+返回的班课中, 用户的角色都是学生
+
+Method: **GET** :key:  
+URI: `/apis/course/student/page`  
+参数: 
+``` typescript
+{
+    pageno: number;
+    size: number;
+    sortDir: "desc" | "asc";
+    searchWildcard: string;
+}
+```
+返回值:
+``` typescript
+{
+    total: number;
+    pairs: Course[];
+}
+interface Course {
+    // 见获取班课的返回值
+}
+```
+
+#### 分页获取班课(教师)
+
+返回的班课中, 用户的角色都是教师
+
+Method: **GET** :key:  
+URI: `/apis/course/teacher/page`  
+参数: 
+``` typescript
+{
+    pageno: number;
+    size: number;
+    sortDir: "desc" | "asc";
+    searchWildcard: string;
+}
+```
+返回值:
+``` typescript
+{
+    total: number;
+    pairs: Course[];
+}
+interface Course {
+    // 见获取班课的返回值
+}
+```
+
+#### 分页获取班课(管理员)
+
+返回系统中所有的班课
+
+Method: **GET** :key:  
+URI: `/apis/course/super/page`  
+参数: 
+``` typescript
+{
+    pageno: number;
+    size: number;
+    sortDir: "desc" | "asc";
+    searchWildcard: string;
+}
+```
+返回值:
+``` typescript
+{
+    total: number;
+    pairs: Course[];
 }
 interface Course {
     // 见获取班课的返回值

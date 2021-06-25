@@ -472,8 +472,7 @@ public class CourseCrud {
     } //}
 
     @GetMapping("/page")
-    private CoursePageDTO getPage(HttpServletRequest httpreq,
-            @RequestParam(value = "role", required = false) String role, 
+    private CoursePageDTO getPageByStudentOrTeacher(HttpServletRequest httpreq,
             @RequestParam(value = "pageno", defaultValue = "1") int pageno, 
             @RequestParam(value = "size", defaultValue = "10") int size, 
             @RequestParam(value = "sortDir", required = false) String sortDir,
@@ -482,21 +481,86 @@ public class CourseCrud {
     {
         CoursePageDTO ans = new CoursePageDTO();
 
-        Page<Course> page;
-        if(role == null) {
-            page = this.courseService.getCoursePage(pageno - 1, size, sortKey, 
-                        "desc".equalsIgnoreCase(sortDir), wildcard);
-        } else if (role.equals("teacher")) {
-            final User teacher = DYUtil.getHttpRequestUser(httpreq);
-            page = this.courseService.getTeacherCoursePage(teacher, pageno - 1, size, sortKey, 
-                    "desc".equalsIgnoreCase(sortDir), wildcard);
+        final User student = DYUtil.getHttpRequestUser(httpreq);
+        Page<Course> page = this.courseService.getTeacherOrStudentCoursePage(student, pageno - 1, size, sortKey, 
+                "desc".equalsIgnoreCase(sortDir), wildcard);
 
-        } else {
-            final User student = DYUtil.getHttpRequestUser(httpreq);
-            page = this.courseService.getCourseStudentPage(student, pageno - 1, size, sortKey, 
-                    "desc".equalsIgnoreCase(sortDir), wildcard);
+        Collection<CourseDTO> pairs = new ArrayList<>();
+        page.forEach(v -> {
+            CourseDTO res = new CourseDTO();
+            this.course2courseDTO(res, v);
+            pairs.add(res);
+        });
+        ans.setPairs(pairs);
+        ans.setTotal(page.getTotalElements());
 
-        }
+        return ans;
+    } //}
+
+    @GetMapping("/student/page")
+    private CoursePageDTO getPageByStudent(HttpServletRequest httpreq,
+            @RequestParam(value = "pageno", defaultValue = "1") int pageno, 
+            @RequestParam(value = "size", defaultValue = "10") int size, 
+            @RequestParam(value = "sortDir", required = false) String sortDir,
+            @RequestParam(value = "sortKey", defaultValue = "courseName") String sortKey,
+            @RequestParam(value = "searchWildcard", required = false) String wildcard) //{
+    {
+        CoursePageDTO ans = new CoursePageDTO();
+
+        final User student = DYUtil.getHttpRequestUser(httpreq);
+        Page<Course> page = this.courseService.getCourseStudentPage(student, pageno - 1, size, sortKey, 
+                "desc".equalsIgnoreCase(sortDir), wildcard);
+
+        Collection<CourseDTO> pairs = new ArrayList<>();
+        page.forEach(v -> {
+            CourseDTO res = new CourseDTO();
+            this.course2courseDTO(res, v);
+            pairs.add(res);
+        });
+        ans.setPairs(pairs);
+        ans.setTotal(page.getTotalElements());
+
+        return ans;
+    } //}
+
+    @GetMapping("/teacher/page")
+    private CoursePageDTO getPageByTeacher(HttpServletRequest httpreq,
+            @RequestParam(value = "pageno", defaultValue = "1") int pageno, 
+            @RequestParam(value = "size", defaultValue = "10") int size, 
+            @RequestParam(value = "sortDir", required = false) String sortDir,
+            @RequestParam(value = "sortKey", defaultValue = "courseName") String sortKey,
+            @RequestParam(value = "searchWildcard", required = false) String wildcard) //{
+    {
+        CoursePageDTO ans = new CoursePageDTO();
+
+        final User teacher = DYUtil.getHttpRequestUser(httpreq);
+        Page<Course> page = this.courseService.getTeacherCoursePage(teacher, pageno - 1, size, sortKey, 
+                "desc".equalsIgnoreCase(sortDir), wildcard);
+
+        Collection<CourseDTO> pairs = new ArrayList<>();
+        page.forEach(v -> {
+            CourseDTO res = new CourseDTO();
+            this.course2courseDTO(res, v);
+            pairs.add(res);
+        });
+        ans.setPairs(pairs);
+        ans.setTotal(page.getTotalElements());
+
+        return ans;
+    } //}
+
+    @GetMapping("/super/page")
+    private CoursePageDTO getAllPageBySuper(HttpServletRequest httpreq,
+            @RequestParam(value = "pageno", defaultValue = "1") int pageno, 
+            @RequestParam(value = "size", defaultValue = "10") int size, 
+            @RequestParam(value = "sortDir", required = false) String sortDir,
+            @RequestParam(value = "sortKey", defaultValue = "courseName") String sortKey,
+            @RequestParam(value = "searchWildcard", required = false) String wildcard) //{
+    {
+        CoursePageDTO ans = new CoursePageDTO();
+
+        Page<Course> page = this.courseService.getCoursePage(pageno - 1, size, sortKey, 
+                "desc".equalsIgnoreCase(sortDir), wildcard);
         Collection<CourseDTO> pairs = new ArrayList<>();
         page.forEach(v -> {
             CourseDTO res = new CourseDTO();

@@ -100,6 +100,23 @@ public class CourseServiceImpl implements CourseService {
 	}
 
 	@Override
+	public Page<Course> getTeacherOrStudentCoursePage(User user, int pageno, int size, String sortKey, boolean desc,
+			String filter) {
+        Sort sort = Sort.by(sortKey);
+        if(desc) {
+            sort = sort.descending();
+        } else {
+            sort = sort.ascending();
+        }
+        Pageable page = PageRequest.of(pageno, size, sort);
+        if(filter == null || filter.isBlank()) {
+            return this.courseRepository.findByStudents_StudentOrTeacher(user, user, page);
+        } else {
+            return this.courseRepository.findByStudents_StudentOrTeacher(filter, user, user, page);
+        }
+	}
+
+	@Override
 	public Page<Course> getCourseStudentPage(User student, int pageno, int size, String sortKey, boolean desc,
 			String filter) {
         Sort sort = Sort.by(sortKey);
