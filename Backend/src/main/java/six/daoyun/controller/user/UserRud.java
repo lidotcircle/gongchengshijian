@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import six.daoyun.controller.DYUtil;
@@ -26,22 +26,21 @@ import six.daoyun.utils.ObjUtil;
 
 
 @RestController
+@RequestMapping("/apis/user")
 public class UserRud {
     @Autowired
     private UserService userService;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping("/apis/user")
-    @ResponseBody
+    @GetMapping()
     public UserInfo getUserinfo(HttpServletRequest httpreq) //{
     {
         final User user = DYUtil.getHttpRequestUser(httpreq);
         return this.userService.getUserInfo(user.getUserName()).get();
     } //}
 
-    @PutMapping("/apis/user")
-    @ResponseBody
+    @PutMapping()
     public Collection<String> modifyUserInfo(HttpServletRequest httpreq, @RequestBody UserUpdating request) //{
     {
         final User user = DYUtil.getHttpRequestUser(httpreq);
@@ -68,9 +67,7 @@ public class UserRud {
         return ans;
     } //}
 
-
-	@PutMapping("/apis/user/privileged")
-    @ResponseBody
+	@PutMapping("/privileged")
     public Collection<String> modifyUserInfoPriv(HttpServletRequest httpreq, @RequestBody @Valid UserUpdatingPriv request) //{
     {
         final User user = DYUtil.getHttpRequestUser(httpreq);
@@ -92,5 +89,11 @@ public class UserRud {
 
         return ans;
     } //}
+
+    @GetMapping("/descriptor")
+    public Collection<String> getDescriptors(HttpServletRequest httpreq) {
+        final User user = DYUtil.getHttpRequestUser(httpreq);
+        return this.userService.getDescriptors(user);
+    }
 }
 

@@ -1,11 +1,14 @@
 package six.daoyun.service.UserServiceImpl;
 
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +31,11 @@ public class UserServiceImpl implements UserService {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UserServiceImpl.class);
     @Autowired
     private RoleService roleService;
+
+    @Value("${strictadmin.enable}")
+    private Boolean strictadmin;
+    @Value("${strictadmin.adminuser}")
+    private String adminuser;
 
     @Autowired
     private RedisTemplate<String, UserInfo> userinfoCache;
@@ -66,6 +74,10 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void deleteUser(final String username) {
+        if(this.strictadmin && this.adminuser.equals(username)) {
+            throw new Forbidden("不可以删除管理员账号");
+        }
+
         this.clearKey(username);
         this.userRepository.deleteByUserName(username);
 	}
@@ -168,6 +180,20 @@ public class UserServiceImpl implements UserService {
         if(u.isEmpty()) return false;
 
         return this.hasPermission(u.get(), link, method);
+	}
+
+	@Override
+	public Collection<String> getDescriptors(User user) {
+        final Set<String> ans = new HashSet<>();
+
+        for(var role: user.getRoles()) {
+            var entries = this.roleService.getPermEntries(role.getRoleName());
+            for(var perm: entries) {
+                ans.add(perm.getDescriptor());
+            }
+        }
+
+		return ans;
 	}
 }
 

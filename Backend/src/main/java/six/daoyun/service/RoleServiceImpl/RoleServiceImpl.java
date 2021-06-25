@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import six.daoyun.controller.exception.HttpNotFound;
@@ -26,6 +27,11 @@ public class RoleServiceImpl implements RoleService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Value("${strictadmin.enable}")
+    private Boolean strictadmin;
+    @Value("${strictadmin.admin}")
+    private String adminRole;
 
 	@Override
 	public void createRole(String roleName) //{
@@ -69,6 +75,10 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public void deleteRole(String roleName) //{
     {
+        if(this.strictadmin && roleName.equals(this.adminRole)) {
+            throw new Forbidden("管理员角色不可以删除");
+        }
+
         final Role role = this.getRoleByRoleName(roleName)
             .orElseThrow(() -> new NotFound());
         this.roleRepository.delete(role);
@@ -97,6 +107,10 @@ public class RoleServiceImpl implements RoleService {
 	@Override
     public void disablePermEntry(String roleName, String descriptor) //{
     {
+        if(this.strictadmin && roleName.equals(this.adminRole)) {
+            throw new Forbidden("不可以禁用修改管理员角色的权限");
+        }
+
         Role role = this.getRole(roleName);
         PermEntry perm = this.permEntryRepository.findByDescriptor(descriptor)
             .orElseThrow(() -> new NotFound());
@@ -138,6 +152,10 @@ public class RoleServiceImpl implements RoleService {
 	@Override
     public void disablePermEntryRecursively(String roleName, String descriptor) //{
     {
+        if(this.strictadmin && roleName.equals(this.adminRole)) {
+            throw new Forbidden("不可以禁用修改管理员角色的权限");
+        }
+
         Role role = this.getRole(roleName);
         PermEntry perm = this.permEntryRepository.findByDescriptor(descriptor)
             .orElseThrow(() -> new NotFound());
@@ -279,7 +297,7 @@ public class RoleServiceImpl implements RoleService {
 
     private boolean __hasPermissionInLink(String roleName, String link, String method) {
         PermEntry entry = this.permEntryRepository.findByLinkAndMethod(link, method)
-            .orElseThrow(() -> new NotFound());
+            .orElseThrow(() -> new NotFound("找不到权限入口"));
         return this.hasPermission(roleName, entry.getDescriptor());
     }
 

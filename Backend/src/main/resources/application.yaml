@@ -27,6 +27,11 @@ jwt:
   secret: "${JWT_SECRET:helloworld}"
   aliveTimeFrame_second: 1800
 
+strictadmin:
+  enable: true
+  admin: administrator
+  adminuser: admin
+
 # using environment variable
 # AliyunAccessKeyId: 
 # AliyunAccessKeySecret: 
