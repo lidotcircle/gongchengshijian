@@ -25,8 +25,8 @@ public interface CourseRepository extends PagingAndSortingRepository<Course, Int
     Page<Course> findByStudents_Student(User students, Pageable request);
 
     @Query("SELECT cr FROM Course cr WHERE cr.courseName LIKE %?1%")
-    Page<Course> findByStudents_StudentOrTeacher(String filter, User students, User teacher, Pageable request);
-    Page<Course> findByStudents_StudentOrTeacher(User students, User teacher, Pageable request);
+    Page<Course> findDistinctByStudents_StudentOrTeacher(String filter, User students, User teacher, Pageable request);
+    Page<Course> findDistinctByStudents_StudentOrTeacher(User students, User teacher, Pageable request);
 
     Course findByCourseExId(String exId);
 

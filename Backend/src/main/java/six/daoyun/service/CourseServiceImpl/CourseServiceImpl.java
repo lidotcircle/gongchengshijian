@@ -110,9 +110,9 @@ public class CourseServiceImpl implements CourseService {
         }
         Pageable page = PageRequest.of(pageno, size, sort);
         if(filter == null || filter.isBlank()) {
-            return this.courseRepository.findByStudents_StudentOrTeacher(user, user, page);
+            return this.courseRepository.findDistinctByStudents_StudentOrTeacher(user, user, page);
         } else {
-            return this.courseRepository.findByStudents_StudentOrTeacher(filter, user, user, page);
+            return this.courseRepository.findDistinctByStudents_StudentOrTeacher(filter, user, user, page);
         }
 	}
 
