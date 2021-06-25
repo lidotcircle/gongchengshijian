@@ -1,6 +1,7 @@
 package six.daoyun.controller.exception;
 
 import java.io.Serializable;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -60,6 +61,14 @@ public class HttpExceptionAdvice {
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     public Object processInternalServerError(DYException ex) {
         return this.processDYException(ex);
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    @ResponseStatus(code = HttpStatus.FORBIDDEN)
+    public Object sqlIntegrityEx(SQLIntegrityConstraintViolationException ex) {
+        HttpExceptionResponse ans = new HttpExceptionResponse();
+        ans.setReason("操作非法, 不满足约束条件");
+        return ans;
     }
 
     public Object processDYException(DYException ex) {

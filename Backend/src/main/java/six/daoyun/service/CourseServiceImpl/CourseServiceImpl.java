@@ -47,7 +47,7 @@ public class CourseServiceImpl implements CourseService {
 	@Override
 	public void joinIntoCourse(Course course, User student) {
         if(csRepository.findByCourseAndStudent(course, student).isPresent()){
-            throw new Forbidden();
+            throw new Forbidden("已在班课中");
         }
 
         final CourseStudent sc = new CourseStudent();
@@ -61,7 +61,7 @@ public class CourseServiceImpl implements CourseService {
 	@Override
 	public void exitCourse(Course course, User student) {
         final CourseStudent sc = csRepository.findByCourseAndStudent(course, student)
-            .orElseThrow(() -> new NotFound());
+            .orElseThrow(() -> new NotFound("退出班课错误, 原本就不在班课中"));
 
         this.csRepository.delete(sc);
 	}
@@ -134,7 +134,7 @@ public class CourseServiceImpl implements CourseService {
 	@Override
 	public boolean isMemberOfCourse(String courseExId, User user) {
         final Course course = this.getCourse(courseExId)
-            .orElseThrow(() -> new NotFound());
+            .orElseThrow(() -> new NotFound("不是班课的成员"));
         return this.isMemberOfCourse(course, user);
 	}
 }

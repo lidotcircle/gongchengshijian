@@ -80,14 +80,14 @@ public class RoleServiceImpl implements RoleService {
         }
 
         final Role role = this.getRoleByRoleName(roleName)
-            .orElseThrow(() -> new NotFound());
+            .orElseThrow(() -> new NotFound(String.format("角色 %s 不存在", roleName)));
         this.roleRepository.delete(role);
 	} //}
 
     private Role getRole(String roleName) //{
     {
         return this.getRoleByRoleName(roleName)
-            .orElseThrow(() -> new NotFound());
+            .orElseThrow(() -> new NotFound(String.format("角色 %s 不存在", roleName)));
     } //}
 
 	@Override
@@ -95,7 +95,7 @@ public class RoleServiceImpl implements RoleService {
     {
         Role role = this.getRole(roleName);
         PermEntry perm = this.permEntryRepository.findByDescriptor(descriptor)
-            .orElseThrow(() -> new NotFound());
+            .orElseThrow(() -> new NotFound(String.format("权限项 %s 不存在", descriptor)));
         if(perm.getRoles().contains(role)) {
             throw new Forbidden("角色已拥有该菜单: " + descriptor);
         }
@@ -113,9 +113,9 @@ public class RoleServiceImpl implements RoleService {
 
         Role role = this.getRole(roleName);
         PermEntry perm = this.permEntryRepository.findByDescriptor(descriptor)
-            .orElseThrow(() -> new NotFound());
+            .orElseThrow(() -> new NotFound(String.format("权限项 %s 不存在", descriptor)));
         if(!perm.getRoles().contains(role)) {
-            throw new Forbidden();
+            throw new Forbidden(String.format("角色 %s 无权限 %s", roleName, descriptor));
         }
 
         perm.getRoles().add(role);
@@ -135,7 +135,7 @@ public class RoleServiceImpl implements RoleService {
     {
         Role role = this.getRole(roleName);
         PermEntry perm = this.permEntryRepository.findByDescriptor(descriptor)
-            .orElseThrow(() -> new NotFound());
+            .orElseThrow(() -> new NotFound(String.format("权限项 %s 不存在", descriptor)));
 
         Collection<PermEntry> permlist = new ArrayList<>();
         permlist.add(perm);
@@ -158,7 +158,7 @@ public class RoleServiceImpl implements RoleService {
 
         Role role = this.getRole(roleName);
         PermEntry perm = this.permEntryRepository.findByDescriptor(descriptor)
-            .orElseThrow(() -> new NotFound());
+            .orElseThrow(() -> new NotFound(String.format("权限项 %s 不存在", descriptor)));
 
         Collection<PermEntry> permlist = new ArrayList<>();
         permlist.add(perm);
@@ -184,7 +184,7 @@ public class RoleServiceImpl implements RoleService {
     private PermEntry getPermEntry(String descriptor) //{
     {
         return this.permEntryRepository.findByDescriptor(descriptor)
-            .orElseThrow(() -> new NotFound());
+            .orElseThrow(() -> new NotFound(String.format("权限项 %s 不存在", descriptor)));
     } //}
 
 	@Override

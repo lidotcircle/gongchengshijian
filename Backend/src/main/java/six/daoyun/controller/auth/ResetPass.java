@@ -88,7 +88,7 @@ public class ResetPass {
                                        req.getPhone(), 
                                        req.getMessageCode(), 
                                        MessageCodeService.MessageCodeType.reset)) {
-            throw new HttpUnauthorized();
+            throw new HttpUnauthorized("验证码错误");
         }
 
         final RequestResetPassResp ans = new RequestResetPassResp();

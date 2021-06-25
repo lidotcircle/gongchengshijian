@@ -155,11 +155,14 @@ class Signup {
 
     private Collection<Role> initRoles() {
         var roles = this.sysparam.get(SystemParameter.InitRoles)
-            .orElseThrow(() -> new HttpForbidden()).getParameterValue().split(",");
+            .orElseThrow(() -> new HttpForbidden(String.format(
+                            "配置错误: 创建角色需要初始角色系统参数 %s",
+                            SystemParameter.InitRoles)))
+            .getParameterValue().split(",");
         Collection<Role> ans = new ArrayList<>();
         for(var role: roles) {
             var r = this.roleService.getRoleByRoleName(role)
-                .orElseThrow(() -> new HttpForbidden("bad configuration"));
+                .orElseThrow(() -> new HttpForbidden(String.format("配置错误: 系统参数 %s 中的角色不存在", SystemParameter.InitRoles)));
             ans.add(r);
         }
 
@@ -176,7 +179,7 @@ class Signup {
         }
 
         if(!this.userService.getUser(req.getUserName()).isEmpty()) {
-            throw new HttpForbidden("用户 '" + req.getUserName() + "' 已存在");
+            throw new HttpForbidden(String.format("用户 %s  已存在", req.getUserName()));
         }
 
         User user = new User();
