@@ -29,7 +29,7 @@
     <div class="buttons" *ngIf='!roleName'>
       <button nbButton (click)='showRoleList()' shape='semi-round' status='primary' outline
               [nbSpinner]="loadingStatus.roleListIsLoading" nbSpinnerStatus="info" nbSpinnerSize="large">角色列表</button>
-      <button nbButton (click)='addChildEntry()' shape='semi-round' status='primary' outline>添加子项</button>
+      <button [disabled]='menu.entryType == "button"' nbButton (click)='addChildEntry()' shape='semi-round' status='primary' outline>添加子项</button>
       <button nbButton (click)='editPermEntry()' shape='semi-round' status='primary' outline>编辑</button>
     </div>
   </div>
