@@ -2,6 +2,8 @@ package six.daoyun.service.RoleServiceImpl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -190,6 +192,7 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public void addPermEntry(String parentDescriptor, PermEntryItem permx) //{
     {
+        this.cachetree = null;
         if(this.permEntryRepository.findByDescriptor(permx.getDescriptor()).isPresent()) {
             throw new Forbidden("Descriptor 已存在");
         }
@@ -211,6 +214,7 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public void removePermEntry(String descriptor) //{
     {
+        this.cachetree = null;
         final PermEntry entry = this.getPermEntry(descriptor);
         if(entry.getChildren() == null || entry.getChildren().size() > 0) {
             throw new Forbidden("节点存在子节点");
@@ -222,6 +226,7 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public void removePermEntryRecursively(String descriptor) //{
     {
+        this.cachetree = null;
         ArrayList<PermEntry> entries = new ArrayList<>();
         final PermEntry entry = this.getPermEntry(descriptor);
         entries.add(entry);
@@ -233,16 +238,23 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public void updatePermEntry(String descriptor, PermEntryItem perm) //{
     {
+        this.cachetree = null;
         perm.setDescriptor(descriptor);
         final PermEntry entry = this.getPermEntry(descriptor);
         ObjUtil.assignFields(entry, perm);
         this.permEntryRepository.save(entry);
 	} //}
 
+    static Map<String, Integer> type2value = new HashMap<>();
+    static {
+        type2value.put("menu",   Integer.valueOf(10000));
+        type2value.put("page",   Integer.valueOf(100));
+        type2value.put("button", Integer.valueOf(1));
+    }
     private PermEntryTree PermEntryToPermEntryTree(PermEntry entry) //{
     {
         PermEntryTree ans = new PermEntryTree();
-        Collection<PermEntryTree> children = new ArrayList<>();
+        ArrayList<PermEntryTree> children = new ArrayList<>();
         ObjUtil.assignFields(ans, entry);
 
         final Collection<PermEntry> childrenx = entry.getChildren();
@@ -252,12 +264,25 @@ public class RoleServiceImpl implements RoleService {
             }
         }
 
+        children.sort((a, b) -> {
+            long av = type2value.get(a.getEntryType());
+            av += a.getSortOrder() * 100000;
+            av += a.getChildren().size();
+
+            long bv = type2value.get(b.getEntryType());
+            bv += a.getSortOrder() * 100000;
+            bv += b.getChildren().size();
+
+            return av > bv ? -1 : av == bv ? 0 : 1;
+        });
         ans.setChildren(children);
         return ans;
     } //}
 	@Override
 	public Collection<PermEntryTree> getPermEntryTree() //{
     {
+        if(this.cachetree != null) return this.cachetree;
+
         final Collection<PermEntryTree> ans = new ArrayList<>();
         Collection<PermEntry> rootEntries = this.permEntryRepository.findByParentIsNull();
 
@@ -265,8 +290,10 @@ public class RoleServiceImpl implements RoleService {
             ans.add(this.PermEntryToPermEntryTree(e));
         }
 
+        this.cachetree = ans;
 		return ans;
 	} //}
+    private Collection<PermEntryTree> cachetree;
 
 	@Override
 	public Collection<PermEntryItem> getPermEntries(String roleName) //{
