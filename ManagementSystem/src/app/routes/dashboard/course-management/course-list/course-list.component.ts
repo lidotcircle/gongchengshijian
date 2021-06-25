@@ -6,6 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Course, User } from 'src/app/entity';
 import { CourseService } from 'src/app/service/course/course.service';
 import { UserService } from 'src/app/service/user/user.service';
+import { httpErrorHandler } from 'src/app/shared/utils';
 
 @Component({
     selector: 'ngx-course-list',
@@ -78,7 +79,7 @@ export class CourseListComponent implements OnInit, OnDestroy {
             this.courses = pages.pairs;
             this._pageno = pageno;
         } catch (err) {
-            this.toastrService.danger(`获取页面失败${err?.error?.reason ? (": " + err.error.reason) : ""}`, "课程管理");
+            httpErrorHandler(err, "课程管理", `获取页面失败`);
         }
     }
 

@@ -5,6 +5,7 @@ import { Observable, from } from 'rxjs';
 import { Role } from 'src/app/entity';
 import { RoleService } from 'src/app/service/role/role.service';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window.component';
+import { httpErrorHandler } from 'src/app/shared/utils';
 import { ButtonsCellComponent } from './buttons-cell.component';
 
 @Component({
@@ -87,7 +88,7 @@ export class RoleListComponent implements OnInit {
         from(this.roleService.getList()).subscribe(list => {
             this.source.load(list);
         }, error => {
-            this.toastrService.danger("加载角色列表失败", "角色管理");
+            httpErrorHandler(error, "角色管理", "加载角色列表失败");
         });
     }
 
@@ -118,8 +119,8 @@ export class RoleListComponent implements OnInit {
         try {
             await this.roleService.post(event.newData.roleName); 
             event.confirm.resolve(event.newData);
-        } catch {
-            this.toastrService.danger("新增角色失败", "角色管理");
+        } catch (err) {
+            httpErrorHandler(err, "角色管理", "新增角色失败");
             event.confirm.reject();
             event.source.remove(event.newData);
         } finally {
@@ -143,8 +144,8 @@ export class RoleListComponent implements OnInit {
             try {
                 await this.roleService.delete(event.data.roleName);
                 event.confirm.resolve(event.data);
-            }catch {
-                this.toastrService.danger("删除角色失败", "角色管理");
+            } catch (err) {
+                httpErrorHandler(err, "角色管理", "删除角色失败");
                 event.confirm.reject();
             }
         }

@@ -8,7 +8,7 @@ import { takeUntil } from 'rxjs/operators';
 import { DictionaryData, DictionaryType } from 'src/app/entity';
 import { DataDictionaryService } from 'src/app/service/datadict/data-dictionary.service';
 import { RESTfulAPI } from 'src/app/service/restful';
-import { Pattern, UglyInputHint } from 'src/app/shared/utils';
+import { httpErrorHandler, Pattern, UglyInputHint } from 'src/app/shared/utils';
 import { getElementWait } from 'src/app/shared/utils/get-util';
 
 
@@ -104,15 +104,13 @@ export class DictionaryInfoComponent implements OnInit, OnDestroy {
         this.activatedRoute.queryParamMap.subscribe(async (params) => {
             const typeCode = params.get("typeCode");
             if(typeCode == null) {
-                this.toastrService.danger("页面错误", "错误", {
-                    duration: 60 * 1000
-                });
+                this.toastrService.danger("页面错误", "错误");
             } else {
                 try {
                     this.dictType = await this.datadictService.getType(typeCode);
                     this.initSource();
-                } catch {
-                    this.toastrService.danger("获取数据失败, 请刷新", "错误");
+                } catch (err) {
+                    httpErrorHandler(err, "获取数据失败, 请刷新", "错误");
                 }
             }
         });
@@ -325,8 +323,8 @@ export class DictionaryInfoComponent implements OnInit, OnDestroy {
             event.newData.typeCode = this.dictType.typeCode;
             await this.datadictService.postData(event.newData);
             this.toastrService.success(`新建'${event.newData.keyword}'`, "数据字典");
-        } catch {
-            this.toastrService.danger(`创建字典数据'${event.newData.keyword}'失败`, "数据字典");
+        } catch (err) {
+            httpErrorHandler(err, "数据字典", `创建字典数据'${event.newData.keyword}'失败`);
             return event.confirm.reject();
         }
 
@@ -354,8 +352,8 @@ export class DictionaryInfoComponent implements OnInit, OnDestroy {
                 v.isDefault = false;
                 try {
                     await this.datadictService.putData(v);
-                } catch {
-                    this.toastrService.danger(`编辑字典树'${event.newData.keyword}'失败`, "数据字典");
+                } catch (err) {
+                    httpErrorHandler(err, "数据字典", `编辑字典树'${event.newData.keyword}'失败`);
                     return event.confirm.reject();
                 }
             }
@@ -368,8 +366,8 @@ export class DictionaryInfoComponent implements OnInit, OnDestroy {
                 dt.order = event.data.order;
                 try {
                     await this.datadictService.putData(dt);
-                } catch {
-                    this.toastrService.danger(`编辑字典树'${event.newData.keyword}'失败`, "数据字典");
+                } catch (err) {
+                    httpErrorHandler(err, "数据字典", `编辑字典树'${event.newData.keyword}'失败`);
                     return event.confirm.reject();
                 }
             }
@@ -378,8 +376,8 @@ export class DictionaryInfoComponent implements OnInit, OnDestroy {
         try {
             await this.datadictService.putData(event.newData);
             this.toastrService.success(`修改'${event.data.keyword}'`, "数据字典");
-        } catch {
-            this.toastrService.danger(`编辑字典树'${event.newData.keyword}'失败`, "数据字典");
+        } catch (err) {
+            httpErrorHandler(err, "数据字典", `编辑字典树'${event.newData.keyword}'失败`);
             return event.confirm.reject();
         }
 
@@ -396,8 +394,8 @@ export class DictionaryInfoComponent implements OnInit, OnDestroy {
         try {
             await this.datadictService.deleteData(event.data.typeCode, event.data.keyword);
             this.toastrService.success(`删除'${event.data.keyword}'`, "数据字典");
-        } catch {
-            this.toastrService.danger(`删除字典数据'${event.data.keyword}'失败`, "数据字典");
+        } catch (err) {
+            httpErrorHandler(err, "数据字典", `删除字典数据'${event.data.keyword}'失败`);
             return event.confirm.reject();
         }
 

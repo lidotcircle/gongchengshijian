@@ -1,6 +1,7 @@
 export * from './utils/ugly-hint';
 export * from './utils/soft-assign';
 export * from './utils/eval';
+export * from './utils/http-error-handler';
 
 
 export function assert(expr: boolean, msg?: string) {

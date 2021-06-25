@@ -69,7 +69,7 @@ export const DaoyunMenu: NbMenuItemEx[] = [
             {
                 title: '系统参数',
                 link: '/daoyun/dashboard/system-parameter/parameter-list',
-                descriptorExpr: 'sysparam.get && sysparam.put && sysparam.post && systemparam.delete',
+                descriptorExpr: 'sysparam.page',
             },
         ]
     },

@@ -7,7 +7,7 @@ import { User } from 'src/app/entity';
 import { AdminUserService } from 'src/app/service/admin-user/admin-user.service';
 import { RoleService } from 'src/app/service/role/role.service';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window.component';
-import { computeDifference } from 'src/app/shared/utils';
+import { computeDifference, httpErrorHandler } from 'src/app/shared/utils';
 
 @Component({
     selector: 'ngx-user-info',
@@ -42,7 +42,7 @@ export class UserInfoComponent implements OnInit {
     ngOnInit(): void {
         this.roleService.getList()
             .then(roleList => this.roleList = (roleList || []).map(r => r.roleName))
-            .catch(e => this.toastrService.danger("获取角色列表失败"));
+            .catch(e => httpErrorHandler(e, "用户管理", "获取角色列表失败"));
 
         this.gotoInfoView();
 
@@ -54,8 +54,8 @@ export class UserInfoComponent implements OnInit {
                     this.birthday = new Date(this.user.birthday);
                 }
                 await this.cancelAndGotoInfoView();
-            } catch {
-                this.toastrService.danger("加载用户信息失败", "用户管理");
+            } catch (err) {
+                httpErrorHandler(err, "用户管理", "加载用户信息失败");
             }
         });
     }
@@ -114,8 +114,8 @@ export class UserInfoComponent implements OnInit {
                     this.inSavingUserinfo = true;
                     await this.adminUserService.put(diff as any);
                     this.user = Object.create(User.prototype, Object.getOwnPropertyDescriptors(this.updatedUser));
-                } catch {
-                    this.toastrService.show("保存用户信息失败", "用户管理", {status: 'danger'});
+                } catch (err) {
+                    httpErrorHandler(err, "用户管理", "保存用户信息失败");
                     return;
                 } finally {
                     this.inSavingUserinfo = false;

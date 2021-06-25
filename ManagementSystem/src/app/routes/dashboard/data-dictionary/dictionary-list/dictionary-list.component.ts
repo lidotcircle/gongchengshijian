@@ -7,7 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { DictionaryType } from 'src/app/entity';
 import { DataDictionaryService } from 'src/app/service/datadict/data-dictionary.service';
 import { RESTfulAPI } from 'src/app/service/restful';
-import { Pattern, UglyInputHint } from 'src/app/shared/utils';
+import { httpErrorHandler, Pattern, UglyInputHint } from 'src/app/shared/utils';
 import { ClickCellComponent } from './click-cell.component';
 
 
@@ -198,8 +198,8 @@ export class DictionaryListComponent implements OnInit, OnDestroy {
         try {
             await this.datadictService.postType(event.newData);
             this.toastrService.success(`新建'${event.newData.typeName}'`, "数据字典");
-        } catch {
-            this.toastrService.danger(`创建数据字典'${event.newData.typeName}'失败`, "数据字典");
+        } catch (err) {
+            httpErrorHandler(err, "数据字典", `创建数据字典'${event.newData.typeName}'失败`);
             return event.confirm.reject();
         }
 

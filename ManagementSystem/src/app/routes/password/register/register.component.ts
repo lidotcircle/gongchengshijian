@@ -7,6 +7,7 @@ import { interval, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthService } from 'src/app/service/auth';
 import { MessageService, MessageType } from 'src/app/service/message/message.service';
+import { httpErrorHandler } from 'src/app/shared/utils';
 
 @Component({
     selector: 'ngx-signup',
@@ -59,7 +60,7 @@ export class RegisterComponent extends NbRegisterComponent implements OnInit {
                 return;
             }
 
-            this.toastrService.danger(`获取验证码失败, ${err?.error?.reason}`, "注册");
+            httpErrorHandler(err, "注册", `获取验证码失败`);
         }
     }
     get WaitText(): String {
@@ -76,7 +77,7 @@ export class RegisterComponent extends NbRegisterComponent implements OnInit {
                 });
             });
         } catch (err) {
-            this.toastrService.danger(`注册失败: ${err?.error?.reason || "错误"}`, "注册");
+            httpErrorHandler(err, "注册", `注册失败: ${err?.error?.reason || "错误"}`);
         }
     }
 

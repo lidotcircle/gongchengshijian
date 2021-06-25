@@ -10,7 +10,7 @@ import { CourseCheckinService } from 'src/app/service/course/course-check-in.ser
 import { CourseTaskService } from 'src/app/service/course/course-task.service';
 import { CourseService } from 'src/app/service/course/course.service';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window.component';
-import { sortObject } from 'src/app/shared/utils';
+import { httpErrorHandler, sortObject } from 'src/app/shared/utils';
 import { BasicInfoEditorComponent } from './basic-info-editor.component';
 import { CourseCheckinEditorComponent } from './course-checkin-editor.component';
 import { CourseInfoViewComponent } from './course-info-viewer.component';
@@ -138,8 +138,8 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
                 this.course.courseName = courseName;
                 this.course.briefDescription = briefDescription;
                 this.toastrService.info('修改成功', '课程管理');
-            } catch {
-                this.toastrService.danger('修改失败', '课程管理');
+            } catch (err) {
+                httpErrorHandler(err, '修改失败', '课程管理');
             }
         }
     } //}
@@ -163,8 +163,8 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
                 await this.courseService.invite(this.course.courseExId, value);
                 await this.refreshCourseFrom(this.course.courseExId);
                 this.toastrService.info('添加学生: ' + value, '课程管理');
-            } catch {
-                this.toastrService.danger('添加失败', '课程管理');
+            } catch (err) {
+                httpErrorHandler(err, '添加失败', '课程管理');
             }
         }
     } //}
@@ -203,8 +203,8 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
             try {
                 await this.courseTaskService.postTask(task);
                 await this.refreshCourseFrom(this.course.courseExId);
-            } catch {
-                this.toastrService.danger("新建任务失败", "课程管理");
+            } catch (err) {
+                httpErrorHandler(err, "课程管理", "新建任务失败");
             }
         }
     } //}
@@ -225,8 +225,8 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
             try {
                 await this.courseCheckinService.postCheckin(checkin);
                 await this.refreshCourseFrom(this.course.courseExId);
-            } catch {
-                this.toastrService.danger("新建签到失败", "课程管理");
+            } catch (err) {
+                httpErrorHandler(err, "课程管理", "新建签到失败");
             }
         }
     } //}
@@ -247,8 +247,8 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
             try {
                 await this.courseTaskService.postInfo(info);
                 await this.refreshCourseFrom(this.course.courseExId);
-            } catch {
-                this.toastrService.danger("新建课程通知失败", "课程管理");
+            } catch (err) {
+                httpErrorHandler(err, "课程管理", "新建课程通知失败");
             }
         }
 
@@ -273,8 +273,8 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
             try {
                 await this.courseTaskService.deleteTask(info.taskId);
                 await this.refreshCourseFrom(this.course.courseExId);
-            } catch {
-                this.toastrService.danger("删除通知失败", "课程管理");
+            } catch (err) {
+                httpErrorHandler(err, "课程管理", "删除通知失败");
             }
         }
     } //}

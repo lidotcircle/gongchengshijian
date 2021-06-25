@@ -7,6 +7,7 @@ import { interval } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthService } from 'src/app/service/auth';
 import { MessageService, MessageType } from 'src/app/service/message/message.service';
+import { httpErrorHandler } from 'src/app/shared/utils';
 
 @Component({
     selector: 'ngx-request-password',
@@ -59,7 +60,7 @@ export class RequestPasswordComponent extends NbRequestPasswordComponent impleme
                 return;
             }
 
-            this.toastrService.danger(`获取验证码失败, ${err?.reason}`);
+            httpErrorHandler(err, "重置密码", `获取验证码失败`);
         }
     }
     get WaitText(): String {
@@ -76,7 +77,7 @@ export class RequestPasswordComponent extends NbRequestPasswordComponent impleme
                 }
             });
         } catch (err) {
-            this.toastrService.danger("重置密码失败: ", err?.reason || "错误");
+            httpErrorHandler(err, "重置密码", "重置密码失败");
         }
     }
 
