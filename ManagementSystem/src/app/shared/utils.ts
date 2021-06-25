@@ -1,5 +1,6 @@
 export * from './utils/ugly-hint';
 export * from './utils/soft-assign';
+export * from './utils/eval';
 
 
 export function assert(expr: boolean, msg?: string) {
