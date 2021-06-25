@@ -46,7 +46,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         throws ServletException, IOException {
         log.info("filtering HTTP Request for: " + request.getMethod() + " " + request.getRequestURI());
 
-        boolean bypass = false;
+        boolean bypass = !request.getRequestURI().startsWith("/apis/");
         for(String uri: bypassURIs) {
             if(request.getRequestURI().startsWith(uri)) {
                 bypass = true;
