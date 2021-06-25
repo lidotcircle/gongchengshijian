@@ -549,7 +549,7 @@ public class CourseCrud {
         return ans;
     } //}
 
-    @GetMapping("/super/page")
+    @GetMapping("/page/super")
     private CoursePageDTO getAllPageBySuper(HttpServletRequest httpreq,
             @RequestParam(value = "pageno", defaultValue = "1") int pageno, 
             @RequestParam(value = "size", defaultValue = "10") int size, 

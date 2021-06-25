@@ -57,15 +57,23 @@ public class CourseStudentCrud {
     {
         final Course course = this.courseService.getCourse(invitation.getCourseExId())
             .orElseThrow(() -> new HttpNotFound("找不到课程"));
-        final User student = this.userService.getUser(invitation.getStudentName())
-            .orElseThrow(() -> new HttpNotFound("找不到学生用户"));
 
         final User user = DYUtil.getHttpRequestUser(httpreq);
 
-        // TODO
         if(!course.getTeacher().getUserName().equals(user.getUserName())) {
             throw new HttpUnauthorized("不是课程的教师");
         }
+
+        this.inviteStudentSuper(invitation);
+    } //}
+
+    @PostMapping("/super")
+    private void inviteStudentSuper(@RequestBody @Valid InviteDTO invitation) //{
+    {
+        final Course course = this.courseService.getCourse(invitation.getCourseExId())
+            .orElseThrow(() -> new HttpNotFound("找不到课程"));
+        final User student = this.userService.getUser(invitation.getStudentName())
+            .orElseThrow(() -> new HttpNotFound("找不到学生用户"));
 
         if(student.equals(course.getTeacher())) {
             throw new HttpForbidden("教师不可以加入自己的课程");
@@ -81,15 +89,23 @@ public class CourseStudentCrud {
     {
         final Course course = this.courseService.getCourse(courseExId)
             .orElseThrow(() -> new HttpNotFound("找不到课程"));
-        final User student = this.userService.getUser(studentName)
-            .orElseThrow(() -> new HttpNotFound("找不到学生用户"));
-
         final User user = DYUtil.getHttpRequestUser(httpreq);
 
-        // TODO
         if(!course.getTeacher().getUserName().equals(user.getUserName())) {
             throw new HttpUnauthorized("不是课程的教师");
         }
+
+        this.deleteStudentSuper(courseExId, studentName);
+    } //}
+
+    @DeleteMapping("/super")
+    private void deleteStudentSuper(@RequestParam("courseExId") String courseExId, 
+                                    @RequestParam("studentName") String studentName) //{
+    {
+        final Course course = this.courseService.getCourse(courseExId)
+            .orElseThrow(() -> new HttpNotFound("找不到课程"));
+        final User student = this.userService.getUser(studentName)
+            .orElseThrow(() -> new HttpNotFound("找不到学生用户"));
 
         this.courseService.exitCourse(course, student);
     } //}

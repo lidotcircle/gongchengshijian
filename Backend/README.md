@@ -810,7 +810,7 @@ interface Course {
 返回系统中所有的班课
 
 Method: **GET** :key:  
-URI: `/apis/course/super/page`  
+URI: `/apis/course/page/super`  
 参数: 
 ``` typescript
 {
