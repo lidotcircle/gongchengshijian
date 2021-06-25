@@ -6,7 +6,9 @@
       <div class="toggle-icon" *ngIf='hasChild &&  show' (click)='closeSubmenu()'><nb-icon icon='chevron-down-outline'></nb-icon></div>
       <div class="toggle-icon" *ngIf='hasChild && !show' (click)='openSubmenu()' ><nb-icon icon='chevron-right-outline'></nb-icon></div>
     </div>
-    <div class="type-icon"><nb-icon [icon]='icon'></nb-icon></div>
+    <div class="type-icon">
+      <nb-icon [icon]='menu.entryType == "menu" ? "menu-outline" : menu.entryType == "page" ? "book-open-outline" : "radio-button-on-outline"'></nb-icon>
+    </div>
     <div class="name"> {{ menu?.permEntryName }} </div>
     <div class="link"> {{ menu?.BaseDescriptor }} </div>
     <div class="take-space"></div>

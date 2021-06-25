@@ -27,7 +27,6 @@ export class MenuTreeComponent implements OnInit {
         deleteIsLoading: false,
     }
 
-    icon: string = 'menu-outline';
     show: boolean = false;
 
     constructor(private windowService: NbWindowService,
@@ -35,12 +34,6 @@ export class MenuTreeComponent implements OnInit {
                 private toastrService: NbToastrService) {}
 
     ngOnInit(): void {
-        if(this.menu?.entryType == 'page') {
-            this.icon = 'book-open-outline';
-        }
-        if(this.menu?.entryType == 'button') {
-            this.icon = 'radio-button-on-outline';
-        }
     }
 
     get hasChild(): boolean {return this.menu?.children && this.menu?.children.length > 0;}
