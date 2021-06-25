@@ -1,7 +1,7 @@
 <ngx-dashboard-header title='班课管理/课程主页'></ngx-dashboard-header>
 
 <nb-card status='info'>
-  <nb-card-header>课程信息</nb-card-header>
+  <nb-card-header><span>课程信息</span><span *ngIf='issuper'>(管理员)</span></nb-card-header>
   <nb-card-body>
     <div class="basic">
       <div>课程名称</div>

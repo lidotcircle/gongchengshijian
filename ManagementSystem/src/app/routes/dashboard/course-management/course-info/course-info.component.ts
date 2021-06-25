@@ -15,6 +15,7 @@ import { BasicInfoEditorComponent } from './basic-info-editor.component';
 import { CourseCheckinEditorComponent } from './course-checkin-editor.component';
 import { CourseInfoViewComponent } from './course-info-viewer.component';
 import { CourseTaskEditorComponent } from './course-task-editor.component';
+import { CourseTaskViewComponent } from './course-task-viewer.component';
 import { JustInputComponent } from './just-input.component';
 
 @Component({
@@ -29,6 +30,7 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
     tasks: CourseTask[] = [];
     infos: CourseInfo[] = [];
     checkins: CourseCheckin[] = [];
+    issuper: boolean = false;
     private studentsFilter: string = '';
     private tasksFilter: string = '';
     private infosFilter: string = '';
@@ -111,6 +113,8 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        this.courseService.getSuperme()
+            .subscribe(s => this.issuper = s);
     }
 
     async editBasic() //{
@@ -180,8 +184,8 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
             try {
                 await this.courseService.deleteStudent(this.course.courseExId, student.userName);
                 await this.refreshCourseFrom(this.course.courseExId);
-            } catch {
-                this.toastrService.info('删除失败 ', '课程管理');
+            } catch (err) {
+                httpErrorHandler(err, '课程管理', '删除失败 ');
             }
         }
     } //}
@@ -255,8 +259,24 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
 
     async viewTask(n: number) {
         const task: CourseTask = this.tasks[n];
-        // TODO
+        const win = this.windowService.open(CourseTaskViewComponent, {
+            title: '课程任务',
+            context: {
+                courseTask: task,
+            }
+        });
+        await win.onClose.toPromise();
+
+        if(win.config.context['delete']) {
+            try {
+                await this.courseTaskService.deleteTask(task.taskId);
+                await this.refreshCourseFrom(this.course.courseExId);
+            } catch (err) {
+                httpErrorHandler(err, "课程管理", "删除任务失败");
+            }
+        }
     }
+
     async viewInfo(n: number) //{
     {
         const info: CourseInfo = this.infos[n];

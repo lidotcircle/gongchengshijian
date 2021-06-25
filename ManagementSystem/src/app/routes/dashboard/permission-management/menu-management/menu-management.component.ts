@@ -76,7 +76,7 @@ export class MenuManagementComponent implements OnInit, OnDestroy {
         this.inAdding = true;
 
         const win = this.windowService.open(MenuEditorComponent, {
-            context: {},
+            context: { },
             title: "添加根节点菜单",
         });
 

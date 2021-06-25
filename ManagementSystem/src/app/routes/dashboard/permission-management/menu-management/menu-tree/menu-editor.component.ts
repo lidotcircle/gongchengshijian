@@ -29,7 +29,7 @@ import { httpErrorHandler, Pattern } from 'src/app/shared/utils';
                 <nb-select fullWidth [(ngModel)]="menu.entryType" name='entryType'>
                   <nb-option value="menu">菜单</nb-option>
                   <nb-option value="page">页面</nb-option>
-                  <nb-option value="button" *ngIf='originEntryType == "button"'>按钮</nb-option>
+                  <nb-option value="button" *ngIf='showButton'>按钮</nb-option>
                 </nb-select>
             </div>
 
@@ -69,7 +69,7 @@ export class MenuEditorComponent implements OnInit {
     @Input()
     menu: PermMenu;
     inEdit: boolean;
-    originEntryType: string;
+    showButton: boolean;
 
     inDelete: boolean;
     inDeleteRec: boolean;
@@ -81,7 +81,7 @@ export class MenuEditorComponent implements OnInit {
     ngOnInit() {
         this.inEdit = !!this.menu;
         this.menu = this.menu || new PermMenu();
-        this.originEntryType = this.menu.entryType;
+        this.showButton = this.menu.children == null || this.menu.children.length == 0;
         if(this.menu.entryType == null) {
             this.menu.entryType = 'menu';
         }

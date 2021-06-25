@@ -10,7 +10,7 @@
 </nb-card>
 
 <nb-card status='primary'>
-  <nb-card-header>课程列表</nb-card-header>
+  <nb-card-header><span>课程列表</span><span *ngIf='issuper'>(管理员)</span></nb-card-header>
   <nb-card-body>
     <nb-list>
       <nb-list-item class='property-name course'>

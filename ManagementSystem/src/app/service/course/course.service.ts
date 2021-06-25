@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { Course, User } from 'src/app/entity';
 import { RESTfulAPI } from 'src/app/service/restful';
 import { UserService } from 'src/app/service/user/user.service';
+import { DYMenuService } from '../menu/dy-menu.service';
 
 
 export interface CoursePageResp {
@@ -16,17 +17,65 @@ export interface CoursePageResp {
 })
 export class CourseService {
     private user: User;
+    private suffix: string = '';
+    private initd: Promise<void>;
+    private supermereciver: Subject<boolean>;
 
     constructor(private http: HttpClient,
-                private userService: UserService) {
+                private userService: UserService,
+                private dymenuService: DYMenuService) {
         this.user = new User();
+        this.supermereciver = new Subject();
 
         this.userService.getUser()
             .subscribe(user => this.user = user);
+
+        let resolved = false;
+        let resolve;
+        this.initd = new Promise((rf) => {
+            if(!resolved) {
+                resolve = rf;
+            } else {
+                rf();
+            }
+        });
+
+        this.dymenuService.menuOnReady()
+            .subscribe(() => {
+                const superme = this.dymenuService.testDescriptorExpr(`
+                    coursesuper.page    &&
+                    coursesuper.get     &&
+                    coursesuper.put     &&
+                    coursesuper.post    &&
+                    coursesuper.delete  &&
+                    coursesuper.checkin &&
+                    coursesuper.task
+                `);
+                this.suffix = superme ? '/super' : '';
+                this.supermereciver.next(superme);
+
+                if(!resolved) {
+                    resolve();
+                    resolved = true;
+                }
+            }, () => {
+                if(!resolved) {
+                    resolve();
+                    resolved = true;
+                }
+            });
+    }
+
+    getSuperme(): Observable<boolean> {
+        return new Observable(subscriber => {
+            subscriber.next(this.suffix != '');
+            return this.supermereciver.subscribe(subscriber);
+        });
     }
 
     async get(courseExId: string): Promise<Course> {
-        const ans = await this.http.get(RESTfulAPI.Course.get, {
+        await this.initd;
+        const ans = await this.http.get(RESTfulAPI.Course.get + this.suffix, {
             params: {
                 courseExId: courseExId
             }
@@ -36,7 +85,8 @@ export class CourseService {
     }
 
     async delete(courseExId: string): Promise<void> {
-        await this.http.delete(RESTfulAPI.Course.deleteCourse, {
+        await this.initd;
+        await this.http.delete(RESTfulAPI.Course.deleteCourse + this.suffix, {
             params: {
                 courseExId: courseExId
             }
@@ -47,7 +97,8 @@ export class CourseService {
         courseName: string;
         briefDescription?: string;
     }): Promise<string> {
-        const ans = await this.http.post(RESTfulAPI.Course.post, {
+        await this.initd;
+        const ans = await this.http.post(RESTfulAPI.Course.post + this.suffix, {
             courseName: course.courseName, 
             briefDescription: course.briefDescription
         }).toPromise();
@@ -59,7 +110,8 @@ export class CourseService {
         courseName?: string;
         briefDescription?: string;
     }): Promise<void> {
-        const ans = await this.http.put(RESTfulAPI.Course.put, course).toPromise();
+        await this.initd;
+        const ans = await this.http.put(RESTfulAPI.Course.put + this.suffix, course).toPromise();
     }
 
 
@@ -70,12 +122,12 @@ export class CourseService {
         sortKey?: string;
         searchWildcard?: string;
     }): Promise<CoursePageResp> {
+        await this.initd;
         const req = Object.assign({}, request) as {[key: string]: string};
         req.pageno = req.pageno && `${req.pageno}`;
         req.size   = req.size && `${req.size}`;
 
-        // TODO role
-        const resp = await this.http.get(RESTfulAPI.Course.getPage, {
+        const resp = await this.http.get(RESTfulAPI.Course.getPage + this.suffix, {
             params: req
         }).toPromise() as CoursePageResp;
 
@@ -88,14 +140,16 @@ export class CourseService {
     }
 
     async invite(courseExId: string, studentName: string) {
-        await this.http.post(RESTfulAPI.Course.invite, {
+        await this.initd;
+        await this.http.post(RESTfulAPI.Course.invite + this.suffix, {
             courseExId: courseExId,
             studentName: studentName,
         }).toPromise();
     }
 
     async deleteStudent(courseExId: string, studentName: string) {
-        await this.http.delete(RESTfulAPI.Course.deleteStudent, {
+        await this.initd;
+        await this.http.delete(RESTfulAPI.Course.deleteStudent + this.suffix, {
             params: {
                 courseExId: courseExId,
                 studentName: studentName,

@@ -20,6 +20,7 @@ export class CourseListComponent implements OnInit, OnDestroy {
     courses: Course[] = [];
     pagesize: number = 10;
     searchWildcard: string = '';
+    issuper: boolean = false;
     get pageno(): number {return this._pageno;}
     set pageno(no: number) {
         this.gotoPage(no);
@@ -38,6 +39,8 @@ export class CourseListComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.gotoPage(1);
+        this.courseService.getSuperme()
+            .subscribe(s => this.issuper = s);
     }
 
     onsearchinput(pair: [string, (hints: string[]) => void]) //{
