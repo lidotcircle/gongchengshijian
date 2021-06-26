@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -75,6 +77,7 @@ public class CourseTask implements Serializable {
         this.course = course;
     }
 
+    @Lob
     @Column()
     private String content;
     public String getContent() {
@@ -84,7 +87,7 @@ public class CourseTask implements Serializable {
         this.content = content;
     }
 
-    @OneToMany(mappedBy = "courseTask")
+    @OneToMany(mappedBy = "courseTask", cascade = CascadeType.REMOVE)
     private Collection<CommitTask> commitTasks;
     public Collection<CommitTask> getCommitTasks() {
         return this.commitTasks;

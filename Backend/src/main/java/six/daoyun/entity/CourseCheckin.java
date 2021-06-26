@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -65,7 +66,7 @@ public class CourseCheckin implements Serializable {
         this.course = course;
     }
 
-    @OneToMany(mappedBy = "courseCheckin")
+    @OneToMany(mappedBy = "courseCheckin",cascade = CascadeType.REMOVE)
     private Collection<CheckinTask> chekcInTasks;
     public Collection<CheckinTask> getChekcInTasks() {
         return this.chekcInTasks;

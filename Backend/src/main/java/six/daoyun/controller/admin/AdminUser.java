@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,6 +33,7 @@ import six.daoyun.utils.ObjUtil;
 
 
 @Tag(name = "用户管理(管理员)")
+@RequestMapping("/apis/admin/user")
 @RestController
 public class AdminUser {
 	@Autowired
@@ -88,7 +90,7 @@ public class AdminUser {
         }
     } //}
 
-    @PostMapping("/apis/admin/user")
+    @PostMapping()
     private void createUser(@RequestBody @Valid UserDTO req) //{
     {
         final User user = new User();
@@ -97,7 +99,7 @@ public class AdminUser {
         this.userService.createUser(user);
     } //}
 
-    @PutMapping("/apis/admin/user")
+    @PutMapping()
     private void updateUser(@RequestBody UserDTO req) //{
     {
         if(req.getUserName() == null) {
@@ -109,7 +111,7 @@ public class AdminUser {
         this.userService.updateUser(user);
     } //}
 
-    @GetMapping("/apis/admin/user")
+    @GetMapping()
     private UserDTO getUser(@RequestParam("userName") String username) //{
     {
         final User user = this.userService.getUser(username)
@@ -117,7 +119,7 @@ public class AdminUser {
         return this.userTodUserDto(user);
     } //}
 
-    @DeleteMapping("/apis/admin/user")
+    @DeleteMapping()
     private void deleteUser(@RequestParam("userName") String username) //{
     {
         this.userService.deleteUser(username);
@@ -174,16 +176,20 @@ public class AdminUser {
             user.setPassword(this.passwordEncoder.encode(dto.getPassword()));
         }
 
-        Collection<Role> roles = new ArrayList<>();
-        for (var rolestr: dto.getRoles()) {
-            var role = this.roleService.getRoleByRoleName(rolestr)
-                .orElseThrow(() -> new HttpNotFound(String.format("角色名%s不存在", rolestr)));
-            roles.add(role);
+        if(dto.getRoles() != null) {
+            Collection<Role> roles = new ArrayList<>();
+            for (var rolestr: dto.getRoles()) {
+                var role = this.roleService.getRoleByRoleName(rolestr)
+                    .orElseThrow(() -> new HttpNotFound(String.format("角色名%s不存在", rolestr)));
+                log.info("asdfzxcv {}", rolestr);
+                roles.add(role);
+            }
+            user.setRoles(roles);
         }
-        user.setRoles(roles);
     } //}
+private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AdminUser.class);
 
-    @GetMapping("/apis/admin/user/page")
+    @GetMapping("/page")
     private PageRespDTO getUserPage(@RequestParam("pageno") int pageno,
                                                @RequestParam("size") int size,
                                                @RequestParam(value = "sortKey", defaultValue = "userName") String sortKey,

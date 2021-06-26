@@ -46,12 +46,13 @@ public class CourseTaskServiceImpl implements CourseTaskService {
         return this.taskRepository.findById(taskId);
 	}
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CourseTaskServiceImpl.class);
 	@Override
 	public long commitTask(long taskId, User student, CommitTask ctask) {
         final CourseTask task = this.getCourseTask(taskId)
             .orElseThrow(() -> new NotFound("班课任务不存在"));
 
-        if(this.courseService.courseHasStudent(task.getCourse(), student)) {
+        if(!this.courseService.courseHasStudent(task.getCourse(), student)) {
             throw new NotFound("班课中不存在该用户");
         }
 

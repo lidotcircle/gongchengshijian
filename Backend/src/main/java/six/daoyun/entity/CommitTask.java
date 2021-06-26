@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -37,6 +38,7 @@ public class CommitTask implements Serializable {
         return this.modifiedDate;
     }
 
+    @Lob
     @Column()
     private String commitContent;
     public String getCommitContent() {
@@ -46,6 +48,7 @@ public class CommitTask implements Serializable {
         this.commitContent = commitContent;
     }
 
+    @Lob
     @Column()
     private String teacherDoThis;
     public String getTeacherDoThis() {

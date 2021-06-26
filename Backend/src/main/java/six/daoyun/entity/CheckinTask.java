@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -37,6 +38,7 @@ public class CheckinTask implements Serializable {
         return this.modifiedDate;
     }
 
+    @Lob
     private String checkinJsonData;
     public String getCheckinJsonData() {
         return this.checkinJsonData;

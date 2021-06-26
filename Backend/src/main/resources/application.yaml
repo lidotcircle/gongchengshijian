@@ -1,5 +1,7 @@
 server:
   port: "${PORT:8099}"
+  use-forward-headers: true
+  forward-headers-strategy: NATIVE
 
 spring:
   datasource:
@@ -19,6 +21,7 @@ springdoc:
     enabled: "${SRPINGDOC_ENABLED:true}"
   swagger-ui:
     enabled: "${SPRINGDOC_ENABLED:true}"
+    doc-expansion: none
     # url: /openapi.yaml
 
 redis:

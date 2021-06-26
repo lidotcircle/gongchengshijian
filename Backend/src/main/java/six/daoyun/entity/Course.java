@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -65,7 +66,7 @@ public class Course implements Serializable {
         this.teacher = teacher;
     }
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", cascade = CascadeType.REMOVE)
     private Collection<CourseStudent> students;
     public Collection<CourseStudent> getStudents() {
         return this.students;
@@ -80,7 +81,7 @@ public class Course implements Serializable {
         return ans;
     }
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", cascade = CascadeType.REMOVE)
     private Collection<CourseCheckin> checkins;
     public Collection<CourseCheckin> getCheckins() {
         return this.checkins;
@@ -89,7 +90,7 @@ public class Course implements Serializable {
         this.checkins = checkins;
     }
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", cascade = CascadeType.REMOVE)
     private Collection<CourseTask> tasks;
     public Collection<CourseTask> getTasks() {
         return this.tasks;
