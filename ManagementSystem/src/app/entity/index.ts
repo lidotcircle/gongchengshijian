@@ -13,5 +13,6 @@ export { DictionaryData } from './DictionaryData';
 export { DictionaryType } from './DictionaryType';
 
 export { User, defaultProfileImage } from './User';
+export * from './CheckinAnwser';
 
 

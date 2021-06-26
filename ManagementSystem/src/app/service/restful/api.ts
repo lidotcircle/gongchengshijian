@@ -75,6 +75,8 @@ export module API {
             export const post = API_ADDRESS + '/apis/course/check-in';
             export const put = API_ADDRESS + '/apis/course/check-in';
             export const deleteCheckin = API_ADDRESS + '/apis/course/check-in'
+
+            export const anwserList = API_ADDRESS + '/apis/course/check-in/anwser-list';
         }
     }
 

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { Course, User } from 'src/app/entity';
+import { CheckinAnwser, Course, User } from 'src/app/entity';
 import { RESTfulAPI } from 'src/app/service/restful';
 import { UserService } from 'src/app/service/user/user.service';
 import { DYMenuService } from '../menu/dy-menu.service';
@@ -167,6 +167,14 @@ export class CourseService {
                 courseExId: courseExId,
             }
         }).toPromise();
+    }
+
+    async getCheckinList(checkinId: number) {
+        return await this.http.get(RESTfulAPI.Course.Checkin.anwserList, {
+            params: {
+                checkinId: `${checkinId}`
+            }
+        }).toPromise() as CheckinAnwser[];
     }
 }
 

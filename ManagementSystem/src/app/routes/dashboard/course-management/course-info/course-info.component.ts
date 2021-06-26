@@ -9,6 +9,7 @@ import { CourseCheckin, CourseInfo, CourseTask, Student } from 'src/app/entity/C
 import { CourseCheckinService } from 'src/app/service/course/course-check-in.service';
 import { CourseTaskService } from 'src/app/service/course/course-task.service';
 import { CourseService } from 'src/app/service/course/course.service';
+import { ObjectTransferService } from 'src/app/service/object-transfer.service';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window.component';
 import { httpErrorHandler, sortObject } from 'src/app/shared/utils';
 import { BasicInfoEditorComponent } from './basic-info-editor.component';
@@ -95,6 +96,7 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
 
     constructor(private courseService: CourseService,
                 private courseTaskService: CourseTaskService,
+                private objectTransferService: ObjectTransferService,
                 private courseCheckinService: CourseCheckinService,
                 private windowService: NbWindowService,
                 private toastrService: NbToastrService,
@@ -300,7 +302,16 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
     } //}
 
     async viewCheckin(n: number) {
-        // TODO
+        const o = this.objectTransferService.store(this.course);
+        const i = this.course.checkins[n].checkinId;
+
+        this.router.navigate(['../checkin-info'], {
+            relativeTo: this.activatedRoute,
+            queryParams: {
+                checkinId: `${i}`,
+                object: `${o}`,
+            }
+        });
     }
 
     async deleteCourse() {

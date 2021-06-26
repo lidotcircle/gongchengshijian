@@ -1,0 +1,61 @@
+<ngx-dashboard-header title='班课管理/课程信息/课程签到'></ngx-dashboard-header>
+
+<nb-card accent='primary'>
+  <nb-card-header>
+    已签到数/全部学生数: {{ total || 0 }} / {{ course.students.length }}
+  </nb-card-header>
+
+  <nb-card-body>
+  </nb-card-body>
+
+  <nb-card-footer>
+    <app-search-bar (searchinput)='onsearchinput($event)' (searchenter)='onsearchenter($event)'></app-search-bar>
+  </nb-card-footer>
+</nb-card>
+
+<nb-card status='primary'>
+  <nb-card-header><span>签到列表</span><span *ngIf='issuper'>(管理员)</span></nb-card-header>
+  <nb-card-body>
+    <nb-list>
+      <nb-list-item class='property-name checkin'>
+        <div class="student">
+          签到学生
+        </div>
+        <div class="datetime">
+          签到时间
+        </div>
+        <div class="data">
+          签到数据
+        </div>
+        <div class="buttons"></div>
+      </nb-list-item>
+      <nb-list-item *ngFor='let checkin of anwserList | paginate: {
+          itemsPerPage: pagesize,
+          currentPage: pageno,
+          totalItems: total
+        }' class='checkin'>
+        <div class="student">
+          {{ checkin.studentInfo.name || checkin.studentInfo.userName }}
+        </div>
+        <div class="datetime">
+          {{ checkin.checkinDate }}
+        </div>
+        <div class="data">
+          {{ checkin.checkinJsonData }}
+        </div>
+        <div class="buttons">
+          <div class="take-space"></div>
+          <button nbButton status='primary' hero>查看</button>
+        </div>
+      </nb-list-item>
+    </nb-list>
+
+    <div class="pager">
+      <pagination-controls 
+        (pageChange)="pageno = $event"
+        previousLabel="上一页"
+        nextLabel="下一页"></pagination-controls>
+    </div>
+  </nb-card-body>
+</nb-card>
+
