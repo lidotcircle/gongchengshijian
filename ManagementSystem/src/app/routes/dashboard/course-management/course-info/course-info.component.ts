@@ -1,6 +1,6 @@
 import { ViewportScroller } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NbToastrService, NbWindowService } from '@nebular/theme';
 import { Observable, Subject, from, of } from 'rxjs';
 import { concatMap, map, takeUntil, tap } from 'rxjs/operators';
@@ -99,6 +99,7 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
                 private windowService: NbWindowService,
                 private toastrService: NbToastrService,
                 private viewportScroller: ViewportScroller,
+                private router: Router,
                 private activatedRoute: ActivatedRoute) {
         this.course = new Course();
 
@@ -300,6 +301,27 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
 
     async viewCheckin(n: number) {
         // TODO
+    }
+
+    async deleteCourse() {
+        const win = this.windowService.open(ConfirmWindowComponent, {
+            title: `删除班课`,
+            context: {}
+        });
+        await win.onClose.toPromise();
+
+        if(win.config.context['isConfirmed']) {
+            try {
+                await this.courseService.delete(this.course.courseExId);
+                this.toastrService.success("删除班课成功", "班课管理");
+                this.router.navigate(["../course-list"], {
+                    relativeTo: this.activatedRoute,
+                    queryParams: {},
+                });
+            } catch (err) {
+                httpErrorHandler(err, '课程管理', '删除失败 ');
+            }
+        }
     }
 
     gotoStudentList() { this.viewportScroller.scrollToAnchor('student-list'); }

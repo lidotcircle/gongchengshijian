@@ -27,7 +27,10 @@
       <a nbButton outline status='info' (click)='gotoCheckinList()'>签到</a>
     </div>
     <div></div>
-    <button nbButton hero status='primary' (click)='editBasic()'>编辑</button>
+    <div class='right-side-buttons'>
+      <button nbButton hero status='danger'  (click)='deleteCourse()'>删除</button>
+      <button nbButton hero status='primary' (click)='editBasic()'>编辑</button>
+    </div>
   </nb-card-footer>
 </nb-card>
 

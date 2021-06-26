@@ -28,8 +28,9 @@ export class UserInfoComponent implements OnInit {
                 private activatedRoute: ActivatedRoute,
                 private windowService: NbWindowService,
                 private toastrService: NbToastrService) {
-        this.user = {} as any;
-        this.updatedUser = {} as any;
+        this.user = new User();
+        this.updatedUser = new User();
+        this.password = '';
         this.roleList = [];
         this.selectedRoleIndex = "0";
     }
@@ -98,10 +99,16 @@ export class UserInfoComponent implements OnInit {
     async gotoInfoView() //{
     {
         this.updatedUser.birthday = this.birthday?.getTime() || this.updatedUser.birthday;
+        if (this.password != '') {
+            this.updatedUser['password'] = this.password;
+        }
         const diff = computeDifference(this.updatedUser, this.user) as User;
 
         if(diff) {
             diff.userName = this.user.userName;
+            if (diff.roles != null) {
+                diff.roles = this.updatedUser.roles?.slice();
+            }
             const win = this.windowService.open(ConfirmWindowComponent, {
                 title: '修改用户信息',
                 context: {message: '是否保存?'}
@@ -119,6 +126,7 @@ export class UserInfoComponent implements OnInit {
                     return;
                 } finally {
                     this.inSavingUserinfo = false;
+                    this.password = '';
                 }
             } else {
                 return;

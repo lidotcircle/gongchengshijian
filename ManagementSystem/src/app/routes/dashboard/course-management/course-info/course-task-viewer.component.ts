@@ -12,6 +12,7 @@ import { Pattern } from 'src/app/shared/utils';
             <nb-card-header>
                 <div class="title">{{ courseTask.taskTitle }} </div>
                 <div class="date">发布日期: {{ courseTask.releaseDate && courseTask.releaseDate.toLocaleString() }}</div>
+                <div class="date">截至时间: {{ courseTask.deadline    && courseTask.deadline.toLocaleString() }}</div>
             </nb-card-header>
             <nb-card-body>
                 {{ courseTask.content }}

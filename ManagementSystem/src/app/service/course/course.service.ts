@@ -97,8 +97,7 @@ export class CourseService {
         courseName: string;
         briefDescription?: string;
     }): Promise<string> {
-        await this.initd;
-        const ans = await this.http.post(RESTfulAPI.Course.post + this.suffix, {
+        const ans = await this.http.post(RESTfulAPI.Course.post, {
             courseName: course.courseName, 
             briefDescription: course.briefDescription
         }).toPromise();
