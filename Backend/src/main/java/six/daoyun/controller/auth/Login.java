@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import six.daoyun.controller.exception.HttpBadRequest;
 import six.daoyun.controller.exception.HttpNotFound;
 import six.daoyun.controller.exception.HttpRequireCaptcha;
@@ -28,8 +31,9 @@ import six.daoyun.service.MessageCodeService;
 import six.daoyun.service.UserService;
 import six.daoyun.service.MessageCodeService.MessageCodeType;
 
+@Tag(name = "登录 & 注销")
 @RestController()
-@RequestMapping("/apis/auth")
+@RequestMapping("/apis/auth/refresh-token")
 class Login {
     @Autowired
     private UserService userService;
@@ -116,7 +120,9 @@ class Login {
         }
     } //}
 
-    @PostMapping("refresh-token")
+    @Operation(summary = "手机号/用户名登录")
+    @PostMapping()
+    @SecurityRequirements
     private LoginResponse login(@RequestBody @Valid LoginByUsernameRequest request, HttpServletRequest httpreq) //{
     {
         if(!this.captchaService.validate(httpreq.getRemoteAddr() + request.getUserName(), request.captcha)) {
@@ -148,7 +154,9 @@ class Login {
         return resp;
     } //}
 
-    @PostMapping("/refresh-token/message")
+    @Operation(summary = "短信登录")
+    @PostMapping("/message")
+    @SecurityRequirements
     private LoginResponse loginByMessage(@RequestBody @Valid LoginByMessage req) //{
     {
         if(!this.mcodeService.validate(req.getMessageCodeToken(), 
@@ -166,7 +174,9 @@ class Login {
         return resp;
     } //}
 
-    @PostMapping("/refresh-token/quick")
+    @Operation(summary = "快速登录")
+    @PostMapping("/quick")
+    @SecurityRequirements
     private LoginResponse quickLogin(@RequestBody @Valid QuickLoginDTO req) {
         if(!this.mcodeService.validate(req.getMessageCodeToken(), 
                     req.getPhone(), 
@@ -193,7 +203,8 @@ class Login {
         return resp;
     }
 
-    @DeleteMapping("/refresh-token")
+    @Operation(summary = "注销登录获得的Token")
+    @DeleteMapping()
     private void logout(@RequestParam("refreshToken") String refreshToken) {
         this.authService.logout(refreshToken);
     }

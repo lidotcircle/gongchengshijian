@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -23,6 +27,8 @@ import six.daoyun.service.SysparamService;
 import six.daoyun.service.MessageCodeService;
 import six.daoyun.utils.SystemParameter;
 
+@Tag(name = "注册")
+@SecurityRequirements
 @RestController()
 class Signup {
     @Autowired
@@ -153,7 +159,8 @@ class Signup {
         }
     } //}
 
-    private Collection<Role> initRoles() {
+    private Collection<Role> initRoles() //{
+    {
         var roles = this.sysparam.get(SystemParameter.InitRoles)
             .orElseThrow(() -> new HttpForbidden(String.format(
                             "配置错误: 创建角色需要初始角色系统参数 %s",
@@ -167,10 +174,11 @@ class Signup {
         }
 
         return ans;
-    }
+    } //}
 
     @PostMapping("/apis/auth/user")
-    private void createUserByPhone(@RequestBody @Valid RegisterByPhone req) {
+    private void createUserByPhone(@RequestBody @Valid RegisterByPhone req) //{
+    {
         if(!this.mcodeService.validate(req.getMessageCodeToken(), 
                                        req.getPhone(), 
                                        req.getMessageCode(), 
@@ -200,6 +208,6 @@ class Signup {
         }
         this.mcodeService.removeToken(req.getMessageCodeToken());
         this.authService.signup(user);
-    }
+    } //}
 }
 

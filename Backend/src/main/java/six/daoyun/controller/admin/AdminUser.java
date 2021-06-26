@@ -20,17 +20,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import six.daoyun.controller.exception.HttpBadRequest;
 import six.daoyun.controller.exception.HttpNotFound;
 import six.daoyun.entity.Role;
 import six.daoyun.entity.User;
-import six.daoyun.exception.NotFound;
 import six.daoyun.exchange.UserInfo;
 import six.daoyun.service.RoleService;
 import six.daoyun.service.UserService;
 import six.daoyun.utils.ObjUtil;
 
 
+@Tag(name = "用户管理(管理员)")
 @RestController
 public class AdminUser {
 	@Autowired

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import six.daoyun.controller.DYUtil;
 import six.daoyun.controller.exception.HttpForbidden;
 import six.daoyun.controller.exception.HttpNotFound;
@@ -22,6 +23,8 @@ import six.daoyun.entity.User;
 import six.daoyun.service.CourseService;
 import six.daoyun.service.UserService;
 
+
+@Tag(name = "班课学生", description = "邀请、踢出、加入、退出")
 @RestController()
 @RequestMapping("/apis/course/student")
 public class CourseStudentCrud {

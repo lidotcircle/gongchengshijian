@@ -18,11 +18,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import six.daoyun.controller.exception.HttpForbidden;
 import six.daoyun.controller.exception.HttpNotFound;
 import six.daoyun.entity.SystemParameter;
 import six.daoyun.service.SysparamService;
 
+
+@Tag(name = "系统参数")
 @RestController
 @RequestMapping("/apis/sysparam")
 class SysparamCrud {

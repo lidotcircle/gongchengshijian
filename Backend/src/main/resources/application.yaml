@@ -14,6 +14,13 @@ spring:
       # ddl-auto: none
       # ddl-auto: create-drop # DEV
 
+springdoc:
+  api-docs:
+    enabled: "${SRPINGDOC_ENABLED:true}"
+  swagger-ui:
+    enabled: "${SPRINGDOC_ENABLED:true}"
+    # url: /openapi.yaml
+
 redis:
   host: "${REDIS_HOST:localhost}"
   port: "${REDIS_PORT:63791}"

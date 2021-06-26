@@ -8,13 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import six.daoyun.controller.exception.HttpUnauthorized;
 import six.daoyun.service.AuthService;
 import six.daoyun.service.MessageCodeService;
 
+@Tag(name = "重置密码")
 @RestController
+@SecurityRequirements
+@RequestMapping("/apis/auth/password")
 public class ResetPass {
     @Autowired
     private MessageCodeService mcodeService;
@@ -82,7 +89,8 @@ public class ResetPass {
         }
     } //}
 
-    @PostMapping("/apis/auth/password/reset-token")
+    @Operation(summary = "获取重置密码的Token")
+    @PostMapping("/reset-token")
     private RequestResetPassResp requestResetPassword(@RequestBody @Valid RequestResetPassReq req) {
         if(!this.mcodeService.validate(req.getMessageCodeToken(), 
                                        req.getPhone(), 
@@ -96,7 +104,8 @@ public class ResetPass {
         return ans;
     }
 
-    @PutMapping("/apis/auth/password")
+    @Operation(summary = "执行重置密码的操作")
+    @PutMapping()
     private void ResetPassword(@RequestBody @Valid ResetPassReq req) {
 
         this.authService.resetPassword(req.getResetToken(), req.getPassword());

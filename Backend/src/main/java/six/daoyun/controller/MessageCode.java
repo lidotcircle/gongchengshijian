@@ -12,12 +12,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import six.daoyun.controller.exception.HttpForbidden;
 import six.daoyun.controller.exception.HttpRequireCaptcha;
 import six.daoyun.service.CaptchaService;
 import six.daoyun.service.MessageCodeService;
 import six.daoyun.service.UserService;
 
+
+@Tag(name = "短信服务")
 @RestController
 @RequestMapping("/apis/message")
 public class MessageCode {

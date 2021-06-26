@@ -1,0 +1,11 @@
+openapi: 3.0.1
+info:
+  title: Daoyun
+  version: 1.0.0
+components:
+  securitySchemes:
+    JSON Web Token:
+      type: apiKey
+      name: Authentication
+      in: header
+

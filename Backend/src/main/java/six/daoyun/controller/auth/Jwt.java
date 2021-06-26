@@ -7,11 +7,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import six.daoyun.config.JwtTokenUtil;
 import six.daoyun.controller.exception.HttpBadRequest;
 import six.daoyun.entity.RefreshToken;
 import six.daoyun.service.RefreshTokenService;
 
+
+@Tag(name = "鉴权 - JWT", description = "JWT 是 API 鉴权的凭证")
+@SecurityRequirements
 @RestController()
 class Jwt {
     @Autowired
@@ -30,6 +36,7 @@ class Jwt {
         }
     }
 
+    @Operation(summary = "获取JSON Web Token")
     @GetMapping("/apis/auth/jwt")
     private JwtResponse getJwt(@RequestParam("refreshToken") String refreshToken) {
         RefreshToken token = this.refreshTokenService.getRefreshTokenByToken(refreshToken)

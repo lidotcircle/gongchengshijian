@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import six.daoyun.controller.DYUtil;
 import six.daoyun.controller.exception.HttpBadRequest;
 import six.daoyun.controller.exception.HttpUnauthorized;
@@ -25,6 +27,7 @@ import six.daoyun.service.UserService;
 import six.daoyun.utils.ObjUtil;
 
 
+@Tag(name = "用户个人信息")
 @RestController
 @RequestMapping("/apis/user")
 public class UserRud {
@@ -90,6 +93,7 @@ public class UserRud {
         return ans;
     } //}
 
+    @Operation(summary = "获取用户的API权限")
     @GetMapping("/descriptor")
     public Collection<String> getDescriptors(HttpServletRequest httpreq) {
         final User user = DYUtil.getHttpRequestUser(httpreq);

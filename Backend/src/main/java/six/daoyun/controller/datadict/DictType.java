@@ -18,10 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import six.daoyun.controller.exception.HttpNotFound;
 import six.daoyun.entity.DictionaryType;
 import six.daoyun.service.DataDictionaryService;
 
+
+@Tag(name = "数字字典-数据")
 @RestController()
 @RequestMapping("/apis/datadict/type")
 class DictType {

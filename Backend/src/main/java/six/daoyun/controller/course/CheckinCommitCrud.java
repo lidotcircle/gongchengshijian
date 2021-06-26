@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import six.daoyun.controller.DYUtil;
 import six.daoyun.controller.exception.HttpForbidden;
 import six.daoyun.controller.exception.HttpNotFound;
@@ -24,6 +25,8 @@ import six.daoyun.service.CourseCheckinService;
 import six.daoyun.service.UserService;
 import six.daoyun.utils.ObjUtil;
 
+
+@Tag(name = "学生签到")
 @RestController
 @RequestMapping("/apis/course/check-in/anwser")
 public class CheckinCommitCrud {
