@@ -120,7 +120,8 @@ public class RoleServiceImpl implements RoleService {
             throw new Forbidden(String.format("角色 %s 无权限 %s", roleName, descriptor));
         }
 
-        perm.getRoles().add(role);
+        var roles = perm.getRoles();
+        roles.removeIf(r -> r.getRoleName().equals(roleName));
         this.permEntryRepository.save(perm);
 	} //}
 
