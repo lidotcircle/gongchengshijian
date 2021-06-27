@@ -35,3 +35,18 @@ nb-card {
     }
 }
 
+.course-info {
+    display: grid;
+    grid-template-columns: 7em 42% 7em 42%;
+    grid-row-gap: 1em;
+
+    .course-type-field {
+        user-select: none;
+    }
+
+    .course-type-value {
+        margin-left: 0.5em;
+        color: gray;
+    }
+}
+

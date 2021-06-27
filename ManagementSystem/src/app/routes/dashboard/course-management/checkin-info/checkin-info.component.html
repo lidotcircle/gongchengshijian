@@ -2,10 +2,22 @@
 
 <nb-card accent='primary'>
   <nb-card-header>
-    已签到数/全部学生数: {{ total || 0 }} / {{ course.students.length }}
+    已签到数/全部学生数: {{ originalAnwserList?.length || 0 }} / {{ course.students.length }}
   </nb-card-header>
 
   <nb-card-body>
+    <div class="course-info">
+      <div class="course-type-field">课程名称</div>
+      <div class="course-type-value">{{ course.courseName }}</div>
+      <div class="course-type-field">签到类型</div>
+      <div class="course-type-value">{{ checkin["getType"] && checkin["getType"]() }}</div>
+      <div class="course-type-field">签到开始时间</div>
+      <div class="course-type-value">{{ checkin.releaseDate && checkin.releaseDate.toLocaleString() }}</div>
+      <div class="course-type-field">签到截至时间</div>
+      <div class="course-type-value">{{ checkin.deadline && checkin.deadline.toLocaleString() }}</div>
+      <div class="course-type-field">签到数据</div>
+      <div class="course-type-value">{{ checkin.jsonData }}</div>
+    </div>
   </nb-card-body>
 
   <nb-card-footer>
@@ -45,7 +57,7 @@
         </div>
         <div class="buttons">
           <div class="take-space"></div>
-          <button nbButton status='primary' hero>查看</button>
+          <button disabled='true' nbButton status='primary' hero>查看</button>
         </div>
       </nb-list-item>
     </nb-list>

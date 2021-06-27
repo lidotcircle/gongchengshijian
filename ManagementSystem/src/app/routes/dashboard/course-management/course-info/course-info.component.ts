@@ -309,7 +309,7 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
             relativeTo: this.activatedRoute,
             queryParams: {
                 checkinId: `${i}`,
-                object: `${o}`,
+                courseExId: this.course.courseExId,
             }
         });
     }
