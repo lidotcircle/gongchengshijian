@@ -13,9 +13,7 @@ export function assert(expr: boolean, msg?: string) {
     }
 }
 
-const NV = "API_ADDRESS_BUILD_ENV";
-export const API_ADDRESS = NV.startsWith("http") ? NV : 
-    window.location.protocol.toLowerCase() == 'http:' ? "http://192.168.44.43:8099" : window.location.origin;
+export const API_ADDRESS = window.location.origin;
 
 export function computeDifference(newObj: object, oldObj: object): object | null {
     const ans = Object.create({});

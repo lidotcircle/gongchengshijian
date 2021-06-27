@@ -170,7 +170,7 @@ export class CourseService {
     }
 
     async getCheckinList(checkinId: number) {
-        return await this.http.get(RESTfulAPI.Course.Checkin.anwserList, {
+        return await this.http.get(RESTfulAPI.Course.Checkin.anwserList + this.suffix, {
             params: {
                 checkinId: `${checkinId}`
             }
