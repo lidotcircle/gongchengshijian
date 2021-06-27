@@ -1,5 +1,7 @@
 package six.daoyun.service.SysparamServiceImpl;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -7,8 +9,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import six.daoyun.controller.exception.HttpNotFound;
@@ -20,8 +20,11 @@ import six.daoyun.service.SysparamService;
 public class SysparamServiceImpl implements SysparamService {
 	@Autowired
     private SysparamRepository repository;
-    @Autowired
-    private RedisTemplate<String, SystemParameter> cache;
+    private Map<String, SystemParameter> cache;
+
+    public SysparamServiceImpl() {
+        this.cache = new HashMap<>();
+    }
 
     private static String keyname(String key) {
         return "systemparam_" + key;
@@ -29,8 +32,8 @@ public class SysparamServiceImpl implements SysparamService {
 
     private void invalidateKey(String paramkey) {
         final String key = keyname(paramkey);
-        if(this.cache.hasKey(key)) {
-            this.cache.delete(key);
+        if(this.cache.containsKey(key)) {
+            this.cache.remove(key);
         }
     }
 
@@ -42,14 +45,13 @@ public class SysparamServiceImpl implements SysparamService {
 	@Override
 	public Optional<SystemParameter> get(String paramkey) {
         final String key = keyname(paramkey);
-        ValueOperations<String, SystemParameter> operation = this.cache.opsForValue();
-        if(this.cache.hasKey(key)) {
-            return Optional.of(operation.get(key));
+        if(this.cache.containsKey(key)) {
+            return Optional.of(this.cache.get(key));
         }
 
         SystemParameter param = this.repository.findByParameterName(paramkey);
         if(param != null) {
-            operation.set(key, param);
+            this.cache.put(key, param);
             return Optional.of(param);
         }
 

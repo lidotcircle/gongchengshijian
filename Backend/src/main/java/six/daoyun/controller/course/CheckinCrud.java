@@ -274,6 +274,15 @@ public class CheckinCrud {
         public void setStudentInfo(StudentInfo studentInfo) {
             this.studentInfo = studentInfo;
         }
+
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", shape = JsonFormat.Shape.STRING)
+        private Date checkinDate;
+        public Date getCheckinDate() {
+            return this.checkinDate;
+        }
+        public void setCheckinDate(Date checkinDate) {
+            this.checkinDate = checkinDate;
+        }
     } //}
     @GetMapping("/anwser-list")
     private Collection<CheckinAnwser> getAnwserList(HttpServletRequest httpreq, @RequestParam() long checkinId) //{
@@ -297,12 +306,13 @@ public class CheckinCrud {
             .orElseThrow(() -> new HttpNotFound("找不到该签到任务"));
 
         final Collection<CheckinAnwser> ans = new ArrayList<>();
-        checkin.getChekcInTasks().forEach((anwser) -> {
+        checkin.getChekcInTasks().forEach(anwser -> {
             StudentInfo s = new StudentInfo(anwser.getStudent());
             CheckinAnwser a = new CheckinAnwser();
             ObjUtil.assignFields(a, anwser);
             a.setCheckinAnwserId(anwser.getId());
             a.setStudentInfo(s);
+            a.setCheckinDate(anwser.getCreatedDate());
             ans.add(a);
         });
 

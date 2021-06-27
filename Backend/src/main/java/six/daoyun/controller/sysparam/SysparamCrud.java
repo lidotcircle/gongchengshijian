@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import six.daoyun.controller.exception.HttpForbidden;
 import six.daoyun.controller.exception.HttpNotFound;
 import six.daoyun.entity.SystemParameter;
+import six.daoyun.exception.Forbidden;
 import six.daoyun.service.SysparamService;
 
 
@@ -116,6 +117,12 @@ class SysparamCrud {
 
     @DeleteMapping()
     private void delete(@RequestParam("key") String key) {
+        if (key.equals(six.daoyun.utils.SystemParameter.Experience) ||
+            key.equals(six.daoyun.utils.SystemParameter.InitRoles)) 
+        {
+            throw new Forbidden("不可删除内置参数");
+        }
+
         this.sysparamService.delete(key);
     }
 
