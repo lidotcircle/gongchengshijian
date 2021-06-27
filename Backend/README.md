@@ -104,6 +104,8 @@ export SMS_BIND_PHONE_TEMPLATE_CODE=
 
 ## RESTful APIs
 
+[Swagger UI](https://gcsj.lidotcircle.ltd/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config#/)提供API的访问功能.
+
 使用**GET**和**DELETE**请求时, API的参数包含在URI的 *params* 中; 使用**POST** **PUT**请求时, 
 API的参数序列化为JSON格式包含在 *body*中.
 
