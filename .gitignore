@@ -9,3 +9,7 @@ Backend/.classpath
 Backend/.factorypath
 Backend/.project
 
+setupfiles/daoyun*.jar
+setupfiles/dist*.tar.gz
+mysqldata
+

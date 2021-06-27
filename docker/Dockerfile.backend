@@ -1,0 +1,10 @@
+FROM openjdk:11
+
+WORKDIR /daoyun/bin
+COPY ./setupfiles/daoyun.jar .
+COPY ./setupfiles/wait-for-it.sh .
+RUN chmod +x wait-for-it.sh
+
+EXPOSE 8099
+CMD [ "sh", "-c", "java -jar /daoyun/bin/daoyun.jar" ]
+

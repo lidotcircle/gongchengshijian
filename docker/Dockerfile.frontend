@@ -1,0 +1,15 @@
+FROM busybox:latest as extrator
+
+WORKDIR /tmp
+COPY ./setupfiles/dist.tar.gz .
+RUN tar -xf dist.tar.gz
+
+
+FROM nginx:1.21.0
+
+WORKDIR /daoyun
+COPY --from=extrator /tmp/dist .
+COPY ./setupfiles/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
+ADD  ./setupfiles/nginx/nginx_env.sh /docker-entrypoint.d/
+RUN  chmod +x /docker-entrypoint.d/nginx_env.sh
+

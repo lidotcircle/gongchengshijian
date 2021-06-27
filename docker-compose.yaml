@@ -1,0 +1,86 @@
+version: '3.2'
+
+services:
+  mysql.daoyun.six:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+    volumes:
+      - mysql-datavolume:/var/lib/mysql
+      - ./Backend/mysql:/docker-entrypoint-initdb.d
+    ports:
+      - 33062:3306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  redis.daoyun.six:
+    image: redis
+    command: redis-server --requirepass password
+    restart: always
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    ports:
+      - 63792:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      timeout: 20s
+      retries: 10
+
+  adminer.daoyun.six:
+    image: adminer
+    restart: always
+    ports:
+      - 6082:8080
+
+  backend.daoyun.six:
+    image: daoyunbackend
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    depends_on:
+      mysql.daoyun.six:
+        condition: service_healthy
+      redis.daoyun.six:
+        condition: service_healthy
+    environment:
+      - PORT=8099
+      - DB_URL=jdbc:mysql://mysql.daoyun.six:3306/daoyun
+      - DB_USER=root
+      - DB_PASS=password
+      - REDIS_HOST=redis.daoyun.six
+      - REDIS_PORT=6379
+      - REDIS_PASS=password
+      - JWT_SECRET=helloworld
+      - AliyunAccessKeyId=${AliyunAccessKeyId}
+      - AliyunAccessKeySecret=${AliyunAccessKeySecret}
+      - ALIYUN_SMS_SIGN_NAME=生意专家
+      - SMS_LOGIN_TEMPLATE_CODE=SMS_205462496
+      - SMS_SIGNUP_TEMPLATE_CODE=SMS_205462496
+      - SMS_RESET_TEMPLATE_CODE=SMS_205462496
+      - SMS_BIND_PHONE_TEMPLATE_CODE=SMS_205462496
+    command: ["./wait-for-it.sh", "-t", "0", "mysql.daoyun.six:3306", "--", "java", "-jar", "/daoyun/bin/daoyun.jar"]
+
+  frontend.daoyun.six:
+    image: daoyunfrontend
+    depends_on:
+      - backend.daoyun.six
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    ports:
+      - 8181:80
+    environment:
+      - BACKEND_ADDRESS=backend.daoyun.six:8099
+
+volumes:
+  mysql-datavolume:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './mysqldata'
+
