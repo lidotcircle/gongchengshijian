@@ -7,6 +7,7 @@ import { Subject, interval } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { AuthService } from 'src/app/service/auth';
 import { MessageService, MessageType } from 'src/app/service/message/message.service';
+import { httpErrorHandler } from 'src/app/shared/utils';
 
 @Component({
     selector: 'ngx-login-by-message-code',
@@ -59,7 +60,7 @@ export class LoginByMessageCodeComponent extends NbLoginComponent implements OnI
                 return;
             }
 
-            this.toastrService.danger(`获取验证码失败, ${err?.error?.reason}`);
+            httpErrorHandler(err, "登录", null);
         }
     }
     get WaitText(): String {
@@ -80,12 +81,7 @@ export class LoginByMessageCodeComponent extends NbLoginComponent implements OnI
                 this.authService.forgetLogin();
             }
         } catch (e: any) {
-            let errorMsg = "未知错误, 服务不可达";
-            if(e instanceof HttpErrorResponse) {
-                errorMsg = e.error.reason || errorMsg;
-            }
-
-            this.toastrService.show(errorMsg, "登录", {status: 'danger'});
+            const errorMsg = httpErrorHandler(e, "登录", "未知错误, 服务不可达");
             this.errors.push(errorMsg);
             this.showMessages = {error: true};
         }

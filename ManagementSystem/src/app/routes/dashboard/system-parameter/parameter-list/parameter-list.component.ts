@@ -8,7 +8,7 @@ import { SystemParameter } from 'src/app/entity';
 import { RESTfulAPI } from 'src/app/service/restful';
 import { SysParamService } from 'src/app/service/system-param/system-parameter.service';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window.component';
-import { Pattern, UglyInputHint } from 'src/app/shared/utils';
+import { httpErrorHandler, Pattern, UglyInputHint } from 'src/app/shared/utils';
 
 
 function isEmpty(v: string | null) {return !v || v == '';}
@@ -200,12 +200,7 @@ export class ParameterListComponent implements OnInit, OnDestroy {
             await this.sysParamService.post(event.newData);
             this.toastrService.success(`新建'${event.newData.key}'`, "系统参数");
         } catch (e: any) {
-            let errorMsg = `创建系统参数'${event.newData.key}'失败`;
-            if (e instanceof HttpErrorResponse) {
-                errorMsg = e.error.reason || errorMsg;
-
-            }
-            this.toastrService.danger(errorMsg, "系统参数");
+            httpErrorHandler(e, "系统参数", `创建系统参数'${event.newData.key}'失败`);
             return event.confirm.reject();
         }
 
@@ -229,11 +224,7 @@ export class ParameterListComponent implements OnInit, OnDestroy {
             await this.sysParamService.put(event.newData);
             this.toastrService.success(`修改'${event.data.key}'`, "系统参数");
         } catch (e: any) {
-            let errorMsg = `编辑系统参数'${event.newData.key}'失败`;
-            if(e instanceof HttpErrorResponse) {
-                errorMsg = e.error.reason || errorMsg;
-            }
-            this.toastrService.danger(errorMsg, "系统参数");
+            httpErrorHandler(e, "系统参数", `编辑系统参数'${event.newData.key}'失败`);
             return event.confirm.reject();
         }
 
@@ -259,11 +250,7 @@ export class ParameterListComponent implements OnInit, OnDestroy {
             await this.sysParamService.delete(event.data.key);
             this.toastrService.success(`删除'${event.data.key}'`, "系统参数");
         } catch (e: any) {
-            let errorMsg = `删除系统参数'${event.data.key}'失败`;
-            if (e instanceof HttpErrorResponse) {
-                errorMsg = e.error.reason || errorMsg;
-            }
-            this.toastrService.danger(errorMsg, "系统参数");
+            httpErrorHandler(e, "系统参数", `删除系统参数'${event.data.key}'失败`);
             return event.confirm.reject();
         }
 

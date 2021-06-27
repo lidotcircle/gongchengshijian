@@ -7,6 +7,7 @@ import { AdminUserService } from 'src/app/service/admin-user/admin-user.service'
 import { RESTfulAPI } from 'src/app/service/restful';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window.component';
 import { OptionalCellComponent } from 'src/app/shared/components/optional-cell.component';
+import { httpErrorHandler } from 'src/app/shared/utils';
 import { ClickCellComponent } from './click-cell.component';
 
 @Component({
@@ -157,8 +158,8 @@ export class UserListComponent implements OnInit {
         try {
             await this.adminUser.delete(event.data.userName);
             this.toastrService.success(`删除'${event.data.userName}'`, "用户管理");
-        } catch {
-            this.toastrService.danger(`删除用户'${event.data.userName}'失败`, "用户管理");
+        } catch (err) {
+            httpErrorHandler(err, "用户管理", `删除用户'${event.data.userName}'失败`);
             return event.confirm.reject();
         }
 

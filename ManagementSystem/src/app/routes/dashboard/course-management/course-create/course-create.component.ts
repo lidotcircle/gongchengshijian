@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NbToastrService } from '@nebular/theme';
 import { Course } from 'src/app/entity';
 import { CourseService } from 'src/app/service/course/course.service';
+import { httpErrorHandler } from 'src/app/shared/utils';
 
 @Component({
     selector: 'ngx-course-create',
@@ -26,7 +27,7 @@ export class CourseCreateComponent implements OnInit {
             this.course.briefDescription = '';
             this.toastrService.info("创建班课成功", "班课管理");
         } catch (e) {
-            this.toastrService.danger("创建班课失败", "班课管理");
+            httpErrorHandler(e, "班课管理", "创建班课失败");
         }
     }
 }

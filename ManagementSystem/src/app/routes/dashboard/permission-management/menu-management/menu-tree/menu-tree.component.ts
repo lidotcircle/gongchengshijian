@@ -2,6 +2,7 @@ import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { NbToastrService, NbWindowService } from '@nebular/theme';
 import { PermMenu } from 'src/app/entity';
 import { PermMenuService } from 'src/app/service/role/perm-menu.service';
+import { httpErrorHandler } from 'src/app/shared/utils';
 import { MenuEditorComponent } from './menu-editor.component';
 import { MenuRoleListComponent } from './menu-role-list.component';
 
@@ -26,7 +27,6 @@ export class MenuTreeComponent implements OnInit {
         deleteIsLoading: false,
     }
 
-    icon: string = 'menu-outline';
     show: boolean = false;
 
     constructor(private windowService: NbWindowService,
@@ -34,12 +34,6 @@ export class MenuTreeComponent implements OnInit {
                 private toastrService: NbToastrService) {}
 
     ngOnInit(): void {
-        if(this.menu?.entryType == 'page') {
-            this.icon = 'book-open-outline';
-        }
-        if(this.menu?.entryType == 'button') {
-            this.icon = 'radio-button-on-outline';
-        }
     }
 
     get hasChild(): boolean {return this.menu?.children && this.menu?.children.length > 0;}
@@ -69,8 +63,8 @@ export class MenuTreeComponent implements OnInit {
         try {
             await this.permMenuService.enable(this.roleName, this.menu.descriptor);
             this.menu.enable();
-        } catch {
-            this.toastrService.danger("开启失败", "菜单权限");
+        } catch (err) {
+            httpErrorHandler(err, "菜单权限", "开启失败");
         } finally {
             this.loadingStatus.enableIsLoading = false;
         }
@@ -83,8 +77,8 @@ export class MenuTreeComponent implements OnInit {
         try {
             await this.permMenuService.disable(this.roleName, this.menu.descriptor);
             this.menu.disable();
-        } catch {
-            this.toastrService.danger("关闭失败", "菜单权限");
+        } catch (err) {
+            httpErrorHandler(err, "菜单权限", "关闭失败");
         } finally {
             this.loadingStatus.disableIsLoading = false;
         }
@@ -97,8 +91,8 @@ export class MenuTreeComponent implements OnInit {
         try {
             await this.permMenuService.enable(this.roleName, this.menu.descriptor, true);
             this.menu.enable(true);
-        } catch {
-            this.toastrService.danger("开启失败", "菜单权限");
+        } catch (err) {
+            httpErrorHandler(err, "菜单权限", "开启失败");
         } finally {
             this.loadingStatus.enableRecurIsLoading = false;
         }
@@ -111,8 +105,8 @@ export class MenuTreeComponent implements OnInit {
         try {
             await this.permMenuService.disable(this.roleName, this.menu.descriptor, true);
             this.menu.disable(true);
-        } catch {
-            this.toastrService.danger("开启失败", "菜单权限");
+        } catch (err) {
+            httpErrorHandler(err, "菜单权限", "开启失败");
         } finally {
             this.loadingStatus.disableRecurIsLoading = false;
         }
@@ -131,8 +125,8 @@ export class MenuTreeComponent implements OnInit {
             menu.descriptor = this.menu.descriptor + '.' + menu.descriptor;
             try {
                 await this.permMenuService.create(this.menu.descriptor, menu);
-            } catch {
-                this.toastrService.danger("创建菜单失败", "菜单管理")
+            } catch (err) {
+                httpErrorHandler(err, "菜单管理", "创建菜单失败")
             }
         }
     }
@@ -149,8 +143,8 @@ export class MenuTreeComponent implements OnInit {
         if(win.config.context['isConfirmed']) {
             try {
                 await this.permMenuService.update(menu);
-            } catch {
-                this.toastrService.danger("编辑菜单失败", "菜单管理")
+            } catch (err) {
+                httpErrorHandler(err, "菜单管理", "编辑菜单失败")
             }
         }
     }

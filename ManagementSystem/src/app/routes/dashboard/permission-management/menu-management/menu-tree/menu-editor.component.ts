@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { NbToastrService, NbWindowRef } from '@nebular/theme';
 import { PermMenu } from 'src/app/entity';
 import { PermMenuService } from 'src/app/service/role/perm-menu.service';
-import { Pattern } from 'src/app/shared/utils';
+import { httpErrorHandler, Pattern } from 'src/app/shared/utils';
 
 @Component({
     template: `
@@ -29,7 +29,7 @@ import { Pattern } from 'src/app/shared/utils';
                 <nb-select fullWidth [(ngModel)]="menu.entryType" name='entryType'>
                   <nb-option value="menu">菜单</nb-option>
                   <nb-option value="page">页面</nb-option>
-                  <nb-option value="button">按钮</nb-option>
+                  <nb-option value="button" *ngIf='showButton'>按钮</nb-option>
                 </nb-select>
             </div>
 
@@ -69,6 +69,7 @@ export class MenuEditorComponent implements OnInit {
     @Input()
     menu: PermMenu;
     inEdit: boolean;
+    showButton: boolean;
 
     inDelete: boolean;
     inDeleteRec: boolean;
@@ -80,6 +81,7 @@ export class MenuEditorComponent implements OnInit {
     ngOnInit() {
         this.inEdit = !!this.menu;
         this.menu = this.menu || new PermMenu();
+        this.showButton = this.menu.children == null || this.menu.children.length == 0;
         if(this.menu.entryType == null) {
             this.menu.entryType = 'menu';
         }
@@ -103,8 +105,8 @@ export class MenuEditorComponent implements OnInit {
         try {
             await this.permMenuService.delete(this.menu.descriptor);
             this.cancel();
-        } catch {
-            this.toastrService.danger("删除菜单失败", "菜单管理");
+        } catch (err) {
+            httpErrorHandler(err, "菜单管理", "删除菜单失败");
         } finally {
             this.inDelete = false;
         }
@@ -117,8 +119,8 @@ export class MenuEditorComponent implements OnInit {
         try {
             await this.permMenuService.delete(this.menu.descriptor, true);
             this.cancel();
-        } catch {
-            this.toastrService.danger("删除菜单失败", "菜单管理");
+        } catch (err) {
+            httpErrorHandler(err, "菜单管理", "删除菜单失败");
         } finally {
             this.inDeleteRec = false;
         }

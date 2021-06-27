@@ -1,4 +1,4 @@
-import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
+import { Injector, ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NbAuthModule, NbDummyAuthStrategy } from '@nebular/auth';
 import { NbSecurityModule, NbRoleProvider } from '@nebular/security';
@@ -145,6 +145,7 @@ export const NB_CORE_PROVIDERS = [
   StateService,
 ];
 
+export let AppInjector: Injector;
 @NgModule({
   imports: [
     CommonModule,
@@ -155,7 +156,8 @@ export const NB_CORE_PROVIDERS = [
   declarations: [],
 })
 export class CoreModule {
-  constructor(@Optional() @SkipSelf() parentModule: CoreModule) {
+  constructor(@Optional() @SkipSelf() parentModule: CoreModule, private injector: Injector) {
+    AppInjector = this.injector;
     throwIfAlreadyLoaded(parentModule, 'CoreModule');
   }
 

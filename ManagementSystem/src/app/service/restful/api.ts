@@ -17,6 +17,7 @@ export module API {
         export const info = API_ADDRESS + '/apis/user';
         export const update = API_ADDRESS + '/apis/user';
         export const updatePrivileged = API_ADDRESS + '/apis/user/privileged';
+        export const descriptors = API_ADDRESS + '/apis/user/descriptor';
     }
 
     export module SysParam {
@@ -74,6 +75,8 @@ export module API {
             export const post = API_ADDRESS + '/apis/course/check-in';
             export const put = API_ADDRESS + '/apis/course/check-in';
             export const deleteCheckin = API_ADDRESS + '/apis/course/check-in'
+
+            export const anwserList = API_ADDRESS + '/apis/course/check-in/anwser-list';
         }
     }
 

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { DaoyunMenu } from './dashboard-menu';
 
 @Component({
     selector: 'ngx-dashboard',

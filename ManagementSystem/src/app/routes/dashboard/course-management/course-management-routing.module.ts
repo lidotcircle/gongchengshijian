@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { CheckinInfoComponent } from './checkin-info/checkin-info.component';
 import { CourseCreateComponent } from './course-create/course-create.component';
 import { CourseInfoComponent } from './course-info/course-info.component';
 import { CourseListComponent } from './course-list/course-list.component';
@@ -16,6 +17,10 @@ const routes: Routes = [
     {
         path: 'course-info',
         component: CourseInfoComponent,
+    },
+    {
+        path: 'checkin-info',
+        component: CheckinInfoComponent,
     },
     {
         path: '',

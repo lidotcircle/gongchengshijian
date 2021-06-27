@@ -1,5 +1,7 @@
 export * from './utils/ugly-hint';
 export * from './utils/soft-assign';
+export * from './utils/eval';
+export * from './utils/http-error-handler';
 
 
 export function assert(expr: boolean, msg?: string) {
@@ -20,8 +22,18 @@ export function computeDifference(newObj: object, oldObj: object): object | null
     let i=0;
 
     for(const prop of Object.getOwnPropertyNames(newObj)) {
-        if(newObj[prop] != oldObj[prop]) {
-            ans[prop] = newObj[prop];
+        const a = newObj[prop];
+        const b = oldObj[prop];
+        if (typeof a == 'object' && a != null && 
+            typeof b == 'object' && b != null)
+        {
+            const diff = computeDifference(a, b);
+            if(diff != null) {
+                ans[prop] = diff;
+                i++;
+            }
+        } else if (a != b) {
+            ans[prop] = a;
             i++;
         }
     }

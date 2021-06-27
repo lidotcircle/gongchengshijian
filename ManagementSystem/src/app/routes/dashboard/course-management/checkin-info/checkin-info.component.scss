@@ -1,0 +1,52 @@
+@import 'src/app/style/utils.scss';
+
+.property-name {
+    color: nb-theme(color-primary-600);
+    user-select: none;
+}
+
+nb-card {
+    nb-card-body {
+        .pager {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2em 0em 0em 0em;
+        }
+    }
+}
+
+.checkin {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .student, .datetime, .data, .buttons {
+        width: 25%;
+    }
+
+    .take-space {
+        flex-grow: 1;
+    }
+
+    .buttons {
+        display: flex;
+        flex-direction: row;
+    }
+}
+
+.course-info {
+    display: grid;
+    grid-template-columns: 7em 42% 7em 42%;
+    grid-row-gap: 1em;
+
+    .course-type-field {
+        user-select: none;
+    }
+
+    .course-type-value {
+        margin-left: 0.5em;
+        color: gray;
+    }
+}
+

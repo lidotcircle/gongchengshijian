@@ -1,6 +1,6 @@
 import { ViewportScroller } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NbToastrService, NbWindowService } from '@nebular/theme';
 import { Observable, Subject, from, of } from 'rxjs';
 import { concatMap, map, takeUntil, tap } from 'rxjs/operators';
@@ -9,12 +9,14 @@ import { CourseCheckin, CourseInfo, CourseTask, Student } from 'src/app/entity/C
 import { CourseCheckinService } from 'src/app/service/course/course-check-in.service';
 import { CourseTaskService } from 'src/app/service/course/course-task.service';
 import { CourseService } from 'src/app/service/course/course.service';
+import { ObjectTransferService } from 'src/app/service/object-transfer.service';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window.component';
-import { sortObject } from 'src/app/shared/utils';
+import { httpErrorHandler, sortObject } from 'src/app/shared/utils';
 import { BasicInfoEditorComponent } from './basic-info-editor.component';
 import { CourseCheckinEditorComponent } from './course-checkin-editor.component';
 import { CourseInfoViewComponent } from './course-info-viewer.component';
 import { CourseTaskEditorComponent } from './course-task-editor.component';
+import { CourseTaskViewComponent } from './course-task-viewer.component';
 import { JustInputComponent } from './just-input.component';
 
 @Component({
@@ -29,6 +31,7 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
     tasks: CourseTask[] = [];
     infos: CourseInfo[] = [];
     checkins: CourseCheckin[] = [];
+    issuper: boolean = false;
     private studentsFilter: string = '';
     private tasksFilter: string = '';
     private infosFilter: string = '';
@@ -56,7 +59,6 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
         });
     }
     private runCheckinsFilter() {
-        console.log(this.course.CheckinList);
         this.checkins = this.course.CheckinList.filter(checkins => {
             return this.checkinsFilter.trim().length == 0 ||
                 checkins.deadline.toISOString().match(this.checkinsFilter);
@@ -94,10 +96,12 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
 
     constructor(private courseService: CourseService,
                 private courseTaskService: CourseTaskService,
+                private objectTransferService: ObjectTransferService,
                 private courseCheckinService: CourseCheckinService,
                 private windowService: NbWindowService,
                 private toastrService: NbToastrService,
                 private viewportScroller: ViewportScroller,
+                private router: Router,
                 private activatedRoute: ActivatedRoute) {
         this.course = new Course();
 
@@ -112,6 +116,8 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        this.courseService.getSuperme()
+            .subscribe(s => this.issuper = s);
     }
 
     async editBasic() //{
@@ -138,8 +144,8 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
                 this.course.courseName = courseName;
                 this.course.briefDescription = briefDescription;
                 this.toastrService.info('修改成功', '课程管理');
-            } catch {
-                this.toastrService.danger('修改失败', '课程管理');
+            } catch (err) {
+                httpErrorHandler(err, '修改失败', '课程管理');
             }
         }
     } //}
@@ -163,8 +169,8 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
                 await this.courseService.invite(this.course.courseExId, value);
                 await this.refreshCourseFrom(this.course.courseExId);
                 this.toastrService.info('添加学生: ' + value, '课程管理');
-            } catch {
-                this.toastrService.danger('添加失败', '课程管理');
+            } catch (err) {
+                httpErrorHandler(err, '添加失败', '课程管理');
             }
         }
     } //}
@@ -181,8 +187,8 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
             try {
                 await this.courseService.deleteStudent(this.course.courseExId, student.userName);
                 await this.refreshCourseFrom(this.course.courseExId);
-            } catch {
-                this.toastrService.info('删除失败 ', '课程管理');
+            } catch (err) {
+                httpErrorHandler(err, '课程管理', '删除失败 ');
             }
         }
     } //}
@@ -203,8 +209,8 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
             try {
                 await this.courseTaskService.postTask(task);
                 await this.refreshCourseFrom(this.course.courseExId);
-            } catch {
-                this.toastrService.danger("新建任务失败", "课程管理");
+            } catch (err) {
+                httpErrorHandler(err, "课程管理", "新建任务失败");
             }
         }
     } //}
@@ -225,8 +231,8 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
             try {
                 await this.courseCheckinService.postCheckin(checkin);
                 await this.refreshCourseFrom(this.course.courseExId);
-            } catch {
-                this.toastrService.danger("新建签到失败", "课程管理");
+            } catch (err) {
+                httpErrorHandler(err, "课程管理", "新建签到失败");
             }
         }
     } //}
@@ -247,8 +253,8 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
             try {
                 await this.courseTaskService.postInfo(info);
                 await this.refreshCourseFrom(this.course.courseExId);
-            } catch {
-                this.toastrService.danger("新建课程通知失败", "课程管理");
+            } catch (err) {
+                httpErrorHandler(err, "课程管理", "新建课程通知失败");
             }
         }
 
@@ -256,8 +262,24 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
 
     async viewTask(n: number) {
         const task: CourseTask = this.tasks[n];
-        // TODO
+        const win = this.windowService.open(CourseTaskViewComponent, {
+            title: '课程任务',
+            context: {
+                courseTask: task,
+            }
+        });
+        await win.onClose.toPromise();
+
+        if(win.config.context['delete']) {
+            try {
+                await this.courseTaskService.deleteTask(task.taskId);
+                await this.refreshCourseFrom(this.course.courseExId);
+            } catch (err) {
+                httpErrorHandler(err, "课程管理", "删除任务失败");
+            }
+        }
     }
+
     async viewInfo(n: number) //{
     {
         const info: CourseInfo = this.infos[n];
@@ -273,14 +295,44 @@ export class CourseInfoComponent implements OnInit, OnDestroy {
             try {
                 await this.courseTaskService.deleteTask(info.taskId);
                 await this.refreshCourseFrom(this.course.courseExId);
-            } catch {
-                this.toastrService.danger("删除通知失败", "课程管理");
+            } catch (err) {
+                httpErrorHandler(err, "课程管理", "删除通知失败");
             }
         }
     } //}
 
     async viewCheckin(n: number) {
-        // TODO
+        const o = this.objectTransferService.store(this.course);
+        const i = this.course.checkins[n].checkinId;
+
+        this.router.navigate(['../checkin-info'], {
+            relativeTo: this.activatedRoute,
+            queryParams: {
+                checkinId: `${i}`,
+                courseExId: this.course.courseExId,
+            }
+        });
+    }
+
+    async deleteCourse() {
+        const win = this.windowService.open(ConfirmWindowComponent, {
+            title: `删除班课`,
+            context: {}
+        });
+        await win.onClose.toPromise();
+
+        if(win.config.context['isConfirmed']) {
+            try {
+                await this.courseService.delete(this.course.courseExId);
+                this.toastrService.success("删除班课成功", "班课管理");
+                this.router.navigate(["../course-list"], {
+                    relativeTo: this.activatedRoute,
+                    queryParams: {},
+                });
+            } catch (err) {
+                httpErrorHandler(err, '课程管理', '删除失败 ');
+            }
+        }
     }
 
     gotoStudentList() { this.viewportScroller.scrollToAnchor('student-list'); }

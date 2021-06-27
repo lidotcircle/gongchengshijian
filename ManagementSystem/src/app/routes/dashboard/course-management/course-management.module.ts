@@ -12,14 +12,17 @@ import { JustInputComponent } from './course-info/just-input.component';
 import { CourseInfoViewComponent } from './course-info/course-info-viewer.component';
 import { CourseTaskEditorComponent } from './course-info/course-task-editor.component';
 import { CourseCheckinEditorComponent } from './course-info/course-checkin-editor.component';
+import { CourseTaskViewComponent } from './course-info/course-task-viewer.component';
+import { CheckinInfoComponent } from './checkin-info/checkin-info.component';
 
 
 @NgModule({
     declarations: [
         CourseListComponent, CourseInfoComponent, CourseCreateComponent, 
         BasicInfoEditorComponent, JustInputComponent,
-        CourseInfoViewComponent, CourseTaskEditorComponent,
+        CourseInfoViewComponent, CourseTaskViewComponent,CourseTaskEditorComponent,
         CourseCheckinEditorComponent,
+        CheckinInfoComponent,
     ],
     imports: [
         CommonModule,

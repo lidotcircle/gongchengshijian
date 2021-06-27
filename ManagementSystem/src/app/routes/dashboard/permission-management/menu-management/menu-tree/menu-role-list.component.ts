@@ -4,6 +4,7 @@ import { NbToastrService, NbWindowRef, NbWindowService } from '@nebular/theme';
 import { from } from 'rxjs';
 import { PermMenu } from 'src/app/entity';
 import { PermMenuService } from 'src/app/service/role/perm-menu.service';
+import { httpErrorHandler } from 'src/app/shared/utils';
 
 @Component({
     selector: 'ngx-menu-role-list',
@@ -90,7 +91,8 @@ export class MenuRoleListComponent implements OnInit {
     ngOnInit(): void {
         this.roleList = [];
         from(this.permMenuService.getRoles(this.menu.descriptor))
-            .subscribe(list => this.roleList = list, err => this.toastrService.danger("获取角色列表失败", "菜单管理"));
+            .subscribe(list => this.roleList = list, 
+                       err => httpErrorHandler(err, "菜单管理", "获取角色列表失败"));
     }
 
     async deleteRole(n: number) {
@@ -101,8 +103,8 @@ export class MenuRoleListComponent implements OnInit {
         try {
             await this.permMenuService.disable(roleName, this.menu.descriptor);
             this.roleList.splice(n, 1);
-        } catch {
-            this.toastrService.danger("删除失败", "菜单管理");
+        } catch (err) {
+            httpErrorHandler(err, "菜单管理", "删除失败");
         } finally {
             this.inDelete = false;
         }

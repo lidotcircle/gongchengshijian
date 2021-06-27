@@ -6,6 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Course, User } from 'src/app/entity';
 import { CourseService } from 'src/app/service/course/course.service';
 import { UserService } from 'src/app/service/user/user.service';
+import { httpErrorHandler } from 'src/app/shared/utils';
 
 @Component({
     selector: 'ngx-course-list',
@@ -19,6 +20,7 @@ export class CourseListComponent implements OnInit, OnDestroy {
     courses: Course[] = [];
     pagesize: number = 10;
     searchWildcard: string = '';
+    issuper: boolean = false;
     get pageno(): number {return this._pageno;}
     set pageno(no: number) {
         this.gotoPage(no);
@@ -37,6 +39,8 @@ export class CourseListComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.gotoPage(1);
+        this.courseService.getSuperme()
+            .subscribe(s => this.issuper = s);
     }
 
     onsearchinput(pair: [string, (hints: string[]) => void]) //{
@@ -78,7 +82,7 @@ export class CourseListComponent implements OnInit, OnDestroy {
             this.courses = pages.pairs;
             this._pageno = pageno;
         } catch (err) {
-            this.toastrService.danger(`获取页面失败${err?.error?.reason ? (": " + err.error.reason) : ""}`, "课程管理");
+            httpErrorHandler(err, "课程管理", `获取页面失败`);
         }
     }
 

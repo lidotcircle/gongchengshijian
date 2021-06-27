@@ -5,6 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { User } from 'src/app/entity';
 import { AdminUserService } from 'src/app/service/admin-user/admin-user.service';
 import { RoleService } from 'src/app/service/role/role.service';
+import { httpErrorHandler } from 'src/app/shared/utils';
 
 @Component({
     selector: 'ngx-user-add',
@@ -24,8 +25,7 @@ export class UserAddComponent implements OnInit {
                 private roleService: RoleService,
                 private toastrService: NbToastrService) {
         this.user = new User();
-        this.user.roles = this.user.roles || [];
-        this.birthday = new Date(0);
+        this.birthday = new Date(this.user.birthday);
         this.roleList = [];
         this.selectedRoleIndex = "0";
     }
@@ -38,7 +38,7 @@ export class UserAddComponent implements OnInit {
     ngOnInit(): void {
         this.roleService.getList()
             .then(roleList => this.roleList = (roleList || []).map(r => r.roleName))
-            .catch(e => this.toastrService.danger("获取角色列表失败"));
+            .catch(e => httpErrorHandler(e, "用户管理", "获取角色列表失败"));
     }
     
     get canAdd(): boolean {
@@ -77,11 +77,11 @@ export class UserAddComponent implements OnInit {
         try {
             await this.adminUserService.post(this.user);
             this.toastrService.success("创建用户成功");
-            this.user = {} as any;
+            this.user = new User();
+            this.birthday = new Date(this.user.birthday);
             this.password = '';
-            this.birthday = new Date(0);
-        } catch {
-            this.toastrService.danger("创建用户失败");
+        } catch (err) {
+            httpErrorHandler(err, "用户管理", "创建用户失败");
         }
     }
 }

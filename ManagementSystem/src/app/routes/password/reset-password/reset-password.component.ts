@@ -4,6 +4,7 @@ import { NbAuthService, NbRequestPasswordComponent } from '@nebular/auth';
 import { NbToastrService } from '@nebular/theme';
 import { timer } from 'rxjs';
 import { AuthService } from 'src/app/service/auth';
+import { httpErrorHandler } from 'src/app/shared/utils';
 
 @Component({
     selector: 'ngx-reset-password',
@@ -43,7 +44,7 @@ export class ResetPasswordComponent extends NbRequestPasswordComponent implement
                 relativeTo: this.activatedRoute
             }));
         } catch (err) {
-            this.toastrService.danger("重置密码失败: " + err?.reason);
+            httpErrorHandler(err, "重置密码", "重置密码失败");
         }
     }
 }

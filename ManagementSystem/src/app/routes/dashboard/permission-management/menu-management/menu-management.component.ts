@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 import { concatMap, map, takeUntil, tap } from 'rxjs/operators';
 import { PermMenu } from 'src/app/entity';
 import { PermMenuService } from 'src/app/service/role/perm-menu.service';
-import { softAssignEnum } from 'src/app/shared/utils';
+import { httpErrorHandler, softAssignEnum } from 'src/app/shared/utils';
 import { MenuEditorComponent } from './menu-tree/menu-editor.component';
 
 @Component({
@@ -46,7 +46,7 @@ export class MenuManagementComponent implements OnInit, OnDestroy {
                 return tree;
             }))
             .subscribe(tree => softAssignEnum(this.menus, tree), error => {
-                this.toastrService.danger("获取权限信息失败", "菜单管理");
+                httpErrorHandler(error, "菜单管理", "获取权限信息失败");
             });
 
         this.permMenuService.menuDuk
@@ -76,7 +76,7 @@ export class MenuManagementComponent implements OnInit, OnDestroy {
         this.inAdding = true;
 
         const win = this.windowService.open(MenuEditorComponent, {
-            context: {},
+            context: { },
             title: "添加根节点菜单",
         });
 
@@ -87,8 +87,8 @@ export class MenuManagementComponent implements OnInit, OnDestroy {
                 const menu = win.config.context['menu'] as PermMenu;
                 await this.permMenuService.create(null, menu);
             }
-        } catch {
-            this.toastrService.danger("创建菜单失败", "菜单管理")
+        } catch (err) {
+            httpErrorHandler(err, "菜单管理", "创建菜单失败")
         } finally {
             this.inAdding = false;
         }
