@@ -5,7 +5,7 @@ on:
     branches:
       - frontend
     tags:
-      - v[0-9]+.[0-9]+(.[0-9])?
+      - v[0-9]+.[0-9]
 
 jobs:
   build_static_files:
@@ -30,7 +30,7 @@ jobs:
         id: release
         run: |
           branch=$(echo ${{github.ref}} | sed 's/refs\/\(heads\|tags\)\///g') && \
-            release=$([[ "$branch" =~ v[\d\.]+ ]] && echo $branch || echo "$branch-${{ steps.version.outputs.version }}") && \
+            release=$([[ "$branch" =~ v[0-9.]+ ]] && echo $branch || echo "$branch-${{ steps.version.outputs.version }}") && \
             echo "release_name=$release" && \
             printf "::set-output name=release::%s\n" "$release"
       - name: build application
@@ -38,22 +38,9 @@ jobs:
           pushd ManagementSystem && ng build --prod && \
           tar -caf dist.tar.gz dist && popd
       - name: release
-        uses: actions/create-release@v1
-        id: create_release
+        uses: ncipollo/release-action@v1
         with:
-          draft: false
-          prerelease: false
-          release_name: ${{ steps.release.outputs.release }}
-          tag_name: ${{ steps.release.outputs.release }}
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-      - name: upload
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./ManagementSystem/dist.tar.gz
-          asset_name: dist.tar.gz
-          asset_content_type: application/gzip
+          allowUpdates: true
+          artifacts: "./ManagementSystem/dist.tar.gz"
+          token: ${{ secrets.GITHUB_TOKEN }}
 
